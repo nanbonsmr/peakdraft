@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Copy, Download, Sparkles, Zap, Crown, TrendingUp } from "lucide-react";
+import { Copy, Download, Sparkles, Zap, Crown, TrendingUp, CreditCard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const templates = [
   {
@@ -56,6 +57,7 @@ const templates = [
 
 export default function Dashboard() {
   const { profile, refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [prompt, setPrompt] = useState('');
   const [keywords, setKeywords] = useState('');
@@ -107,7 +109,18 @@ export default function Dashboard() {
       toast({
         title: "Word limit reached",
         description: "Please upgrade your plan to generate more content.",
-        variant: "destructive"
+        variant: "destructive",
+        action: (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/pricing')}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <CreditCard className="w-4 h-4 mr-2" />
+            Upgrade Now
+          </Button>
+        )
       });
       return;
     }
@@ -272,9 +285,19 @@ export default function Dashboard() {
                 <div className="text-xs text-amber-600 dark:text-amber-400">Current Plan</div>
               </div>
             </div>
-            <div className="text-xs text-amber-600 dark:text-amber-400">
+            <div className="text-xs text-amber-600 dark:text-amber-400 mb-3">
               {profile?.subscription_plan === 'free' ? 'Upgrade available' : 'Active subscription'}
             </div>
+            {profile?.subscription_plan === 'free' && (
+              <Button
+                size="sm"
+                onClick={() => navigate('/pricing')}
+                className="w-full bg-gradient-primary hover:opacity-90 transition-opacity text-white"
+              >
+                <CreditCard className="w-3 h-3 mr-1" />
+                Upgrade Plan
+              </Button>
+            )}
           </div>
         </div>
 
