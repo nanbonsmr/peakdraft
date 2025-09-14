@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Settings, LogOut, Bell, CreditCard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { NotificationPanel } from "./NotificationPanel";
+import { ThemeToggle } from "./ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,6 +62,9 @@ export function Header() {
           <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
           <span className="text-xs font-medium">{Math.round((wordsUsed / wordsLimit) * 100)}%</span>
         </div>
+
+        {/* Theme Toggle */}
+        <ThemeToggle />
 
         {/* Notifications */}
         <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
