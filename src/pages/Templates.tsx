@@ -5,6 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import BlogGenerator from '@/components/templates/BlogGenerator';
+import SocialMediaGenerator from '@/components/templates/SocialMediaGenerator';
+import EmailGenerator from '@/components/templates/EmailGenerator';
+import AdCopyGenerator from '@/components/templates/AdCopyGenerator';
 import { 
   PenTool, 
   MessageSquare, 
@@ -95,39 +99,16 @@ export default function Templates() {
     
     return (
       <div className="max-w-6xl mx-auto space-y-6">
-        <div className="space-y-0.5">
-          <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            {template && <template.icon className={`w-6 h-6 ${template.color}`} />}
-            {template?.title || 'Template'} Generator
-          </h2>
-          <p className="text-muted-foreground">
-            {template?.description || 'Generate content using AI'}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Coming Soon Card */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Coming Soon!</CardTitle>
-                <CardDescription>
-                  Individual template generators are currently in development. 
-                  For now, you can use all templates from the main dashboard.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button asChild>
-                  <a href="/">
-                    <ArrowRight className="w-4 h-4 mr-2" />
-                    Go to Dashboard
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            {currentTemplate === 'blog' && <BlogGenerator />}
+            {currentTemplate === 'social' && <SocialMediaGenerator />}
+            {currentTemplate === 'email' && <EmailGenerator />}
+            {currentTemplate === 'ads' && <AdCopyGenerator />}
           </div>
 
-          {/* Recent Creations for this template */}
+          {/* Recent Creations Sidebar */}
           <div>
             <Card className="border-0 shadow-xl rounded-3xl overflow-hidden">
               <CardHeader className="bg-gradient-to-r from-violet-500/10 via-violet-500/5 to-transparent">
