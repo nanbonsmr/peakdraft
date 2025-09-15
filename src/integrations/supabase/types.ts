@@ -97,6 +97,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      trigger_subscription_expiration: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       update_word_usage: {
         Args: { user_uuid: string; words_to_add: number }
         Returns: undefined
