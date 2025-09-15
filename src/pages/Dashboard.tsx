@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Copy, Download, Sparkles, Zap, Crown, TrendingUp, CreditCard, FileText, BarChart3, Clock } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Copy, Download, Sparkles, Zap, Crown, TrendingUp, CreditCard, FileText, BarChart3, Clock, Calendar, Hash } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -65,6 +66,7 @@ export default function Dashboard() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [recentContent, setRecentContent] = useState<any[]>([]);
+  const [selectedContent, setSelectedContent] = useState<any>(null);
 
   const loadRecentContent = async () => {
     if (!profile) return;
@@ -196,6 +198,14 @@ export default function Dashboard() {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatedContent);
+    toast({
+      title: "Copied!",
+      description: "Content copied to clipboard."
+    });
+  };
+
+  const copyContentToClipboard = (content: string) => {
+    navigator.clipboard.writeText(content);
     toast({
       title: "Copied!",
       description: "Content copied to clipboard."
@@ -575,9 +585,72 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                      View
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors"
+                          onClick={() => setSelectedContent(content)}
+                        >
+                          View
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center gap-2">
+                            {content.template_type === 'blog' ? <Sparkles className="h-5 w-5" /> :
+                             content.template_type === 'social' ? <Zap className="h-5 w-5" /> :
+                             content.template_type === 'ads' ? <Crown className="h-5 w-5" /> :
+                             <TrendingUp className="h-5 w-5" />}
+                            {content.template_type.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())} Content
+                          </DialogTitle>
+                        </DialogHeader>
+                        
+                        <div className="space-y-4">
+                          {/* Content Info */}
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground bg-muted/30 rounded-lg p-3">
+                            <div className="flex items-center gap-1">
+                              <Hash className="w-4 h-4" />
+                              <span>{content.word_count} words</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              <span>{new Date(content.created_at).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+
+                          {/* Original Prompt */}
+                          <div className="space-y-2">
+                            <Label className="font-semibold">Original Prompt:</Label>
+                            <div className="bg-muted/50 rounded-lg p-3">
+                              <p className="text-sm">{content.prompt}</p>
+                            </div>
+                          </div>
+
+                          {/* Generated Content */}
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <Label className="font-semibold">Generated Content:</Label>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => copyContentToClipboard(content.generated_content)}
+                                className="flex items-center gap-2"
+                              >
+                                <Copy className="w-4 h-4" />
+                                Copy Content
+                              </Button>
+                            </div>
+                            <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
+                              <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                                {content.generated_content}
+                              </pre>
+                            </div>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 ))
               ) : (
