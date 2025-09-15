@@ -50,8 +50,8 @@ export function AppSidebar() {
   
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
-      ? "bg-blue-600 text-white font-medium shadow-sm" 
-      : "text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-all duration-200";
+      ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium shadow-sm" 
+      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200";
 
   return (
     <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
@@ -59,12 +59,12 @@ export function AppSidebar() {
         {/* Logo */}
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 bg-sidebar-primary rounded-lg flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-sidebar-primary-foreground" />
             </div>
             {state !== "collapsed" && (
               <div>
-                <h1 className="font-bold text-lg text-blue-700">
+                <h1 className="font-bold text-lg text-sidebar-foreground">
                   QuickWrite AI
                 </h1>
               </div>
@@ -74,7 +74,7 @@ export function AppSidebar() {
 
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-blue-600 uppercase tracking-wider px-2">
+          <SidebarGroupLabel className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider px-2">
             Main
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -95,7 +95,7 @@ export function AppSidebar() {
 
         {/* Templates */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-blue-600 uppercase tracking-wider px-2">
+          <SidebarGroupLabel className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider px-2">
             Templates
           </SidebarGroupLabel>
           <SidebarGroupContent>
