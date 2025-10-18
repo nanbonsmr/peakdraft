@@ -194,7 +194,11 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        // Handle edge function errors
+        const errorMessage = data?.error || error.message || "Failed to start checkout";
+        throw new Error(errorMessage);
+      }
 
       if (data?.priceId) {
         // Open Paddle checkout
@@ -211,10 +215,18 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
       }
     } catch (error) {
       console.error('Checkout error:', error);
+      
+      // Extract meaningful error message
+      let errorMessage = "Failed to start checkout. Please try again.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Checkout Error",
-        description: error instanceof Error ? error.message : "Failed to start checkout. Please try again.",
-        variant: "destructive"
+        description: errorMessage,
+        variant: "destructive",
+        duration: 6000
       });
       setSelectedPlan(null);
     } finally {

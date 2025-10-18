@@ -71,7 +71,12 @@ serve(async (req) => {
     if (!paddleResponse.ok) {
       const errorData = await paddleResponse.json();
       console.error('Paddle API error:', errorData);
-      throw new Error(`Paddle API error: ${errorData.error?.message || 'Unknown error'}`);
+      
+      // Extract detailed error message
+      const errorMessage = errorData.error?.detail || errorData.error?.message || 'Unknown error';
+      const errorCode = errorData.error?.code || 'unknown';
+      
+      throw new Error(`Paddle Error (${errorCode}): ${errorMessage}`);
     }
 
     const paddleData = await paddleResponse.json();
