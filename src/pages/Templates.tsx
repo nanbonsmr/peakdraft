@@ -12,6 +12,11 @@ import BlogGenerator from '@/components/templates/BlogGenerator';
 import SocialMediaGenerator from '@/components/templates/SocialMediaGenerator';
 import EmailGenerator from '@/components/templates/EmailGenerator';
 import AdCopyGenerator from '@/components/templates/AdCopyGenerator';
+import HumanizeGenerator from '@/components/templates/HumanizeGenerator';
+import CVGenerator from '@/components/templates/CVGenerator';
+import ProductDescriptionGenerator from '@/components/templates/ProductDescriptionGenerator';
+import LetterGenerator from '@/components/templates/LetterGenerator';
+import ScriptGenerator from '@/components/templates/ScriptGenerator';
 import { 
   PenTool, 
   MessageSquare, 
@@ -26,7 +31,12 @@ import {
   Crown,
   Copy,
   Calendar,
-  Hash
+  Hash,
+  Bot,
+  FileText,
+  Package,
+  FileEdit,
+  Video
 } from 'lucide-react';
 
 const templates = [
@@ -69,6 +79,56 @@ const templates = [
     bgColor: 'bg-orange-100',
     features: ['High Converting', 'A/B Test Ready', 'Platform Optimized'],
     usageCount: '950 uses'
+  },
+  {
+    id: 'humanize',
+    title: 'AI Text Humanizer',
+    description: 'Transform AI-generated text into natural, human-like writing',
+    icon: Bot,
+    color: 'text-cyan-600',
+    bgColor: 'bg-cyan-100',
+    features: ['Natural Flow', 'Authentic Voice', 'Detection Resistant'],
+    usageCount: '1.2k uses'
+  },
+  {
+    id: 'cv',
+    title: 'CV Writer',
+    description: 'Create professional, ATS-friendly CV and resume content',
+    icon: FileText,
+    color: 'text-indigo-600',
+    bgColor: 'bg-indigo-100',
+    features: ['ATS Optimized', 'Achievement Focus', 'Multiple Formats'],
+    usageCount: '890 uses'
+  },
+  {
+    id: 'product',
+    title: 'Product Description',
+    description: 'Generate compelling product descriptions that convert',
+    icon: Package,
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-100',
+    features: ['SEO-Friendly', 'Benefit-Driven', 'Multiple Tones'],
+    usageCount: '1.4k uses'
+  },
+  {
+    id: 'letter',
+    title: 'Letter Writer',
+    description: 'Write professional letters for any business or personal need',
+    icon: FileEdit,
+    color: 'text-rose-600',
+    bgColor: 'bg-rose-100',
+    features: ['Proper Format', 'Multiple Types', 'Professional Tone'],
+    usageCount: '720 uses'
+  },
+  {
+    id: 'script',
+    title: 'Script Writer',
+    description: 'Create engaging video and audio scripts with timing cues',
+    icon: Video,
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-100',
+    features: ['Scene Breakdown', 'Timing Cues', 'Multiple Formats'],
+    usageCount: '1.1k uses'
   }
 ];
 
@@ -121,6 +181,11 @@ export default function Templates() {
             {currentTemplate === 'social' && <SocialMediaGenerator />}
             {currentTemplate === 'email' && <EmailGenerator />}
             {currentTemplate === 'ads' && <AdCopyGenerator />}
+            {currentTemplate === 'humanize' && <HumanizeGenerator />}
+            {currentTemplate === 'cv' && <CVGenerator />}
+            {currentTemplate === 'product' && <ProductDescriptionGenerator />}
+            {currentTemplate === 'letter' && <LetterGenerator />}
+            {currentTemplate === 'script' && <ScriptGenerator />}
           </div>
 
           {/* Recent Creations Sidebar */}
