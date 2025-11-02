@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Star, Zap } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
+import { Check, Star, Zap, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+
+// Declare FastSpring global
+declare global {
+  interface Window {
+    fastspring?: any;
+  }
+}
 
 const plans = [
   {
@@ -62,175 +69,140 @@ interface PaymentPlansProps {
   discount?: number;
 }
 
-declare global {
-  interface Window {
-    Paddle?: any;
-  }
-}
-
 export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
+  const { user, refreshProfile } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paddleLoaded, setPaddleLoaded] = useState(false);
-  const { user, refreshProfile } = useAuth();
-  const { toast } = useToast();
-
-  const calculateDiscountedPrice = (originalPrice: number) => {
-    return originalPrice * (1 - discount / 100);
-  };
+  const [fastspringLoaded, setFastspringLoaded] = useState(false);
+  const [storeId, setStoreId] = useState<string>('');
 
   useEffect(() => {
-    // Load Paddle.js script
-    const script = document.createElement('script');
-    script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
-    script.async = true;
-    script.onload = async () => {
-      // Get client token from edge function
+    const loadFastSpring = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke('get-paddle-token');
+        // Get store configuration from edge function
+        const { data, error } = await supabase.functions.invoke('get-fastspring-config');
+        
         if (error) throw error;
         
-        if (window.Paddle && data?.clientToken) {
-          window.Paddle.Initialize({
-            token: data.clientToken,
-            eventCallback: (event: any) => {
-              if (event.name === 'checkout.completed') {
-                handlePaymentSuccess(event.data);
-              } else if (event.name === 'checkout.error') {
-                handlePaymentError(event.data);
-              }
+        if (data?.storeId) {
+          setStoreId(data.storeId);
+          
+          // Load FastSpring Store Builder Library
+          const script = document.createElement('script');
+          script.src = 'https://d1f8f9xcsvx3ha.cloudfront.net/sbl/0.8.5/fastspring-builder.min.js';
+          script.async = true;
+          script.type = 'text/javascript';
+          script.setAttribute('data-storefront', `${data.storeId}.onfastspring.com`);
+          
+          script.onload = () => {
+            setFastspringLoaded(true);
+            console.log('FastSpring loaded successfully');
+          };
+
+          script.onerror = () => {
+            console.error('Failed to load FastSpring library');
+            toast.error('Failed to load payment system');
+          };
+
+          document.body.appendChild(script);
+
+          return () => {
+            if (document.body.contains(script)) {
+              document.body.removeChild(script);
             }
-          });
-          setPaddleLoaded(true);
+          };
         }
       } catch (error) {
-        console.error('Failed to initialize Paddle:', error);
-        toast({
-          title: "Initialization Error",
-          description: "Failed to load payment system. Please refresh the page.",
-          variant: "destructive"
-        });
+        console.error('Failed to load FastSpring config:', error);
+        toast.error('Failed to initialize payment system');
       }
     };
-    document.body.appendChild(script);
 
-    return () => {
-      document.body.removeChild(script);
-    };
+    loadFastSpring();
   }, []);
 
-  const handlePaymentSuccess = async (data: any) => {
-    try {
-      setIsProcessing(true);
-      
-      console.log('Payment success:', data);
-      
-      if (!user?.id) {
-        throw new Error('User not authenticated');
-      }
-
-      await refreshProfile();
-      
-      toast({
-        title: "Payment Successful!",
-        description: `You've successfully upgraded to your new plan.`,
-      });
-
-      onSuccess?.();
-    } catch (error) {
-      console.error('Payment processing error:', error);
-      toast({
-        title: "Payment Error",
-        description: error instanceof Error ? error.message : "There was an issue processing your payment. Please contact support.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsProcessing(false);
-      setSelectedPlan(null);
+  const calculateDiscountedPrice = (originalPrice: number) => {
+    if (discount > 0) {
+      return originalPrice * (1 - discount / 100);
     }
+    return originalPrice;
+  };
+
+  const handlePaymentSuccess = async (data: any) => {
+    console.log('Payment successful:', data);
+    toast.success('Payment successful! Your subscription is now active.');
+    
+    await refreshProfile();
+    
+    if (onSuccess) {
+      onSuccess();
+    }
+    
+    setIsProcessing(false);
+    setSelectedPlan(null);
   };
 
   const handlePaymentError = (error: any) => {
-    console.error('Paddle error:', error);
-    toast({
-      title: "Payment Error",
-      description: "There was an issue with the payment. Please try again.",
-      variant: "destructive"
-    });
+    console.error('Payment error:', error);
+    toast.error('Payment failed. Please try again.');
     setIsProcessing(false);
     setSelectedPlan(null);
   };
 
   const handleSelectPlan = async (plan: typeof plans[0]) => {
-    if (!paddleLoaded || !window.Paddle) {
-      toast({
-        title: "Not Ready",
-        description: "Payment system is still loading. Please try again.",
-        variant: "destructive"
-      });
+    if (!user) {
+      toast.error('Please sign in to subscribe');
       return;
     }
 
-    if (!user?.id) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to purchase a plan.",
-        variant: "destructive"
-      });
+    if (!fastspringLoaded) {
+      toast.error('Payment system is still loading. Please try again.');
       return;
     }
 
-    setIsProcessing(true);
     setSelectedPlan(plan.id);
+    setIsProcessing(true);
 
     try {
-      // Create a checkout session via edge function
-      const { data, error } = await supabase.functions.invoke('create-paddle-checkout', {
+      // Create session via edge function
+      const { data, error } = await supabase.functions.invoke('create-fastspring-session', {
         body: {
           planId: plan.id,
-          userId: user.id,
-          amount: calculateDiscountedPrice(plan.price),
-          discount: discount
+          userId: user.id
         }
       });
 
-      if (error) {
-        // Handle edge function errors
-        const errorMessage = data?.error || error.message || "Failed to start checkout";
-        throw new Error(errorMessage);
+      if (error) throw error;
+
+      if (!data.success || !data.sessionId) {
+        throw new Error('Failed to create checkout session');
       }
 
-      if (data?.priceId) {
-        // Open Paddle checkout
-        window.Paddle.Checkout.open({
-          items: [{
-            priceId: data.priceId,
-            quantity: 1
-          }],
-          customData: {
-            userId: user.id,
-            planId: plan.id
+      console.log('Session created:', data);
+
+      // Open FastSpring checkout with session
+      if (window.fastspring) {
+        window.fastspring.builder.secure(data.sessionId, data.productPath);
+        
+        // Set up event listeners for checkout completion
+        window.fastspring.builder.on('popup.closed', () => {
+          setIsProcessing(false);
+          setSelectedPlan(null);
+        });
+
+        window.fastspring.builder.on('data.ready', (orderData: any) => {
+          if (orderData && orderData.status === 'completed') {
+            handlePaymentSuccess(orderData);
           }
         });
+      } else {
+        throw new Error('FastSpring not initialized');
       }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      
-      // Extract meaningful error message
-      let errorMessage = "Failed to start checkout. Please try again.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      
-      toast({
-        title: "Checkout Error",
-        description: errorMessage,
-        variant: "destructive",
-        duration: 6000
-      });
-      setSelectedPlan(null);
-    } finally {
-      setIsProcessing(false);
+
+    } catch (error: any) {
+      console.error('Error creating checkout:', error);
+      handlePaymentError(error);
+      toast.error(error.message || 'Failed to start checkout process');
     }
   };
 
@@ -310,15 +282,18 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
               <Button 
                 className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
                 onClick={() => handleSelectPlan(plan)}
-                disabled={isProcessing || !paddleLoaded}
+                disabled={isProcessing || !fastspringLoaded}
               >
-                {isProcessing && selectedPlan === plan.id 
-                  ? 'Processing...' 
-                  : !paddleLoaded 
-                  ? 'Loading...' 
-                  : plan.popular 
-                  ? 'Get Started' 
-                  : 'Choose Plan'}
+                {isProcessing && selectedPlan === plan.id ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : !fastspringLoaded ? (
+                  'Loading...'
+                ) : (
+                  plan.popular ? 'Get Started' : 'Choose Plan'
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -330,7 +305,7 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
           All plans include a 7-day free trial. Cancel anytime.
         </p>
         <p className="text-xs text-muted-foreground">
-          Payments are processed securely through Paddle
+          Payments are processed securely through FastSpring
         </p>
       </div>
     </div>

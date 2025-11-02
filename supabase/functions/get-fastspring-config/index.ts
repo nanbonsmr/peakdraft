@@ -11,14 +11,14 @@ serve(async (req) => {
   }
 
   try {
-    const clientToken = Deno.env.get('PADDLE_CLIENT_TOKEN');
+    const storeId = Deno.env.get('FASTSPRING_STORE_ID');
 
-    if (!clientToken) {
-      throw new Error('Paddle client token not configured');
+    if (!storeId) {
+      throw new Error('FastSpring store ID not configured');
     }
 
     return new Response(
-      JSON.stringify({ clientToken }),
+      JSON.stringify({ storeId }),
       { 
         headers: { 
           ...corsHeaders, 
@@ -28,11 +28,11 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Error getting Paddle token:', error);
+    console.error('Error getting FastSpring config:', error);
     
     return new Response(
       JSON.stringify({ 
-        error: error.message || 'Failed to get Paddle token' 
+        error: error.message || 'Failed to get FastSpring config' 
       }),
       { 
         status: 500,
