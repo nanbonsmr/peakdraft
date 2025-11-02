@@ -45,9 +45,9 @@ serve(async (req) => {
 
     // Map plan IDs to FastSpring product paths
     const productMap: Record<string, string> = {
-      'basic': 'starter-plan',
-      'pro': 'pro-plan',
-      'enterprise': 'enterprise-plan'
+      'basic': 'basic',
+      'pro': 'pro',
+      'enterprise': 'enterprise'
     };
 
     const productPath = productMap[planId];
