@@ -12,13 +12,14 @@ serve(async (req) => {
 
   try {
     const storeId = Deno.env.get('FASTSPRING_STORE_ID');
+    const storefront = Deno.env.get('FASTSPRING_STOREFRONT') || `${storeId}.onfastspring.com/popup-${storeId}`;
 
     if (!storeId) {
       throw new Error('FastSpring store ID not configured');
     }
 
     return new Response(
-      JSON.stringify({ storeId }),
+      JSON.stringify({ storeId, storefront }),
       { 
         headers: { 
           ...corsHeaders, 

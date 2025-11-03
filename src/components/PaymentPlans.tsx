@@ -87,35 +87,45 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
         if (data?.storeId) {
           setStoreId(data.storeId);
           
+          const storefrontUrl = data.storefront || `${data.storeId}.onfastspring.com/popup-${data.storeId.toLowerCase()}`;
+          console.log('Loading FastSpring with storefront:', storefrontUrl);
+          
           // Load FastSpring Store Builder Library
           const script = document.createElement('script');
+          script.id = 'fsc-api';
           script.src = 'https://d1f8f9xcsvx3ha.cloudfront.net/sbl/0.8.5/fastspring-builder.min.js';
-          script.async = true;
           script.type = 'text/javascript';
-          script.setAttribute('data-storefront', `${data.storeId}.onfastspring.com`);
+          script.setAttribute('data-storefront', storefrontUrl);
+          script.setAttribute('data-debug', 'true');
           
           script.onload = () => {
+            console.log('FastSpring script loaded, checking for initialization...');
             // Wait for FastSpring to be fully initialized
+            let attempts = 0;
+            const maxAttempts = 100; // 10 seconds total
+            
             const checkFastSpring = setInterval(() => {
+              attempts++;
+              console.log(`Checking FastSpring initialization (attempt ${attempts})...`, {
+                hasFastspring: !!window.fastspring,
+                hasBuilder: !!(window.fastspring && window.fastspring.builder)
+              });
+              
               if (window.fastspring && window.fastspring.builder) {
                 clearInterval(checkFastSpring);
                 setFastspringLoaded(true);
-                console.log('FastSpring loaded successfully');
+                console.log('FastSpring initialized successfully!');
+              } else if (attempts >= maxAttempts) {
+                clearInterval(checkFastSpring);
+                console.error('FastSpring failed to initialize after', attempts, 'attempts');
+                console.error('Window.fastspring:', window.fastspring);
+                toast.error('Payment system failed to initialize. Please refresh and try again.');
               }
             }, 100);
-            
-            // Timeout after 10 seconds
-            setTimeout(() => {
-              clearInterval(checkFastSpring);
-              if (!window.fastspring) {
-                console.error('FastSpring failed to initialize');
-                toast.error('Payment system failed to initialize');
-              }
-            }, 10000);
           };
 
-          script.onerror = () => {
-            console.error('Failed to load FastSpring library');
+          script.onerror = (error) => {
+            console.error('Failed to load FastSpring library:', error);
             toast.error('Failed to load payment system');
           };
 
