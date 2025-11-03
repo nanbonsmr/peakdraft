@@ -210,19 +210,22 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
         throw new Error('FastSpring not initialized');
       }
 
-      // Set up event listeners before opening checkout
-      window.fastspring.builder.on('popup.closed', () => {
-        console.log('Checkout popup closed');
+      console.log('Opening FastSpring checkout with session:', data.sessionId);
+
+      // Set up global callback for popup closed
+      (window as any).onFSPopupClosed = () => {
+        console.log('FastSpring popup closed');
         setIsProcessing(false);
         setSelectedPlan(null);
-      });
+      };
 
-      window.fastspring.builder.on('data.ready', (orderData: any) => {
-        console.log('Order data received:', orderData);
-        if (orderData && orderData.status === 'completed') {
-          handlePaymentSuccess(orderData);
+      // Set up global callback for order completion
+      (window as any).dataPopupWebhookReceived = (orderData: any) => {
+        console.log('FastSpring order data received:', orderData);
+        if (orderData && orderData.data && orderData.data.id) {
+          handlePaymentSuccess(orderData.data);
         }
-      });
+      };
 
       // Open FastSpring checkout with session ID
       window.fastspring.builder.checkout(data.sessionId);
