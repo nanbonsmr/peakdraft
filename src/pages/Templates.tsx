@@ -134,7 +134,7 @@ const templates = [
 
 export default function Templates() {
   const location = useLocation();
-  const currentTemplate = location.pathname.split('/')[2];
+  const currentTemplate = location.pathname.split('/')[3];
   const { profile } = useAuth();
   const { toast } = useToast();
   const [recentContent, setRecentContent] = useState<any[]>([]);
