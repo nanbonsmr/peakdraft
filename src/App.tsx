@@ -47,13 +47,13 @@ const App = () => (
                         <Header />
                         <main className="flex-1 p-4 sm:p-6 overflow-auto">
                           <Routes>
-                            <Route path="/app" element={<Dashboard />} />
-                            <Route path="/app/settings" element={<Settings />} />
-                            <Route path="/app/usage" element={<Usage />} />
-                            <Route path="/app/templates" element={<Templates />} />
-                            <Route path="/app/templates/*" element={<Templates />} />
-                            <Route path="/app/pricing" element={<Pricing />} />
-                            <Route path="/app/admin" element={<Admin />} />
+                            <Route path="/" element={<Dashboard />} />
+                            <Route path="settings" element={<Settings />} />
+                            <Route path="usage" element={<Usage />} />
+                            <Route path="templates" element={<Templates />} />
+                            <Route path="templates/*" element={<Templates />} />
+                            <Route path="pricing" element={<Pricing />} />
+                            <Route path="admin" element={<Admin />} />
                           </Routes>
                         </main>
                       </SidebarInset>
