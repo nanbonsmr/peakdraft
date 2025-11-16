@@ -38,7 +38,7 @@ export default function Auth() {
         title: "Welcome back!",
         description: "You have successfully signed in."
       });
-      navigate('/');
+      navigate('/app');
     }
     
     setLoading(false);
@@ -71,6 +71,14 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
       <div className="w-full max-w-md">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')} 
+          className="mb-6"
+        >
+          ← Return to Home Page
+        </Button>
+        
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="p-2 bg-gradient-primary rounded-lg">

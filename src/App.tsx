@@ -11,6 +11,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ThemeProvider } from "next-themes";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
+import Landing from "./pages/Landing";
 import Pricing from "./pages/Pricing";
 import Settings from "./pages/Settings";
 import Usage from "./pages/Usage";
@@ -35,8 +36,9 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
+              <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/*" element={
+              <Route path="/app/*" element={
                 <ProtectedRoute>
                   <SidebarProvider>
                     <div className="flex min-h-screen w-full">
@@ -45,13 +47,13 @@ const App = () => (
                         <Header />
                         <main className="flex-1 p-4 sm:p-6 overflow-auto">
                           <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="/settings" element={<Settings />} />
-                            <Route path="/usage" element={<Usage />} />
-                            <Route path="/templates" element={<Templates />} />
-                            <Route path="/templates/*" element={<Templates />} />
-                            <Route path="/pricing" element={<Pricing />} />
-                            <Route path="/admin" element={<Admin />} />
+                            <Route path="/app" element={<Dashboard />} />
+                            <Route path="/app/settings" element={<Settings />} />
+                            <Route path="/app/usage" element={<Usage />} />
+                            <Route path="/app/templates" element={<Templates />} />
+                            <Route path="/app/templates/*" element={<Templates />} />
+                            <Route path="/app/pricing" element={<Pricing />} />
+                            <Route path="/app/admin" element={<Admin />} />
                           </Routes>
                         </main>
                       </SidebarInset>

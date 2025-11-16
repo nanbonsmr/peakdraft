@@ -29,10 +29,10 @@ import {
 } from "@/components/ui/sidebar";
 
 const templateItems = [
-  { title: "Blog Posts", url: "/templates/blog", icon: PenTool },
-  { title: "Social Media", url: "/templates/social", icon: MessageSquare },
-  { title: "Email Writer", url: "/templates/email", icon: Mail },
-  { title: "Ad Copy", url: "/templates/ads", icon: Megaphone },
+  { title: "Blog Posts", url: "/app/templates/blog", icon: PenTool },
+  { title: "Social Media", url: "/app/templates/social", icon: MessageSquare },
+  { title: "Email Writer", url: "/app/templates/email", icon: Mail },
+  { title: "Ad Copy", url: "/app/templates/ads", icon: Megaphone },
 ];
 
 export function AppSidebar() {
@@ -59,18 +59,18 @@ export function AppSidebar() {
   };
 
   const mainItems = [
-    { title: "Dashboard", url: "/", icon: Home },
-    { title: "Templates", url: "/templates", icon: Sparkles },
-    { title: "Usage", url: "/usage", icon: BarChart3 },
-    { title: "Pricing", url: "/pricing", icon: CreditCard },
-    { title: "Settings", url: "/settings", icon: Settings },
+    { title: "Dashboard", url: "/app", icon: Home },
+    { title: "Templates", url: "/app/templates", icon: Sparkles },
+    { title: "Usage", url: "/app/usage", icon: BarChart3 },
+    { title: "Pricing", url: "/app/pricing", icon: CreditCard },
+    { title: "Settings", url: "/app/settings", icon: Settings },
   ];
 
   // Add admin item if user is admin
   if (isAdmin) {
     mainItems.push({
       title: "Admin",
-      url: "/admin",
+      url: "/app/admin",
       icon: Shield,
     });
   }

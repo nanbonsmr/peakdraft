@@ -199,14 +199,8 @@ export type Database = {
         Args: { discount_code_text: string; user_uuid: string }
         Returns: Json
       }
-      is_admin: {
-        Args: { user_uuid: string }
-        Returns: boolean
-      }
-      trigger_subscription_expiration: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      is_admin: { Args: { user_uuid: string }; Returns: boolean }
+      trigger_subscription_expiration: { Args: never; Returns: undefined }
       update_word_usage: {
         Args: { user_uuid: string; words_to_add: number }
         Returns: undefined
