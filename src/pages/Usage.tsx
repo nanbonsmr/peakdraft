@@ -109,7 +109,7 @@ export default function Usage() {
           </p>
         </div>
         <Button asChild>
-          <Link to="/pricing">
+          <Link to="/app/pricing">
             <ArrowUpRight className="w-4 h-4 mr-2" />
             Upgrade Plan
           </Link>
