@@ -17,6 +17,11 @@ import CVGenerator from '@/components/templates/CVGenerator';
 import ProductDescriptionGenerator from '@/components/templates/ProductDescriptionGenerator';
 import LetterGenerator from '@/components/templates/LetterGenerator';
 import ScriptGenerator from '@/components/templates/ScriptGenerator';
+import HashtagGenerator from '@/components/templates/HashtagGenerator';
+import PostIdeasGenerator from '@/components/templates/PostIdeasGenerator';
+import ChatGPTPromptGenerator from '@/components/templates/ChatGPTPromptGenerator';
+import ImagePromptGenerator from '@/components/templates/ImagePromptGenerator';
+import VideoPromptGenerator from '@/components/templates/VideoPromptGenerator';
 import { 
   PenTool, 
   MessageSquare, 
@@ -36,7 +41,10 @@ import {
   FileText,
   Package,
   FileEdit,
-  Video
+  Video,
+  Lightbulb,
+  Image,
+  Film
 } from 'lucide-react';
 
 const templates = [
@@ -129,6 +137,56 @@ const templates = [
     bgColor: 'bg-amber-100',
     features: ['Scene Breakdown', 'Timing Cues', 'Multiple Formats'],
     usageCount: '1.1k uses'
+  },
+  {
+    id: 'hashtag',
+    title: 'Hashtag Generator',
+    description: 'Generate trending and relevant hashtags for social media posts',
+    icon: Hash,
+    color: 'text-pink-600',
+    bgColor: 'bg-pink-100',
+    features: ['Trending Tags', 'Platform Specific', 'Niche Focused'],
+    usageCount: '980 uses'
+  },
+  {
+    id: 'post-ideas',
+    title: 'Post Ideas Generator',
+    description: 'Get creative content ideas for your social media strategy',
+    icon: Lightbulb,
+    color: 'text-yellow-600',
+    bgColor: 'bg-yellow-100',
+    features: ['Creative Ideas', 'Multiple Platforms', 'Trend-Based'],
+    usageCount: '1.3k uses'
+  },
+  {
+    id: 'chatgpt-prompt',
+    title: 'ChatGPT Prompt Generator',
+    description: 'Create effective prompts for ChatGPT and AI assistants',
+    icon: Bot,
+    color: 'text-teal-600',
+    bgColor: 'bg-teal-100',
+    features: ['Optimized Structure', 'Clear Instructions', 'Professional'],
+    usageCount: '1.6k uses'
+  },
+  {
+    id: 'image-prompt',
+    title: 'Image Prompt Generator',
+    description: 'Generate detailed prompts for AI image generation tools',
+    icon: Image,
+    color: 'text-violet-600',
+    bgColor: 'bg-violet-100',
+    features: ['Detailed Descriptions', 'Style Guides', 'AI-Optimized'],
+    usageCount: '1.4k uses'
+  },
+  {
+    id: 'video-prompt',
+    title: 'Video Prompt Generator',
+    description: 'Create comprehensive prompts for video generation and planning',
+    icon: Film,
+    color: 'text-red-600',
+    bgColor: 'bg-red-100',
+    features: ['Scene Details', 'Camera Movements', 'Production Ready'],
+    usageCount: '890 uses'
   }
 ];
 
@@ -186,6 +244,11 @@ export default function Templates() {
             {currentTemplate === 'product' && <ProductDescriptionGenerator />}
             {currentTemplate === 'letter' && <LetterGenerator />}
             {currentTemplate === 'script' && <ScriptGenerator />}
+            {currentTemplate === 'hashtag' && <HashtagGenerator />}
+            {currentTemplate === 'post-ideas' && <PostIdeasGenerator />}
+            {currentTemplate === 'chatgpt-prompt' && <ChatGPTPromptGenerator />}
+            {currentTemplate === 'image-prompt' && <ImagePromptGenerator />}
+            {currentTemplate === 'video-prompt' && <VideoPromptGenerator />}
           </div>
 
           {/* Recent Creations Sidebar */}
