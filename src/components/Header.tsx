@@ -31,11 +31,11 @@ export function Header() {
   };
 
   const handleSettingsClick = () => {
-    navigate('/settings');
+    navigate('/app/settings');
   };
 
   const handleBillingClick = () => {
-    navigate('/pricing');
+    navigate('/app/pricing');
   };
   
   const initials = profile?.display_name
