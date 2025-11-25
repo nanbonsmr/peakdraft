@@ -5,7 +5,7 @@ export default function Pricing() {
   const navigate = useNavigate();
 
   const handlePaymentSuccess = () => {
-    navigate('/');
+    navigate('/app');
   };
 
   return (

@@ -75,7 +75,7 @@ export default function EmailGenerator() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => navigate('/pricing')}
+            onClick={() => navigate('/app/pricing')}
             className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <CreditCard className="w-4 h-4 mr-2" />

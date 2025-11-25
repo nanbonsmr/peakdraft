@@ -117,7 +117,7 @@ export default function Dashboard() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => navigate('/pricing')}
+            onClick={() => navigate('/app/pricing')}
             className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <CreditCard className="w-4 h-4 mr-2" />
@@ -302,7 +302,7 @@ export default function Dashboard() {
             {profile?.subscription_plan === 'free' && (
               <Button
                 size="sm"
-                onClick={() => navigate('/pricing')}
+                onClick={() => navigate('/app/pricing')}
                 className="w-full bg-gradient-primary hover:opacity-90 transition-opacity text-white"
               >
                 <CreditCard className="w-3 h-3 mr-1" />
