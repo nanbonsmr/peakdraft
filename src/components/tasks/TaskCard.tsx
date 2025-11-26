@@ -8,8 +8,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Calendar, MoreVertical, Pencil, Trash2, Clock } from "lucide-react";
+import { Calendar, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
 interface Task {
   id: string;
@@ -45,8 +47,24 @@ const STATUS_OPTIONS = [
 export function TaskCard({ task, onStatusChange, onEdit, onDelete }: TaskCardProps) {
   const isOverdue = task.due_date && new Date(task.due_date) < new Date() && task.status !== 'completed';
 
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: task.id,
+    data: { task },
+  });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
-    <Card className="hover:shadow-lg transition-shadow cursor-pointer group w-full">
+    <Card 
+      ref={setNodeRef}
+      style={style}
+      className={`hover:shadow-lg transition-shadow cursor-grab active:cursor-grabbing group w-full ${isDragging ? 'shadow-2xl ring-2 ring-primary' : ''}`}
+      {...attributes}
+      {...listeners}
+    >
       <CardHeader className="p-3 sm:p-4 pb-2">
         <div className="flex items-start justify-between gap-2">
           <h4 className="font-semibold text-xs sm:text-sm line-clamp-2 flex-1">{task.title}</h4>
