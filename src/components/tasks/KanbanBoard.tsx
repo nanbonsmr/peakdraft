@@ -83,29 +83,30 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
   };
 
   const handleStatusChange = async (taskId: string, newStatus: string) => {
+    // Optimistically update UI first so drag-and-drop always feels responsive
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === taskId ? { ...task, status: newStatus } : task
+      )
+    );
+
     try {
       const { error } = await supabase
         .from('tasks')
-        .update({ 
+        .update({
           status: newStatus,
-          completed_at: newStatus === 'completed' ? new Date().toISOString() : null
+          completed_at: newStatus === 'completed' ? new Date().toISOString() : null,
         })
         .eq('id', taskId);
 
       if (error) throw error;
-
-      // Update local state immediately for smooth UX
-      setTasks(prev => 
-        prev.map(task => 
-          task.id === taskId ? { ...task, status: newStatus } : task
-        )
-      );
 
       toast({
         title: "Task moved",
         description: `Task moved to ${newStatus.replace('_', ' ')}`,
       });
     } catch (error: any) {
+      console.error('Error updating task status', error);
       toast({
         title: "Error updating task",
         description: error.message,
