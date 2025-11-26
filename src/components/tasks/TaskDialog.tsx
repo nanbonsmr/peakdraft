@@ -162,12 +162,14 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle>{taskId ? 'Edit Task' : 'Create New Task'}</DialogTitle>
+          <DialogTitle className="text-lg sm:text-xl">
+            {taskId ? 'Edit Task' : 'Create New Task'}
+          </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           <div>
             <Label htmlFor="title">Title *</Label>
             <Input
@@ -190,7 +192,7 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <Label htmlFor="priority">Priority</Label>
               <Select value={priority} onValueChange={setPriority}>
@@ -222,17 +224,17 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <Label>Due Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
+                  <Button variant="outline" className="w-full justify-start text-left font-normal text-sm">
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {dueDate ? format(dueDate, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={dueDate}
@@ -276,15 +278,16 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
             </Select>
           </div>
 
-          <div className="flex justify-end gap-2 pt-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="w-full sm:w-auto">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {taskId ? 'Update Task' : 'Create Task'}
             </Button>

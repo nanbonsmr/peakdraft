@@ -46,14 +46,14 @@ export function TaskCard({ task, onStatusChange, onEdit, onDelete }: TaskCardPro
   const isOverdue = task.due_date && new Date(task.due_date) < new Date() && task.status !== 'completed';
 
   return (
-    <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
-      <CardHeader className="p-4 pb-2">
+    <Card className="hover:shadow-lg transition-shadow cursor-pointer group w-full">
+      <CardHeader className="p-3 sm:p-4 pb-2">
         <div className="flex items-start justify-between gap-2">
-          <h4 className="font-semibold text-sm line-clamp-2 flex-1">{task.title}</h4>
+          <h4 className="font-semibold text-xs sm:text-sm line-clamp-2 flex-1">{task.title}</h4>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100">
-                <MoreVertical className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 opacity-0 group-hover:opacity-100">
+                <MoreVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -83,15 +83,15 @@ export function TaskCard({ task, onStatusChange, onEdit, onDelete }: TaskCardPro
         </div>
       </CardHeader>
 
-      <CardContent className="p-4 pt-2 space-y-3">
+      <CardContent className="p-3 sm:p-4 pt-2 space-y-2 sm:space-y-3">
         {task.description && (
           <p className="text-xs text-muted-foreground line-clamp-2">
             {task.description}
           </p>
         )}
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <Badge className={PRIORITY_COLORS[task.priority as keyof typeof PRIORITY_COLORS]}>
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+          <Badge className={PRIORITY_COLORS[task.priority as keyof typeof PRIORITY_COLORS] + " text-xs"}>
             {task.priority}
           </Badge>
           
@@ -105,9 +105,9 @@ export function TaskCard({ task, onStatusChange, onEdit, onDelete }: TaskCardPro
         {task.due_date && (
           <div className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-destructive' : 'text-muted-foreground'}`}>
             <Calendar className="h-3 w-3" />
-            {format(new Date(task.due_date), 'MMM d, yyyy')}
+            <span className="truncate">{format(new Date(task.due_date), 'MMM d, yyyy')}</span>
             {isOverdue && (
-              <Badge variant="destructive" className="ml-2 text-xs">
+              <Badge variant="destructive" className="ml-1 text-xs">
                 Overdue
               </Badge>
             )}

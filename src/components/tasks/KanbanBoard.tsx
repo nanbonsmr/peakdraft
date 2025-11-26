@@ -128,37 +128,78 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {STATUS_COLUMNS.map(column => {
-        const columnTasks = tasks.filter(task => task.status === column.id);
-        
-        return (
-          <div key={column.id} className="flex flex-col">
-            <div className={`border-t-4 ${column.color} bg-card rounded-lg p-4`}>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-lg">{column.label}</h3>
-                <span className="text-sm text-muted-foreground">
-                  {columnTasks.length}
-                </span>
-              </div>
+    <div className="w-full">
+      {/* Mobile/Tablet: Horizontal scroll */}
+      <div className="lg:hidden">
+        <ScrollArea className="w-full whitespace-nowrap">
+          <div className="flex gap-4 pb-4 min-w-max">
+            {STATUS_COLUMNS.map(column => {
+              const columnTasks = tasks.filter(task => task.status === column.id);
               
-              <ScrollArea className="h-[600px] pr-4">
-                <div className="space-y-3">
-                  {columnTasks.map(task => (
-                    <TaskCard
-                      key={task.id}
-                      task={task}
-                      onStatusChange={handleStatusChange}
-                      onEdit={() => onEditTask(task.id)}
-                      onDelete={handleDeleteTask}
-                    />
-                  ))}
+              return (
+                <div key={column.id} className="w-[280px] flex-shrink-0">
+                  <div className={`border-t-4 ${column.color} bg-card rounded-lg p-4`}>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-semibold text-base">{column.label}</h3>
+                      <span className="text-sm text-muted-foreground">
+                        {columnTasks.length}
+                      </span>
+                    </div>
+                    
+                    <ScrollArea className="h-[500px]">
+                      <div className="space-y-3 pr-4">
+                        {columnTasks.map(task => (
+                          <TaskCard
+                            key={task.id}
+                            task={task}
+                            onStatusChange={handleStatusChange}
+                            onEdit={() => onEditTask(task.id)}
+                            onDelete={handleDeleteTask}
+                          />
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </div>
                 </div>
-              </ScrollArea>
-            </div>
+              );
+            })}
           </div>
-        );
-      })}
+        </ScrollArea>
+      </div>
+
+      {/* Desktop: Grid layout */}
+      <div className="hidden lg:grid lg:grid-cols-4 gap-6">
+        {STATUS_COLUMNS.map(column => {
+          const columnTasks = tasks.filter(task => task.status === column.id);
+          
+          return (
+            <div key={column.id} className="flex flex-col">
+              <div className={`border-t-4 ${column.color} bg-card rounded-lg p-4`}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-lg">{column.label}</h3>
+                  <span className="text-sm text-muted-foreground">
+                    {columnTasks.length}
+                  </span>
+                </div>
+                
+                <ScrollArea className="h-[600px] pr-4">
+                  <div className="space-y-3">
+                    {columnTasks.map(task => (
+                      <TaskCard
+                        key={task.id}
+                        task={task}
+                        onStatusChange={handleStatusChange}
+                        onEdit={() => onEditTask(task.id)}
+                        onDelete={handleDeleteTask}
+                      />
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -80,17 +80,17 @@ export function TaskCalendarView({ refreshTrigger, onEditTask }: TaskCalendarVie
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
       <Card>
         <CardHeader>
-          <CardTitle>Calendar</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Calendar</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex justify-center">
           <Calendar
             mode="single"
             selected={selectedDate}
             onSelect={setSelectedDate}
-            className="rounded-md border"
+            className="rounded-md border w-full"
             modifiers={{
               hasTask: getDatesWithTasks(),
             }}
@@ -106,13 +106,13 @@ export function TaskCalendarView({ refreshTrigger, onEditTask }: TaskCalendarVie
 
       <Card>
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="text-lg sm:text-xl">
             {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'Select a date'}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {selectedDateTasks.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">
+            <p className="text-muted-foreground text-center py-8 text-sm">
               No tasks scheduled for this date
             </p>
           ) : (
@@ -120,17 +120,19 @@ export function TaskCalendarView({ refreshTrigger, onEditTask }: TaskCalendarVie
               {selectedDateTasks.map(task => (
                 <div
                   key={task.id}
-                  className="p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors"
+                  className="p-3 sm:p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors"
                   onClick={() => onEditTask(task.id)}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1">
-                      <h4 className="font-medium">{task.title}</h4>
-                      <div className="flex gap-2 mt-2">
-                        <Badge variant="outline">{task.status.replace('_', ' ')}</Badge>
-                        <Badge>{task.priority}</Badge>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-sm sm:text-base">{task.title}</h4>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        <Badge variant="outline" className="text-xs">
+                          {task.status.replace('_', ' ')}
+                        </Badge>
+                        <Badge className="text-xs">{task.priority}</Badge>
                         {task.template_type && (
-                          <Badge variant="secondary">{task.template_type}</Badge>
+                          <Badge variant="secondary" className="text-xs">{task.template_type}</Badge>
                         )}
                       </div>
                     </div>

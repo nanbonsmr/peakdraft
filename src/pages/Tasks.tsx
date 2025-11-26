@@ -32,16 +32,16 @@ export default function Tasks() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6 space-y-6">
+      <div className="container mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Task Management</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-2xl sm:text-3xl font-bold">Task Management</h1>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
               Organize and track your content creation tasks
             </p>
           </div>
-          <Button onClick={() => setIsTaskDialogOpen(true)} size="lg">
+          <Button onClick={() => setIsTaskDialogOpen(true)} size="lg" className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             New Task
           </Button>
@@ -49,22 +49,22 @@ export default function Tasks() {
 
         {/* Views */}
         <Tabs defaultValue="kanban" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-4">
-            <TabsTrigger value="kanban">
-              <LayoutGrid className="mr-2 h-4 w-4" />
-              Kanban
+          <TabsList className="grid w-full max-w-full sm:max-w-md grid-cols-4 h-auto">
+            <TabsTrigger value="kanban" className="flex-col sm:flex-row gap-1 sm:gap-2 py-2">
+              <LayoutGrid className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Kanban</span>
             </TabsTrigger>
-            <TabsTrigger value="list">
-              <List className="mr-2 h-4 w-4" />
-              List
+            <TabsTrigger value="list" className="flex-col sm:flex-row gap-1 sm:gap-2 py-2">
+              <List className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">List</span>
             </TabsTrigger>
-            <TabsTrigger value="calendar">
-              <Calendar className="mr-2 h-4 w-4" />
-              Calendar
+            <TabsTrigger value="calendar" className="flex-col sm:flex-row gap-1 sm:gap-2 py-2">
+              <Calendar className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Calendar</span>
             </TabsTrigger>
-            <TabsTrigger value="analytics">
-              <BarChart3 className="mr-2 h-4 w-4" />
-              Analytics
+            <TabsTrigger value="analytics" className="flex-col sm:flex-row gap-1 sm:gap-2 py-2">
+              <BarChart3 className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Analytics</span>
             </TabsTrigger>
           </TabsList>
 

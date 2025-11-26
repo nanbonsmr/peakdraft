@@ -80,8 +80,8 @@ export function TaskAnalytics({ refreshTrigger }: TaskAnalyticsProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         <StatsCard
           title="Total Tasks"
           value={stats.total}
