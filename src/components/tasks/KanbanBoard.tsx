@@ -177,48 +177,44 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
       autoScroll={{ enabled: false }}
     >
       <div className="w-full relative">
-        {/* Mobile/Tablet: Horizontal scroll */}
-        <div className="lg:hidden">
-          <ScrollArea className="w-full whitespace-nowrap rounded-lg border bg-muted/20 p-4">
-            <div className="flex gap-3 pb-2 min-w-max">
-              {STATUS_COLUMNS.map(column => {
-                const columnTasks = tasks.filter(task => task.status === column.id);
-                
-                return (
-                  <DroppableColumn key={column.id} id={column.id} isOver={false}>
-                    <div className={`border-t-4 ${column.color} bg-card rounded-lg p-3 h-[420px] flex flex-col`}>
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-semibold text-sm">{column.label}</h3>
-                        <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                          {columnTasks.length}
-                        </span>
-                      </div>
-                      
-                      <ScrollArea className="flex-1 -mr-3 pr-3">
-                        <div className="space-y-2.5 min-h-[300px]">
-                          {columnTasks.length === 0 ? (
-                            <p className="text-xs text-muted-foreground text-center py-8">
-                              Drop here
-                            </p>
-                          ) : (
-                            columnTasks.map(task => (
-                              <TaskCard
-                                key={task.id}
-                                task={task}
-                                onStatusChange={handleStatusChange}
-                                onEdit={() => onEditTask(task.id)}
-                                onDelete={handleDeleteTask}
-                              />
-                            ))
-                          )}
-                        </div>
-                      </ScrollArea>
+        {/* Mobile/Tablet: Grid layout */}
+        <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {STATUS_COLUMNS.map(column => {
+            const columnTasks = tasks.filter(task => task.status === column.id);
+            
+            return (
+              <DroppableColumn key={column.id} id={column.id} isOver={false}>
+                <div className={`border-t-4 ${column.color} bg-card rounded-lg p-3 h-[420px] flex flex-col`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-sm">{column.label}</h3>
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                      {columnTasks.length}
+                    </span>
+                  </div>
+                  
+                  <ScrollArea className="flex-1 -mr-3 pr-3">
+                    <div className="space-y-2.5 min-h-[300px]">
+                      {columnTasks.length === 0 ? (
+                        <p className="text-xs text-muted-foreground text-center py-8">
+                          Drop here
+                        </p>
+                      ) : (
+                        columnTasks.map(task => (
+                          <TaskCard
+                            key={task.id}
+                            task={task}
+                            onStatusChange={handleStatusChange}
+                            onEdit={() => onEditTask(task.id)}
+                            onDelete={handleDeleteTask}
+                          />
+                        ))
+                      )}
                     </div>
-                  </DroppableColumn>
-                );
-              })}
-            </div>
-          </ScrollArea>
+                  </ScrollArea>
+                </div>
+              </DroppableColumn>
+            );
+          })}
         </div>
 
         {/* Desktop: Grid layout with fixed height */}
