@@ -338,6 +338,12 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
         <p className="text-xs text-muted-foreground">
           Payments are processed securely through FastSpring
         </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          By subscribing, you agree to our{' '}
+          <a href="/terms" className="underline hover:text-primary">Terms & Conditions</a>
+          {' '}and{' '}
+          <a href="/privacy" className="underline hover:text-primary">Privacy Policy</a>
+        </p>
       </div>
     </div>
   );
