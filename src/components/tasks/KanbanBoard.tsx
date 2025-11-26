@@ -131,32 +131,38 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
     <div className="w-full">
       {/* Mobile/Tablet: Horizontal scroll */}
       <div className="lg:hidden">
-        <ScrollArea className="w-full whitespace-nowrap">
-          <div className="flex gap-4 pb-4 min-w-max">
+        <ScrollArea className="w-full whitespace-nowrap rounded-lg border bg-muted/20 p-4">
+          <div className="flex gap-3 pb-2 min-w-max">
             {STATUS_COLUMNS.map(column => {
               const columnTasks = tasks.filter(task => task.status === column.id);
               
               return (
-                <div key={column.id} className="w-[280px] flex-shrink-0">
-                  <div className={`border-t-4 ${column.color} bg-card rounded-lg p-4`}>
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-base">{column.label}</h3>
-                      <span className="text-sm text-muted-foreground">
+                <div key={column.id} className="w-[260px] flex-shrink-0">
+                  <div className={`border-t-4 ${column.color} bg-card rounded-lg p-3 h-[420px] flex flex-col`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold text-sm">{column.label}</h3>
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                         {columnTasks.length}
                       </span>
                     </div>
                     
-                    <ScrollArea className="h-[500px]">
-                      <div className="space-y-3 pr-4">
-                        {columnTasks.map(task => (
-                          <TaskCard
-                            key={task.id}
-                            task={task}
-                            onStatusChange={handleStatusChange}
-                            onEdit={() => onEditTask(task.id)}
-                            onDelete={handleDeleteTask}
-                          />
-                        ))}
+                    <ScrollArea className="flex-1 -mr-3 pr-3">
+                      <div className="space-y-2.5">
+                        {columnTasks.length === 0 ? (
+                          <p className="text-xs text-muted-foreground text-center py-8">
+                            No tasks
+                          </p>
+                        ) : (
+                          columnTasks.map(task => (
+                            <TaskCard
+                              key={task.id}
+                              task={task}
+                              onStatusChange={handleStatusChange}
+                              onEdit={() => onEditTask(task.id)}
+                              onDelete={handleDeleteTask}
+                            />
+                          ))
+                        )}
                       </div>
                     </ScrollArea>
                   </div>
@@ -167,32 +173,38 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
         </ScrollArea>
       </div>
 
-      {/* Desktop: Grid layout */}
-      <div className="hidden lg:grid lg:grid-cols-4 gap-6">
+      {/* Desktop: Grid layout with fixed height */}
+      <div className="hidden lg:grid lg:grid-cols-4 gap-4">
         {STATUS_COLUMNS.map(column => {
           const columnTasks = tasks.filter(task => task.status === column.id);
           
           return (
             <div key={column.id} className="flex flex-col">
-              <div className={`border-t-4 ${column.color} bg-card rounded-lg p-4`}>
+              <div className={`border-t-4 ${column.color} bg-card rounded-lg p-4 h-[500px] flex flex-col`}>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-lg">{column.label}</h3>
-                  <span className="text-sm text-muted-foreground">
+                  <h3 className="font-semibold text-base">{column.label}</h3>
+                  <span className="text-sm text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
                     {columnTasks.length}
                   </span>
                 </div>
                 
-                <ScrollArea className="h-[600px] pr-4">
+                <ScrollArea className="flex-1 -mr-4 pr-4">
                   <div className="space-y-3">
-                    {columnTasks.map(task => (
-                      <TaskCard
-                        key={task.id}
-                        task={task}
-                        onStatusChange={handleStatusChange}
-                        onEdit={() => onEditTask(task.id)}
-                        onDelete={handleDeleteTask}
-                      />
-                    ))}
+                    {columnTasks.length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-12">
+                        No tasks yet
+                      </p>
+                    ) : (
+                      columnTasks.map(task => (
+                        <TaskCard
+                          key={task.id}
+                          task={task}
+                          onStatusChange={handleStatusChange}
+                          onEdit={() => onEditTask(task.id)}
+                          onDelete={handleDeleteTask}
+                        />
+                      ))
+                    )}
                   </div>
                 </ScrollArea>
               </div>
