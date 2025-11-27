@@ -3,11 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, Mail, Phone, MapPin } from 'lucide-react';
-import heroImage from '@/assets/hero-image.jpg';
 import featuresShowcase from '@/assets/features-showcase.jpg';
 import workflowIllustration from '@/assets/workflow-illustration.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
 import { useAuth } from '@/contexts/AuthContext';
+import Hero3DScene from '@/components/Hero3DScene';
 
 const pricingPlans = [
   {
@@ -136,21 +136,9 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Right Column - Hero Image */}
-            <div className="relative animate-fade-in">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                <img 
-                  src={heroImage} 
-                  alt="AI-powered content creation interface" 
-                  className="w-full h-auto object-cover"
-                />
-                {/* Floating Elements Animation */}
-                <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute top-1/4 left-1/4 w-12 h-12 sm:w-16 sm:h-16 bg-primary/20 rounded-lg animate-[float_6s_ease-in-out_infinite] blur-xl" />
-                  <div className="absolute top-1/3 right-1/4 w-16 h-16 sm:w-20 sm:h-20 bg-primary-glow/20 rounded-full animate-[float_8s_ease-in-out_infinite] blur-xl" style={{ animationDelay: '1s' }} />
-                  <div className="absolute bottom-1/4 left-1/3 w-20 h-20 sm:w-24 sm:h-24 bg-accent/20 rounded-lg animate-[float_7s_ease-in-out_infinite] blur-xl" style={{ animationDelay: '2s' }} />
-                </div>
-              </div>
+            {/* Right Column - 3D Scene */}
+            <div className="relative animate-fade-in h-[400px] sm:h-[500px] lg:h-[600px]">
+              <Hero3DScene />
             </div>
           </div>
         </div>
