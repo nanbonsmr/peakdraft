@@ -202,7 +202,7 @@ export default function Dashboard() {
   return <div className="min-h-screen bg-gradient-to-br from-background via-primary/[0.02] to-accent/[0.03]">
       <div className="space-y-6 sm:space-y-8 p-4 sm:p-6">
         {/* Welcome Header */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary/95 to-primary/80 p-8 sm:p-10 text-white shadow-2xl animate-gradient-shift">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-blue p-8 sm:p-10 text-white shadow-2xl animate-gradient-shift">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.15),transparent_50%)]"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.1),transparent_50%)]"></div>
           <div className="relative">
