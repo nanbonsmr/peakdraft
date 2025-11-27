@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { MessageSquare, Sparkles, Copy, CreditCard, Lightbulb, Hash } from 'lucide-react';
+import { ExportDropdown } from '@/components/ExportDropdown';
 
 const socialExamples = [
   "Promote a new product launch with excitement and call-to-action",
@@ -311,11 +312,14 @@ export default function SocialMediaGenerator() {
                     variant="outline" 
                     size="sm" 
                     onClick={copyToClipboard}
-                    className="flex-1"
                   >
                     <Copy className="w-4 h-4 mr-2" />
-                    Copy Post
+                    Copy
                   </Button>
+                  <ExportDropdown
+                    content={generatedContent}
+                    filename={`social-post-${Date.now()}`}
+                  />
                 </div>
               )}
             </CardHeader>

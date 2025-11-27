@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Sparkles, Copy, CreditCard, Lightbulb } from 'lucide-react';
+import { ExportDropdown } from '@/components/ExportDropdown';
 
 const cvExamples = [
   "Create a professional CV summary for a Senior Software Engineer with 5 years experience in React, Node.js, and cloud technologies",
@@ -256,15 +257,21 @@ export default function CVGenerator() {
             <CardHeader>
               <CardTitle>Generated CV</CardTitle>
               {generatedContent && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={copyToClipboard}
-                  className="w-fit"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Content
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={copyToClipboard}
+                    className="w-fit"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
+                  <ExportDropdown
+                    content={generatedContent}
+                    filename={`cv-${Date.now()}`}
+                  />
+                </div>
               )}
             </CardHeader>
             <CardContent>
