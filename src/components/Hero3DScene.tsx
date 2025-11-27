@@ -1,70 +1,190 @@
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Float, MeshDistortMaterial, Sphere, Box, Torus } from '@react-three/drei';
-import { useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, PerspectiveCamera, Float, Text3D, Center, Sparkles } from '@react-three/drei';
+import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 
-function AnimatedShapes() {
-  const sphereRef = useRef<THREE.Mesh>(null);
-  const boxRef = useRef<THREE.Mesh>(null);
-  const torusRef = useRef<THREE.Mesh>(null);
+// Floating document/paper shape
+function Document({ position }: { position: [number, number, number] }) {
+  return (
+    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1.5}>
+      <mesh position={position} rotation={[0, 0, 0.1]}>
+        <boxGeometry args={[1.2, 1.6, 0.05]} />
+        <meshStandardMaterial 
+          color="#ffffff"
+          metalness={0.1}
+          roughness={0.3}
+          emissive="#8b5cf6"
+          emissiveIntensity={0.1}
+        />
+        {/* Lines on document */}
+        <mesh position={[0, 0.3, 0.03]}>
+          <boxGeometry args={[0.8, 0.05, 0.01]} />
+          <meshStandardMaterial color="#8b5cf6" />
+        </mesh>
+        <mesh position={[0, 0.1, 0.03]}>
+          <boxGeometry args={[0.8, 0.05, 0.01]} />
+          <meshStandardMaterial color="#8b5cf6" />
+        </mesh>
+        <mesh position={[0, -0.1, 0.03]}>
+          <boxGeometry args={[0.6, 0.05, 0.01]} />
+          <meshStandardMaterial color="#06b6d4" />
+        </mesh>
+      </mesh>
+    </Float>
+  );
+}
+
+// Pen/Writing tool
+function Pen({ position }: { position: [number, number, number] }) {
+  return (
+    <Float speed={2} rotationIntensity={1} floatIntensity={2}>
+      <group position={position} rotation={[0, 0, Math.PI / 4]}>
+        {/* Pen body */}
+        <mesh>
+          <cylinderGeometry args={[0.08, 0.08, 2, 16]} />
+          <meshStandardMaterial 
+            color="#8b5cf6"
+            metalness={0.8}
+            roughness={0.2}
+          />
+        </mesh>
+        {/* Pen tip */}
+        <mesh position={[0, -1.1, 0]}>
+          <coneGeometry args={[0.08, 0.3, 16]} />
+          <meshStandardMaterial 
+            color="#ec4899"
+            metalness={0.9}
+            roughness={0.1}
+          />
+        </mesh>
+      </group>
+    </Float>
+  );
+}
+
+// AI Brain/Neural network representation
+function AIBrain({ position }: { position: [number, number, number] }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+      meshRef.current.rotation.y += 0.01;
+    }
+  });
+
+  return (
+    <Float speed={1.8} rotationIntensity={0.5} floatIntensity={1.5}>
+      <mesh ref={meshRef} position={position}>
+        <icosahedronGeometry args={[1, 1]} />
+        <meshStandardMaterial 
+          color="#8b5cf6"
+          wireframe={true}
+          emissive="#8b5cf6"
+          emissiveIntensity={0.5}
+        />
+      </mesh>
+      {/* Inner glowing core */}
+      <mesh position={position}>
+        <sphereGeometry args={[0.5, 32, 32]} />
+        <meshStandardMaterial 
+          color="#8b5cf6"
+          emissive="#a78bfa"
+          emissiveIntensity={1}
+          transparent
+          opacity={0.6}
+        />
+      </mesh>
+    </Float>
+  );
+}
+
+// Floating letters
+function FloatingLetter({ letter, position, color }: { letter: string; position: [number, number, number]; color: string }) {
+  return (
+    <Float speed={2.5} rotationIntensity={1} floatIntensity={2}>
+      <Center position={position}>
+        <Text3D
+          font="/fonts/helvetiker_regular.typeface.json"
+          size={0.5}
+          height={0.1}
+          curveSegments={12}
+        >
+          {letter}
+          <meshStandardMaterial 
+            color={color}
+            metalness={0.6}
+            roughness={0.3}
+            emissive={color}
+            emissiveIntensity={0.3}
+          />
+        </Text3D>
+      </Center>
+    </Float>
+  );
+}
+
+function ContentCreationScene() {
+  // Generate multiple sparkles for AI magic effect
+  const particlePositions = useMemo(() => {
+    const positions: [number, number, number][] = [];
+    for (let i = 0; i < 100; i++) {
+      positions.push([
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10
+      ]);
+    }
+    return positions;
+  }, []);
 
   return (
     <>
-      {/* Main floating sphere with distortion */}
-      <Float speed={2} rotationIntensity={1} floatIntensity={2}>
-        <Sphere ref={sphereRef} args={[1.5, 64, 64]} position={[0, 0, 0]}>
-          <MeshDistortMaterial
-            color="#8b5cf6"
-            attach="material"
-            distort={0.4}
-            speed={2}
-            roughness={0.2}
-            metalness={0.8}
-          />
-        </Sphere>
-      </Float>
+      {/* AI Brain - Center piece */}
+      <AIBrain position={[0, 0, 0]} />
 
-      {/* Floating box */}
-      <Float speed={1.5} rotationIntensity={2} floatIntensity={1.5}>
-        <Box ref={boxRef} args={[1, 1, 1]} position={[-3, 1, -2]}>
-          <meshStandardMaterial
-            color="#06b6d4"
-            metalness={0.6}
-            roughness={0.3}
-          />
-        </Box>
-      </Float>
+      {/* Documents representing content */}
+      <Document position={[-2.5, 1, -2]} />
+      <Document position={[2.5, -0.5, -1.5]} />
 
-      {/* Floating torus */}
-      <Float speed={2.5} rotationIntensity={1.5} floatIntensity={2.5}>
-        <Torus ref={torusRef} args={[1, 0.4, 16, 100]} position={[3, -1, -1]}>
-          <meshStandardMaterial
-            color="#ec4899"
-            metalness={0.7}
-            roughness={0.2}
-          />
-        </Torus>
-      </Float>
+      {/* Writing tools */}
+      <Pen position={[-3, -1.5, -1]} />
+      
+      {/* Floating letters spelling "AI" */}
+      <FloatingLetter letter="A" position={[-1.5, 2, -2]} color="#06b6d4" />
+      <FloatingLetter letter="I" position={[1.5, 2.2, -2]} color="#ec4899" />
 
-      {/* Additional decorative spheres */}
-      <Float speed={3} rotationIntensity={1} floatIntensity={3}>
-        <Sphere args={[0.5, 32, 32]} position={[2, 2, -3]}>
-          <meshStandardMaterial
+      {/* Magic sparkles for AI effect */}
+      <Sparkles
+        count={50}
+        scale={[8, 8, 8]}
+        size={3}
+        speed={0.4}
+        opacity={0.6}
+        color="#8b5cf6"
+      />
+
+      {/* Additional small floating elements */}
+      <Float speed={3} rotationIntensity={1} floatIntensity={2}>
+        <mesh position={[2, 1.5, -3]}>
+          <sphereGeometry args={[0.2, 16, 16]} />
+          <meshStandardMaterial 
             color="#f59e0b"
-            metalness={0.5}
-            roughness={0.4}
+            emissive="#f59e0b"
+            emissiveIntensity={0.5}
           />
-        </Sphere>
+        </mesh>
       </Float>
 
-      <Float speed={2.2} rotationIntensity={1} floatIntensity={2}>
-        <Sphere args={[0.4, 32, 32]} position={[-2, -2, -2]}>
-          <meshStandardMaterial
+      <Float speed={2.5} rotationIntensity={1} floatIntensity={2.5}>
+        <mesh position={[-2, -2, -2.5]}>
+          <sphereGeometry args={[0.15, 16, 16]} />
+          <meshStandardMaterial 
             color="#10b981"
-            metalness={0.6}
-            roughness={0.3}
+            emissive="#10b981"
+            emissiveIntensity={0.5}
           />
-        </Sphere>
+        </mesh>
       </Float>
     </>
   );
@@ -89,8 +209,8 @@ export default function Hero3DScene() {
           castShadow
         />
 
-        {/* 3D Objects */}
-        <AnimatedShapes />
+        {/* 3D Content Creation Scene */}
+        <ContentCreationScene />
 
         {/* Orbit Controls for interaction */}
         <OrbitControls
