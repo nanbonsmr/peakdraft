@@ -293,12 +293,12 @@ export default function Templates() {
                   {recentContent.length > 0 ? (
                     recentContent.map((content, index) => (
                       <div key={index} className="group flex items-center justify-between p-4 bg-gradient-to-r from-muted/30 to-muted/10 rounded-2xl hover:from-muted/50 hover:to-muted/20 transition-all duration-300 border border-muted-foreground/10">
-                        <div className="flex items-center gap-4">
-                          <div className={`p-3 rounded-xl ${template?.bgColor} ${template?.color}`}>
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <div className={`p-3 rounded-xl ${template?.bgColor} ${template?.color} flex-shrink-0`}>
                             {template && <template.icon className="h-5 w-5" />}
                           </div>
-                          <div>
-                            <p className="font-semibold text-sm truncate max-w-32" title={content.prompt}>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-sm truncate" title={content.prompt}>
                               {content.prompt}
                             </p>
                             <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -308,7 +308,7 @@ export default function Templates() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 flex-shrink-0">
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button variant="ghost" size="sm" className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors">
@@ -373,16 +373,17 @@ export default function Templates() {
                             </div>
                           </DialogContent>
                         </Dialog>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteContent(content.id)}
-                          className="rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteContent(content.id)}
+                            className="rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
+                            title="Delete content"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
-                    </div>
                     ))
                   ) : (
                     <div className="text-center py-8">
