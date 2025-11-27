@@ -2,13 +2,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ThemeProvider } from "next-themes";
+import { PageTransition } from "@/components/PageTransition";
+import { AnimatePresence } from "framer-motion";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
@@ -27,6 +29,51 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><Landing /></PageTransition>} />
+        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
+        <Route path="/terms" element={<PageTransition><TermsAndConditions /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
+        <Route path="/pricing" element={<PageTransition><PublicPricing /></PageTransition>} />
+        <Route path="/app/*" element={
+          <ProtectedRoute>
+            <SidebarProvider>
+              <div className="flex min-h-screen w-full">
+                <AppSidebar />
+                <SidebarInset className="flex-1">
+                  <Header />
+                  <main className="flex-1 p-4 sm:p-6 overflow-auto">
+                    <AnimatePresence mode="wait">
+                      <Routes location={location} key={location.pathname}>
+                        <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
+                        <Route path="settings" element={<PageTransition><Settings /></PageTransition>} />
+                        <Route path="usage" element={<PageTransition><Usage /></PageTransition>} />
+                        <Route path="templates" element={<PageTransition><Templates /></PageTransition>} />
+                        <Route path="templates/*" element={<PageTransition><Templates /></PageTransition>} />
+                        <Route path="tasks" element={<PageTransition><Tasks /></PageTransition>} />
+                        <Route path="pricing" element={<PageTransition><Pricing /></PageTransition>} />
+                        <Route path="admin" element={<PageTransition><Admin /></PageTransition>} />
+                      </Routes>
+                    </AnimatePresence>
+                  </main>
+                </SidebarInset>
+              </div>
+            </SidebarProvider>
+          </ProtectedRoute>
+        } />
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -41,41 +88,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-            <Route path="/" element={<Landing />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/terms" element={<TermsAndConditions />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/pricing" element={<PublicPricing />} />
-              <Route path="/app/*" element={
-                <ProtectedRoute>
-                  <SidebarProvider>
-                    <div className="flex min-h-screen w-full">
-                      <AppSidebar />
-                      <SidebarInset className="flex-1">
-                        <Header />
-                        <main className="flex-1 p-4 sm:p-6 overflow-auto">
-                          <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="settings" element={<Settings />} />
-                            <Route path="usage" element={<Usage />} />
-                            <Route path="templates" element={<Templates />} />
-                            <Route path="templates/*" element={<Templates />} />
-                            <Route path="tasks" element={<Tasks />} />
-                            <Route path="pricing" element={<Pricing />} />
-                            <Route path="admin" element={<Admin />} />
-                          </Routes>
-                        </main>
-                      </SidebarInset>
-                    </div>
-                  </SidebarProvider>
-                </ProtectedRoute>
-              } />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AnimatedRoutes />
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>

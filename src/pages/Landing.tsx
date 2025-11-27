@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -488,9 +488,9 @@ export default function Landing() {
               <h3 className="font-bold mb-4">Product</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
-                <li><a href="/pricing" className="hover:text-primary transition-colors">Pricing</a></li>
-                <li><a href="/app/templates" className="hover:text-primary transition-colors">Templates</a></li>
-                <li><a href="/faq" className="hover:text-primary transition-colors">FAQ</a></li>
+                <li><Link to="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
+                <li><Link to="/app/templates" className="hover:text-primary transition-colors">Templates</Link></li>
+                <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
               </ul>
             </div>
 
@@ -500,15 +500,15 @@ export default function Landing() {
                 <li><a href="#about" className="hover:text-primary transition-colors">About</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Blog</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Careers</a></li>
-                <li><a href="/contact" className="hover:text-primary transition-colors">Contact</a></li>
+                <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-bold mb-4">Legal</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a></li>
-                <li><a href="/terms" className="hover:text-primary transition-colors">Terms & Conditions</a></li>
+                <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-primary transition-colors">Terms & Conditions</Link></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Security</a></li>
               </ul>
             </div>
