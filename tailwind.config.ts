@@ -63,6 +63,7 @@ export default {
         'gradient-primary': 'var(--gradient-primary)',
         'gradient-subtle': 'var(--gradient-subtle)',
         'gradient-hero': 'var(--gradient-hero)',
+        'gradient-blue': 'var(--gradient-blue)',
       },
       boxShadow: {
         'elegant': 'var(--shadow-elegant)',
