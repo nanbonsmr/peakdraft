@@ -212,7 +212,6 @@ export default function Templates() {
   const { profile } = useAuth();
   const { toast } = useToast();
   const [recentContent, setRecentContent] = useState<any[]>([]);
-  const [previewTemplate, setPreviewTemplate] = useState<typeof templates[0] | null>(null);
 
   const loadRecentContent = async (templateType: string) => {
     if (!profile) return;
@@ -468,128 +467,17 @@ export default function Templates() {
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setPreviewTemplate(template);
-                  }}
-                >
+              <Button className="w-full group-hover:shadow-sm" asChild>
+                <a href={`/app/templates/${template.id}`}>
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Preview
-                </Button>
-                <Button className="flex-1 group-hover:shadow-sm" asChild>
-                  <a href={`/app/templates/${template.id}`}>
-                    Use Template
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </a>
-                </Button>
-              </div>
+                  Use Template
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </a>
+              </Button>
             </CardContent>
           </Card>
         ))}
       </div>
-
-      {/* Preview Dialog */}
-      <Dialog open={!!previewTemplate} onOpenChange={() => setPreviewTemplate(null)}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-3">
-              {previewTemplate && (
-                <>
-                  <div className={`p-3 rounded-xl ${previewTemplate.bgColor}`}>
-                    <previewTemplate.icon className={`h-6 w-6 ${previewTemplate.color}`} />
-                  </div>
-                  <div>
-                    <div>{previewTemplate.title}</div>
-                    <p className="text-sm text-muted-foreground font-normal mt-1">
-                      {previewTemplate.description}
-                    </p>
-                  </div>
-                </>
-              )}
-            </DialogTitle>
-          </DialogHeader>
-          
-          {previewTemplate && (
-            <div className="space-y-6">
-              {/* Features */}
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold">Key Features:</Label>
-                <div className="flex flex-wrap gap-2">
-                  {previewTemplate.features.map((feature, index) => (
-                    <Badge key={index} variant="secondary" className="text-sm">
-                      <Zap className="w-3 h-3 mr-1" />
-                      {feature}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Usage Stats */}
-              <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">{previewTemplate.usageCount}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-green-500" />
-                  <span className="text-sm text-muted-foreground">Trending</span>
-                </div>
-              </div>
-
-              {/* Example Output */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-semibold">Example Output:</Label>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      navigator.clipboard.writeText(previewTemplate.exampleOutput);
-                      toast({
-                        title: "Copied!",
-                        description: "Example output copied to clipboard."
-                      });
-                    }}
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy
-                  </Button>
-                </div>
-                <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-xl p-6 border border-border/50">
-                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">
-                    {previewTemplate.exampleOutput}
-                  </pre>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="flex gap-3 pt-4 border-t">
-                <Button 
-                  variant="outline" 
-                  className="flex-1"
-                  onClick={() => setPreviewTemplate(null)}
-                >
-                  Close
-                </Button>
-                <Button 
-                  className="flex-1"
-                  asChild
-                >
-                  <a href={`/app/templates/${previewTemplate.id}`}>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Use This Template
-                  </a>
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
 
       {/* Popular Templates Section */}
       <Card className="bg-gradient-subtle border-0">
