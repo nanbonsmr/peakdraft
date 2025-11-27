@@ -163,165 +163,161 @@ export default function BlogGenerator() {
         </p>
       </div>
 
-      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
-        {/* Generator Form */}
-        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                Blog Details
-              </CardTitle>
-              <CardDescription>
-                Provide details about the blog post you want to create
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+      <div className="space-y-4 md:space-y-6">
+        {/* Blog Details Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              Blog Details
+            </CardTitle>
+            <CardDescription>
+              Provide details about the blog post you want to create
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="topic">Blog Topic or Title</Label>
+              <Textarea
+                id="topic"
+                placeholder="Enter your blog topic or title..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="topic">Blog Topic or Title</Label>
-                <Textarea
-                  id="topic"
-                  placeholder="Enter your blog topic or title..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="tone">Writing Tone</Label>
-                  <Select value={tone} onValueChange={setTone}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select tone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {blogTones.map((toneOption) => (
-                        <SelectItem key={toneOption.value} value={toneOption.value}>
-                          {toneOption.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="length">Content Length</Label>
-                  <Select value={length} onValueChange={setLength}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select length" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="short">Short (300-500 words)</SelectItem>
-                      <SelectItem value="medium">Medium (500-800 words)</SelectItem>
-                      <SelectItem value="long">Long (800-1200 words)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Label htmlFor="tone">Writing Tone</Label>
+                <Select value={tone} onValueChange={setTone}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select tone" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {blogTones.map((toneOption) => (
+                      <SelectItem key={toneOption.value} value={toneOption.value}>
+                        {toneOption.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="keywords">SEO Keywords (optional)</Label>
-                <Input
-                  id="keywords"
-                  placeholder="Enter keywords separated by commas..."
-                  value={keywords}
-                  onChange={(e) => setKeywords(e.target.value)}
-                />
+                <Label htmlFor="length">Content Length</Label>
+                <Select value={length} onValueChange={setLength}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select length" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="short">Short (300-500 words)</SelectItem>
+                    <SelectItem value="medium">Medium (500-800 words)</SelectItem>
+                    <SelectItem value="long">Long (800-1200 words)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+            </div>
 
-              <Button 
-                onClick={handleGenerate} 
-                disabled={isGenerating || !prompt.trim()}
-                className="w-full"
-                size="lg"
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Generating Blog Post...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Generate Blog Post
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+            <div className="space-y-2">
+              <Label htmlFor="keywords">SEO Keywords (optional)</Label>
+              <Input
+                id="keywords"
+                placeholder="Enter keywords separated by commas..."
+                value={keywords}
+                onChange={(e) => setKeywords(e.target.value)}
+              />
+            </div>
 
-          {/* Examples */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lightbulb className="w-5 h-5" />
-                Example Topics
-              </CardTitle>
-              <CardDescription>
-                Click on any example to use it as your starting point
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-2">
-                {blogExamples.map((example, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="justify-start text-left h-auto p-3 whitespace-normal"
-                    onClick={() => setPrompt(example)}
-                  >
-                    <span className="text-sm">{example}</span>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating || !prompt.trim()}
+              className="w-full"
+              size="lg"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Generating Blog Post...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Generate Blog Post
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Generated Content */}
-        <div className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle>Generated Content</CardTitle>
-              {generatedContent && (
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={copyToClipboard}
-                    className="w-fit"
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy
-                  </Button>
-                  <ExportDropdown
-                    content={generatedContent}
-                    filename={`blog-post-${Date.now()}`}
-                  />
+        <Card>
+          <CardHeader>
+            <CardTitle>Generated Content</CardTitle>
+            {generatedContent && (
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={copyToClipboard}
+                  className="w-fit"
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy
+                </Button>
+                <ExportDropdown
+                  content={generatedContent}
+                  filename={`blog-post-${Date.now()}`}
+                />
+              </div>
+            )}
+          </CardHeader>
+          <CardContent>
+            {generatedContent ? (
+              <div className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                    {generatedContent}
+                  </pre>
                 </div>
-              )}
-            </CardHeader>
-            <CardContent>
-              {generatedContent ? (
-                <div className="space-y-4">
-                  <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                    <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                      {generatedContent}
-                    </pre>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <PenTool className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Your generated blog post will appear here
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <PenTool className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Your generated blog post will appear here
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Example Topics */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Example Topics
+            </CardTitle>
+            <CardDescription>
+              Click on any example to use it as your starting point
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-2">
+              {blogExamples.map((example, index) => (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  className="justify-start text-left h-auto p-3 whitespace-normal"
+                  onClick={() => setPrompt(example)}
+                >
+                  <span className="text-sm">{example}</span>
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
