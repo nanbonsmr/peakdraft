@@ -1,14 +1,69 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, Mail, Phone, MapPin } from 'lucide-react';
 import heroImage from '@/assets/hero-image.jpg';
 import featuresShowcase from '@/assets/features-showcase.jpg';
 import workflowIllustration from '@/assets/workflow-illustration.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
+import { useAuth } from '@/contexts/AuthContext';
+
+const pricingPlans = [
+  {
+    id: 'basic',
+    name: 'Basic',
+    price: 9.99,
+    description: 'Perfect for individuals',
+    features: [
+      '10,000 words per month',
+      'All content templates',
+      'Basic support',
+      'Export to multiple formats'
+    ],
+    popular: false
+  },
+  {
+    id: 'pro',
+    name: 'Pro',
+    price: 19.99,
+    description: 'Ideal for professionals',
+    features: [
+      '50,000 words per month',
+      'All content templates',
+      'Priority support',
+      'API access',
+      'Team collaboration'
+    ],
+    popular: true
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: 49.99,
+    description: 'For large teams',
+    features: [
+      '200,000 words per month',
+      'All content templates',
+      '24/7 dedicated support',
+      'Full API access',
+      'White-label options'
+    ],
+    popular: false
+  }
+];
 
 export default function Landing() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleSelectPlan = () => {
+    if (user) {
+      navigate('/app/pricing');
+    } else {
+      navigate('/auth');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -21,6 +76,17 @@ export default function Landing() {
                 <PenTool className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold">QuickWrite AI</span>
+            </div>
+            <div className="hidden md:flex gap-6">
+              <Button variant="ghost" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}>
+                Features
+              </Button>
+              <Button variant="ghost" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>
+                Pricing
+              </Button>
+              <Button variant="ghost" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
+                Contact
+              </Button>
             </div>
             <div className="flex gap-4">
               <Button variant="ghost" onClick={() => navigate('/auth')}>
@@ -254,6 +320,73 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section id="pricing" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Choose the plan that fits your needs. All plans include a 7-day free trial.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {pricingPlans.map((plan) => (
+              <Card
+                key={plan.id}
+                className={`relative p-6 hover:shadow-elegant transition-all duration-300 ${
+                  plan.popular ? 'border-primary shadow-glow scale-105' : ''
+                }`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-gradient-primary text-primary-foreground px-4 py-1">
+                      <Star className="w-3 h-3 mr-1" />
+                      Most Popular
+                    </Badge>
+                  </div>
+                )}
+
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
+                  <div className="flex items-baseline justify-center">
+                    <span className="text-4xl font-bold">${plan.price}</span>
+                    <span className="text-muted-foreground ml-2">/month</span>
+                  </div>
+                </div>
+
+                <ul className="space-y-3 mb-6">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Button
+                  className="w-full"
+                  variant={plan.popular ? 'default' : 'outline'}
+                  onClick={handleSelectPlan}
+                >
+                  {user ? 'Choose Plan' : 'Start Free Trial'}
+                </Button>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <p className="text-sm text-muted-foreground mb-2">
+              All plans include a 7-day free trial. No credit card required.
+            </p>
+            <Button variant="link" onClick={() => navigate('/app/pricing')}>
+              View detailed comparison →
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section id="testimonials" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="container mx-auto">
@@ -283,6 +416,50 @@ export default function Landing() {
                 </div>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Get in Touch</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Have questions? We're here to help. Reach out to our team.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
+            <Card className="p-6 text-center hover:shadow-elegant transition-all cursor-pointer" onClick={() => window.location.href = 'mailto:support@quickwriteai.com'}>
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Mail className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-bold mb-2">Email Us</h3>
+              <p className="text-sm text-muted-foreground">support@quickwriteai.com</p>
+            </Card>
+
+            <Card className="p-6 text-center hover:shadow-elegant transition-all cursor-pointer" onClick={() => window.location.href = 'tel:+15551234567'}>
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Phone className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-bold mb-2">Call Us</h3>
+              <p className="text-sm text-muted-foreground">+1 (555) 123-4567</p>
+            </Card>
+
+            <Card className="p-6 text-center hover:shadow-elegant transition-all">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <MapPin className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-bold mb-2">Visit Us</h3>
+              <p className="text-sm text-muted-foreground">123 AI Street, Tech City</p>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <Button size="lg" onClick={() => navigate('/contact')}>
+              Send Us a Message
+            </Button>
           </div>
         </div>
       </section>
