@@ -29,12 +29,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const templateItems = [
-  { title: "Blog Posts", url: "/app/templates/blog", icon: PenTool },
-  { title: "Social Media", url: "/app/templates/social", icon: MessageSquare },
-  { title: "Email Writer", url: "/app/templates/email", icon: Mail },
-  { title: "Ad Copy", url: "/app/templates/ads", icon: Megaphone },
-];
 
 export function AppSidebar() {
   const { state } = useSidebar();
@@ -78,7 +72,6 @@ export function AppSidebar() {
   }
 
   const isActive = (path: string) => currentPath === path;
-  const isTemplateActive = templateItems.some((item) => isActive(item.url));
   
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
@@ -125,26 +118,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Templates */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider px-2">
-            Templates
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {templateItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavCls}>
-                      <item.icon className="w-4 h-4" />
-                      {state !== "collapsed" && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );
