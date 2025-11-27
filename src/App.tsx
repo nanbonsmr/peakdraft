@@ -22,6 +22,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
+import PublicPricing from "./pages/PublicPricing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
               <Route path="/terms" element={<TermsAndConditions />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/faq" element={<FAQ />} />
+              <Route path="/pricing" element={<PublicPricing />} />
               <Route path="/app/*" element={
                 <ProtectedRoute>
                   <SidebarProvider>

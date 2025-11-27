@@ -81,10 +81,10 @@ export default function Landing() {
               <Button variant="ghost" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}>
                 Features
               </Button>
-              <Button variant="ghost" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>
+              <Button variant="ghost" onClick={() => navigate('/pricing')}>
                 Pricing
               </Button>
-              <Button variant="ghost" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
+              <Button variant="ghost" onClick={() => navigate('/contact')}>
                 Contact
               </Button>
             </div>
@@ -380,7 +380,7 @@ export default function Landing() {
             <p className="text-sm text-muted-foreground mb-2">
               All plans include a 7-day free trial. No credit card required.
             </p>
-            <Button variant="link" onClick={() => navigate('/app/pricing')}>
+            <Button variant="link" onClick={() => navigate('/pricing')}>
               View detailed comparison →
             </Button>
           </div>
@@ -500,7 +500,7 @@ export default function Landing() {
               <h3 className="font-bold mb-4">Product</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
-                <li><a href="/app/pricing" className="hover:text-primary transition-colors">Pricing</a></li>
+                <li><a href="/pricing" className="hover:text-primary transition-colors">Pricing</a></li>
                 <li><a href="/app/templates" className="hover:text-primary transition-colors">Templates</a></li>
                 <li><a href="/faq" className="hover:text-primary transition-colors">FAQ</a></li>
               </ul>
