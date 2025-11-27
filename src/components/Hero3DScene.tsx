@@ -1,9 +1,129 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Float, Sparkles, Trail, Sphere, MeshDistortMaterial } from '@react-three/drei';
-import { useRef } from 'react';
+import { OrbitControls, PerspectiveCamera, Float, Sparkles, Trail, Sphere, MeshDistortMaterial, Text } from '@react-three/drei';
+import { useRef, useState, useEffect } from 'react';
 import * as THREE from 'three';
 
-// Animated content block
+// Holographic glitch text
+function HolographicText({ 
+  text, 
+  position, 
+  size = 0.6 
+}: { 
+  text: string; 
+  position: [number, number, number]; 
+  size?: number;
+}) {
+  const textRef = useRef<THREE.Mesh>(null);
+  const [glitchOffset, setGlitchOffset] = useState({ x: 0, y: 0, z: 0 });
+  const [colorShift, setColorShift] = useState(0);
+  const [opacity, setOpacity] = useState(1);
+
+  useFrame((state) => {
+    if (textRef.current) {
+      // Smooth rotation
+      textRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.3;
+      
+      // Random glitch effect
+      if (Math.random() > 0.98) {
+        setGlitchOffset({
+          x: (Math.random() - 0.5) * 0.3,
+          y: (Math.random() - 0.5) * 0.3,
+          z: (Math.random() - 0.5) * 0.1
+        });
+        setOpacity(0.5 + Math.random() * 0.5);
+        
+        // Reset after short time
+        setTimeout(() => {
+          setGlitchOffset({ x: 0, y: 0, z: 0 });
+          setOpacity(1);
+        }, 50);
+      }
+      
+      // Color shift for holographic effect
+      setColorShift(state.clock.elapsedTime * 2);
+    }
+  });
+
+  const holographicColor = new THREE.Color().setHSL(
+    (Math.sin(colorShift) + 1) * 0.5 * 0.3 + 0.5, // Hue shift between cyan and purple
+    0.8, 
+    0.6
+  );
+
+  return (
+    <Float speed={1.5} rotationIntensity={0.2} floatIntensity={1}>
+      <Text
+        ref={textRef}
+        position={[
+          position[0] + glitchOffset.x,
+          position[1] + glitchOffset.y,
+          position[2] + glitchOffset.z
+        ]}
+        fontSize={size}
+        font="/fonts/helvetiker_bold.typeface.json"
+        anchorX="center"
+        anchorY="middle"
+      >
+        {text}
+        <meshStandardMaterial
+          color={holographicColor}
+          emissive={holographicColor}
+          emissiveIntensity={0.8}
+          transparent
+          opacity={opacity}
+          metalness={1}
+          roughness={0.1}
+        />
+      </Text>
+      
+      {/* Glitch shadow/duplicate effect */}
+      <Text
+        position={[
+          position[0] + glitchOffset.x * 0.5 + 0.05,
+          position[1] + glitchOffset.y * 0.5,
+          position[2] + glitchOffset.z * 0.5 - 0.1
+        ]}
+        fontSize={size}
+        font="/fonts/helvetiker_bold.typeface.json"
+        anchorX="center"
+        anchorY="middle"
+      >
+        {text}
+        <meshStandardMaterial
+          color="#06b6d4"
+          emissive="#06b6d4"
+          emissiveIntensity={0.5}
+          transparent
+          opacity={opacity * 0.3}
+        />
+      </Text>
+      
+      {/* Second glitch layer */}
+      <Text
+        position={[
+          position[0] - glitchOffset.x * 0.5 - 0.05,
+          position[1] - glitchOffset.y * 0.5,
+          position[2] - glitchOffset.z * 0.5 - 0.1
+        ]}
+        fontSize={size}
+        font="/fonts/helvetiker_bold.typeface.json"
+        anchorX="center"
+        anchorY="middle"
+      >
+        {text}
+        <meshStandardMaterial
+          color="#ec4899"
+          emissive="#ec4899"
+          emissiveIntensity={0.5}
+          transparent
+          opacity={opacity * 0.3}
+        />
+      </Text>
+    </Float>
+  );
+}
+
+// Content block
 function ContentBlock({ position, color }: { position: [number, number, number]; color: string }) {
   const meshRef = useRef<THREE.Mesh>(null);
   
@@ -135,13 +255,20 @@ function AbstractContentScene() {
       {/* Main distorted sphere */}
       <MainSphere />
 
+      {/* Holographic glitch text */}
+      <HolographicText text="AI" position={[-2.5, 2, -2]} size={0.8} />
+      <HolographicText text="WRITE" position={[2.5, 1.5, -2.5]} size={0.6} />
+      <HolographicText text="CREATE" position={[-3, -1, -1.5]} size={0.5} />
+      <HolographicText text="CONTENT" position={[2, -1.5, -2]} size={0.5} />
+      <HolographicText text="GENERATE" position={[0, 2.5, -3]} size={0.4} />
+
       {/* Content blocks */}
-      <ContentBlock position={[-2.5, 1.5, -2]} color="#06b6d4" />
-      <ContentBlock position={[2.5, -1, -2]} color="#ec4899" />
-      <ContentBlock position={[-2, -1.5, -1]} color="#f59e0b" />
+      <ContentBlock position={[-2.5, 0, -2]} color="#06b6d4" />
+      <ContentBlock position={[2.5, -0.5, -2]} color="#ec4899" />
+      <ContentBlock position={[-1.5, -2, -1]} color="#f59e0b" />
 
       {/* Energy spheres */}
-      <EnergySphere position={[0, 2, -1]} />
+      <EnergySphere position={[0, 0, 0]} />
       <EnergySphere position={[3, 0.5, -3]} />
 
       {/* Glowing rings */}
