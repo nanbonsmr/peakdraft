@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, Mail, Phone, MapPin, Menu, X } from 'lucide-react';
+import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, Mail, Phone, MapPin, Menu, X, LayoutGrid, Calendar, BarChart3, FileText, Hash, Video, Image, MessageSquare, Briefcase } from 'lucide-react';
 import featuresShowcase from '@/assets/features-showcase-new.jpg';
 import workflowIllustration from '@/assets/workflow-illustration-new.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
@@ -67,6 +67,8 @@ export default function Landing() {
   const { ref: statsRef, isInView: statsInView } = useInView();
   const { ref: testimonialRef, isInView: testimonialInView } = useInView();
   const { ref: ctaRef, isInView: ctaInView } = useInView();
+  const { ref: newFeaturesRef, isInView: newFeaturesInView } = useInView();
+  const { ref: templatesRef, isInView: templatesInView } = useInView();
   const { user } = useAuth();
 
   const handleSelectPlan = () => {
@@ -212,14 +214,14 @@ export default function Landing() {
               </div>
               
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 animate-fade-in bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent leading-tight">
-                Write Better, Faster
+                AI Content Generator
                 <br />
-                With AI Magic
+                & Task Manager
               </h1>
               
               <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-6 sm:mb-8 animate-fade-in">
-                Transform your ideas into compelling content in seconds. From blog posts to ad copy, 
-                QuickWrite AI helps you create professional content effortlessly.
+                Create professional blog posts, social media content, emails & ad copy with 14+ AI templates. 
+                Organize your workflow with built-in task management, Kanban boards & analytics.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start animate-fade-in">
@@ -242,14 +244,14 @@ export default function Landing() {
       </section>
 
       {/* Stats Section */}
-      <section ref={statsRef} className="py-12 sm:py-16 bg-muted/30">
+      <section ref={statsRef} className="py-12 sm:py-16 bg-muted/30" aria-label="Platform Statistics">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {[
-              { value: '50K+', label: 'Active Users' },
+              { value: '50K+', label: 'Active Content Creators' },
+              { value: '14+', label: 'AI Writing Templates' },
               { value: '10M+', label: 'Words Generated' },
-              { value: '99.9%', label: 'Uptime' },
-              { value: '4.9/5', label: 'User Rating' },
+              { value: '4.9/5', label: 'User Satisfaction' },
             ].map((stat, idx) => (
               <div 
                 key={idx} 
@@ -265,8 +267,103 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* NEW: Task Management Feature Section */}
+      <section ref={newFeaturesRef} id="task-management" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Task Management Features">
+        <div className="container mx-auto">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${newFeaturesInView ? 'animate-fade-up' : ''}`}>
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">New Feature</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Built-in Task Management</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Organize your content workflow with powerful task management tools. Kanban boards, calendar views, and detailed analytics to boost your productivity.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto">
+            {[
+              { icon: LayoutGrid, title: 'Kanban Board', desc: 'Drag-and-drop task organization with customizable columns for your workflow' },
+              { icon: Calendar, title: 'Calendar View', desc: 'Schedule content and deadlines with an intuitive calendar interface' },
+              { icon: BarChart3, title: 'Task Analytics', desc: 'Track productivity metrics and completion rates with detailed charts' },
+              { icon: CheckCircle, title: 'Subtasks & Priorities', desc: 'Break down tasks into subtasks and set priority levels for better focus' },
+            ].map((feature, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  newFeaturesInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-4">
+                  <feature.icon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground">{feature.desc}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* NEW: Templates Showcase Section */}
+      <section ref={templatesRef} id="templates" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="AI Content Templates">
+        <div className="container mx-auto">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${templatesInView ? 'animate-fade-up' : ''}`}>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">14+ AI Content Templates</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Professional templates for every content need. From blog posts to video scripts, generate high-quality content for any platform.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4 max-w-6xl mx-auto mb-8">
+            {[
+              { icon: FileText, title: 'Blog Posts', color: 'from-blue-500 to-blue-600' },
+              { icon: MessageSquare, title: 'Social Media', color: 'from-pink-500 to-rose-600' },
+              { icon: Mail, title: 'Emails', color: 'from-violet-500 to-purple-600' },
+              { icon: Zap, title: 'Ad Copy', color: 'from-orange-500 to-amber-600' },
+              { icon: Briefcase, title: 'CV/Resume', color: 'from-teal-500 to-cyan-600' },
+              { icon: Hash, title: 'Hashtags', color: 'from-indigo-500 to-blue-600' },
+              { icon: Video, title: 'Video Scripts', color: 'from-red-500 to-rose-600' },
+            ].map((template, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-4 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  templatesInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 50}`}
+              >
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${template.color} flex items-center justify-center mx-auto mb-2`}>
+                  <template.icon className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="text-xs sm:text-sm font-semibold">{template.title}</h3>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4 max-w-6xl mx-auto">
+            {[
+              { icon: PenTool, title: 'Letters', color: 'from-emerald-500 to-green-600' },
+              { icon: Star, title: 'Product Desc', color: 'from-yellow-500 to-orange-600' },
+              { icon: Sparkles, title: 'Humanize', color: 'from-fuchsia-500 to-pink-600' },
+              { icon: Image, title: 'Image Prompts', color: 'from-cyan-500 to-blue-600' },
+              { icon: MessageSquare, title: 'ChatGPT', color: 'from-green-500 to-emerald-600' },
+              { icon: TrendingUp, title: 'Post Ideas', color: 'from-purple-500 to-violet-600' },
+              { icon: Video, title: 'Video Prompts', color: 'from-rose-500 to-red-600' },
+            ].map((template, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-4 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  templatesInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 50 + 350}`}
+              >
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${template.color} flex items-center justify-center mx-auto mb-2`}>
+                  <template.icon className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="text-xs sm:text-sm font-semibold">{template.title}</h3>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* About Section */}
-      <section ref={aboutRef} id="about" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section ref={aboutRef} id="about" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="About QuickWrite AI">
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-16">
             {/* Left Column - Image with Parallax */}
@@ -277,28 +374,29 @@ export default function Landing() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
                   src={featuresShowcase} 
-                  alt="AI content features showcase" 
+                  alt="QuickWrite AI content generation features and templates showcase" 
                   className="w-full h-auto object-cover"
+                  loading="lazy"
                 />
               </div>
             </div>
 
             {/* Right Column - Text */}
             <div className={`order-1 lg:order-2 text-center lg:text-left scroll-animate ${aboutInView ? 'animate-slide-in-right' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Why Choose QuickWrite AI?</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Why Content Creators Choose QuickWrite AI</h2>
               <p className="text-base sm:text-lg text-muted-foreground mb-8">
-                We combine cutting-edge AI technology with intuitive design to deliver 
-                the best content creation experience.
+                The ultimate AI writing assistant combining cutting-edge language models with intuitive task management. 
+                Create blog posts, marketing copy, social media content, and more - all organized in one powerful platform.
               </p>
             </div>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
             {[
-              { icon: Sparkles, title: 'Advanced AI Models', desc: 'Powered by the latest language models to generate human-like, contextually relevant content.' },
-              { icon: Zap, title: 'Lightning Fast', desc: 'Generate high-quality content in seconds, not hours. Boost your productivity instantly.' },
-              { icon: Shield, title: 'Secure & Private', desc: 'Your data is encrypted and never shared. We take your privacy seriously.' },
-              { icon: TrendingUp, title: 'Continuous Improvement', desc: 'Regular updates and new features to keep you ahead of the curve.' },
+              { icon: Sparkles, title: 'Advanced AI Writing', desc: 'Powered by state-of-the-art language models for human-like, SEO-optimized content generation.' },
+              { icon: Zap, title: 'Lightning Fast Generation', desc: 'Create professional blog posts, emails, and ad copy in seconds. Save hours on content creation.' },
+              { icon: Shield, title: 'Secure & Enterprise-Ready', desc: 'Bank-level encryption protects your data. GDPR compliant with no data sharing.' },
+              { icon: TrendingUp, title: 'Built-in Productivity Tools', desc: 'Task management, analytics, and content history keep your workflow organized and efficient.' },
             ].map((feature, idx) => (
               <Card 
                 key={idx} 
@@ -322,6 +420,7 @@ export default function Landing() {
         ref={featuresRef}
         id="features" 
         className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30 relative overflow-hidden"
+        aria-label="AI Content Generation Features"
       >
         {/* Animated Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-bl from-primary/5 via-transparent to-primary-glow/5 animate-gradient-shift" />
@@ -331,25 +430,25 @@ export default function Landing() {
           className="absolute inset-0 opacity-10"
           style={{ transform: `translateY(${parallaxOffset * 0.4}px)` }}
         >
-          <img src={abstractBg} alt="" className="w-full h-full object-cover" />
+          <img src={abstractBg} alt="" className="w-full h-full object-cover" aria-hidden="true" />
         </div>
         
         <div className="container mx-auto relative z-10">
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${featuresInView ? 'animate-fade-up' : ''}`}>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Powerful Features</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">AI Content Generation Features</h2>
             <p className="text-base sm:text-lg text-muted-foreground">
-              Everything you need to create amazing content, all in one place.
+              Everything you need to create SEO-optimized, engaging content - powered by advanced AI technology.
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
             {[
-              { icon: PenTool, title: 'Blog Posts', desc: 'Create engaging blog content that ranks' },
-              { icon: Sparkles, title: 'Social Media', desc: 'Craft perfect posts for all platforms' },
-              { icon: Zap, title: 'Ad Copy', desc: 'Generate high-converting advertisements' },
-              { icon: Users, title: 'Email Campaigns', desc: 'Write persuasive email sequences' },
-              { icon: TrendingUp, title: 'Product Descriptions', desc: 'Compelling copy that sells' },
-              { icon: Star, title: 'Scripts & More', desc: 'Video scripts, letters, and beyond' },
+              { icon: PenTool, title: 'SEO Blog Posts', desc: 'Create search engine optimized blog content that ranks and drives traffic' },
+              { icon: Sparkles, title: 'Social Media Content', desc: 'Generate viral-worthy posts for Instagram, Twitter, LinkedIn & more' },
+              { icon: Zap, title: 'High-Converting Ad Copy', desc: 'Create Facebook, Google, and display ads that convert' },
+              { icon: Users, title: 'Email Marketing', desc: 'Write persuasive newsletters and email sequences that engage' },
+              { icon: TrendingUp, title: 'Product Descriptions', desc: 'eCommerce copy that sells products and boosts conversions' },
+              { icon: Star, title: 'Video Scripts & More', desc: 'YouTube scripts, letters, CVs, and professional documents' },
             ].map((feature, idx) => (
               <Card 
                 key={idx} 
@@ -499,9 +598,9 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
             {[
-              { name: 'Sarah Johnson', role: 'Content Marketer', text: 'QuickWrite AI has transformed how I create content. What used to take hours now takes minutes!' },
-              { name: 'Michael Chen', role: 'Blogger', text: 'The quality of AI-generated content is incredible. It feels natural and engaging every time.' },
-              { name: 'Emily Rodriguez', role: 'Social Media Manager', text: 'I can manage multiple clients effortlessly now. This tool is a game-changer for my business.' },
+              { name: 'Sarah Johnson', role: 'Content Marketing Manager', text: 'QuickWrite AI has transformed how I create content. Blog posts that took hours now take minutes. The task management feature keeps my team organized!' },
+              { name: 'Michael Chen', role: 'Professional Blogger', text: 'The AI-generated blog posts are SEO-optimized and engaging. I\'ve doubled my organic traffic since using QuickWrite AI.' },
+              { name: 'Emily Rodriguez', role: 'Social Media Manager', text: 'Managing content for multiple clients is effortless now. The 14+ templates cover everything from Instagram captions to email newsletters.' },
             ].map((testimonial, idx) => (
               <Card 
                 key={idx} 
@@ -509,7 +608,7 @@ export default function Landing() {
                   testimonialInView ? 'animate-fade-in-scale' : ''
                 } animation-delay-${(idx + 1) * 100}`}
               >
-                <div className="flex gap-1 mb-4">
+                <div className="flex gap-1 mb-4" aria-label="5 star rating">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-primary text-primary" />
                   ))}
@@ -570,25 +669,30 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section ref={ctaRef} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section ref={ctaRef} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Get Started with QuickWrite AI">
         <div className="container mx-auto">
           <Card className={`max-w-4xl mx-auto p-6 sm:p-8 lg:p-12 text-center bg-gradient-to-br from-primary/10 via-primary-glow/5 to-accent/10 border-primary/20 scroll-animate ${
             ctaInView ? 'animate-fade-in-scale' : ''
           }`}>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">Ready to Transform Your Content?</h2>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">Start Creating Professional Content Today</h2>
             <p className="text-sm sm:text-base lg:text-lg text-muted-foreground mb-6 sm:mb-8">
-              Join thousands of content creators who are already using QuickWrite AI
+              Join 50,000+ marketers, bloggers, and content creators using QuickWrite AI to generate blog posts, social media content, emails, and more.
             </p>
-            <Button size="lg" onClick={() => navigate('/auth')} className="group w-full sm:w-auto">
-              Start Your Free Trial
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button size="lg" onClick={() => navigate('/auth')} className="group w-full sm:w-auto">
+                Start Free Trial - No Credit Card
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => document.getElementById('templates')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto">
+                View All Templates
+              </Button>
+            </div>
           </Card>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/40 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <footer className="border-t border-border/40 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-muted/30" role="contentinfo">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
             <div>
@@ -599,19 +703,20 @@ export default function Landing() {
                 <span className="text-sm sm:text-base font-bold">QuickWrite AI</span>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                AI-powered content generation made simple and efficient.
+                AI content generator with 14+ templates and built-in task management. Create blog posts, social media content, emails & more.
               </p>
             </div>
 
-            <div>
+            <nav aria-label="Product navigation">
               <h3 className="text-sm sm:text-base font-bold mb-3 sm:mb-4">Product</h3>
               <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
-                <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
-                <li><Link to="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
-                <li><Link to="/app/templates" className="hover:text-primary transition-colors">Templates</Link></li>
+                <li><a href="#features" className="hover:text-primary transition-colors">AI Content Features</a></li>
+                <li><a href="#task-management" className="hover:text-primary transition-colors">Task Management</a></li>
+                <li><a href="#templates" className="hover:text-primary transition-colors">14+ Templates</a></li>
+                <li><Link to="/pricing" className="hover:text-primary transition-colors">Pricing Plans</Link></li>
                 <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
               </ul>
-            </div>
+            </nav>
 
             <div>
               <h3 className="text-sm sm:text-base font-bold mb-3 sm:mb-4">Company</h3>
