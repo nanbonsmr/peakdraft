@@ -359,68 +359,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Templates Section */}
-        <div className="space-y-8">
-          <div className="text-center space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Choose Your Template</h2>
-            <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto">Select from our professionally designed templates to get started with AI-powered content creation</p>
-          </div>
-          
-          <div className="grid gap-6 sm:gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            {templates.map((template, index) => (
-              <div
-                key={template.title}
-                onClick={() => setSelectedTemplate(template.href.split('/').pop())}
-                className={`group relative overflow-hidden rounded-3xl p-6 cursor-pointer transition-all duration-500 hover:scale-[1.03] ${
-                  selectedTemplate === template.href.split('/').pop()
-                    ? 'ring-4 ring-primary ring-offset-4 shadow-2xl scale-[1.02]'
-                    : 'shadow-xl hover:shadow-2xl'
-                } ${
-                  index === 0 ? 'bg-gradient-to-br from-pink-50 via-rose-50 to-rose-100 dark:from-pink-900/30 dark:to-rose-800/30 border-2 border-pink-200/60 dark:border-pink-700/60' :
-                  index === 1 ? 'bg-gradient-to-br from-blue-50 via-cyan-50 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-800/30 border-2 border-blue-200/60 dark:border-blue-700/60' :
-                  index === 2 ? 'bg-gradient-to-br from-green-50 via-emerald-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 border-2 border-green-200/60 dark:border-green-700/60' :
-                  'bg-gradient-to-br from-purple-50 via-violet-50 to-violet-100 dark:from-purple-900/30 dark:to-violet-800/30 border-2 border-purple-200/60 dark:border-purple-700/60'
-                }`}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="relative flex flex-col items-center text-center space-y-4">
-                  <div className={`p-5 rounded-2xl shadow-lg border ${
-                    index === 0 ? 'bg-gradient-to-br from-pink-500/20 to-rose-500/20 border-pink-400/30' :
-                    index === 1 ? 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-blue-400/30' :
-                    index === 2 ? 'bg-gradient-to-br from-green-500/20 to-emerald-500/20 border-green-400/30' :
-                    'bg-gradient-to-br from-purple-500/20 to-violet-500/20 border-purple-400/30'
-                  }`}>
-                    {template.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xl mb-2">{template.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{template.description}</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {template.examples.map((example, i) => (
-                      <span key={i} className={`px-2.5 py-1.5 text-xs font-medium rounded-lg shadow-sm ${
-                        index === 0 ? 'bg-pink-500/20 text-pink-700 dark:text-pink-300 border border-pink-400/30' :
-                        index === 1 ? 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-400/30' :
-                        index === 2 ? 'bg-green-500/20 text-green-700 dark:text-green-300 border border-green-400/30' :
-                        'bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-400/30'
-                      }`}>
-                        {example.split(' ').slice(0, 3).join(' ')}...
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                {selectedTemplate === template.href.split('/').pop() && (
-                  <div className="absolute top-4 right-4 animate-scale-in">
-                    <div className="p-2.5 bg-gradient-to-br from-primary to-primary/80 rounded-full text-white shadow-xl border-2 border-white/50">
-                      <Sparkles className="h-5 w-5" />
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Content Generator */}
         <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
           <Card className="border-0 shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-br from-background via-background to-primary/5 backdrop-blur-sm">
