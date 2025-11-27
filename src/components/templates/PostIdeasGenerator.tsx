@@ -121,8 +121,8 @@ export default function PostIdeasGenerator() {
         <p className="text-muted-foreground">Get creative post ideas for your social media and content strategy</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Content Strategy</CardTitle>
@@ -199,8 +199,10 @@ export default function PostIdeasGenerator() {
             </CardContent>
           </Card>
         </div>
-
-        <Card>
+        
+        {/* Generated Content */}
+        <div>
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Generated Post Ideas
@@ -224,7 +226,8 @@ export default function PostIdeasGenerator() {
               </div>
             )}
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );
