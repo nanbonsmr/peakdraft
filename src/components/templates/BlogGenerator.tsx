@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { PenTool, Sparkles, Copy, CreditCard, Lightbulb } from 'lucide-react';
+import { ExportDropdown } from '@/components/ExportDropdown';
 
 const blogExamples = [
   "Write a comprehensive guide about sustainable living practices for beginners",
@@ -284,15 +285,21 @@ export default function BlogGenerator() {
             <CardHeader>
               <CardTitle>Generated Content</CardTitle>
               {generatedContent && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={copyToClipboard}
-                  className="w-fit"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Content
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={copyToClipboard}
+                    className="w-fit"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
+                  <ExportDropdown
+                    content={generatedContent}
+                    filename={`blog-post-${Date.now()}`}
+                  />
+                </div>
               )}
             </CardHeader>
             <CardContent>

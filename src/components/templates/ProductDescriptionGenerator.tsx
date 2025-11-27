@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Package, Sparkles, Copy, CreditCard, Lightbulb } from 'lucide-react';
+import { ExportDropdown } from '@/components/ExportDropdown';
 
 const productExamples = [
   "Write a compelling product description for wireless noise-cancelling headphones with 30-hour battery life",
@@ -268,15 +269,21 @@ export default function ProductDescriptionGenerator() {
             <CardHeader>
               <CardTitle>Generated Description</CardTitle>
               {generatedContent && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={copyToClipboard}
-                  className="w-fit"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Content
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={copyToClipboard}
+                    className="w-fit"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
+                  <ExportDropdown
+                    content={generatedContent}
+                    filename={`product-description-${Date.now()}`}
+                  />
+                </div>
               )}
             </CardHeader>
             <CardContent>

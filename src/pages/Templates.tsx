@@ -47,6 +47,7 @@ import {
   Film,
   Trash2
 } from 'lucide-react';
+import { ExportDropdown } from '@/components/ExportDropdown';
 
 const templates = [
   {
@@ -347,15 +348,21 @@ export default function Templates() {
                               <div className="space-y-2">
                                 <div className="flex items-center justify-between">
                                   <Label className="font-semibold">Generated Content:</Label>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => copyContentToClipboard(content.generated_content)}
-                                    className="flex items-center gap-2"
-                                  >
-                                    <Copy className="w-4 h-4" />
-                                    Copy Content
-                                  </Button>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => copyContentToClipboard(content.generated_content)}
+                                      className="flex items-center gap-2"
+                                    >
+                                      <Copy className="w-4 h-4" />
+                                      Copy
+                                    </Button>
+                                    <ExportDropdown
+                                      content={content.generated_content}
+                                      filename={`${content.template_type}-${Date.now()}`}
+                                    />
+                                  </div>
                                 </div>
                                 <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
                                   <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">

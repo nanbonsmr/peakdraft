@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Sparkles, Copy, CreditCard, Lightbulb, Send } from 'lucide-react';
+import { ExportDropdown } from '@/components/ExportDropdown';
 
 const emailExamples = [
   "Welcome new subscribers to our newsletter with a special offer",
@@ -309,15 +310,21 @@ export default function EmailGenerator() {
             <CardHeader>
               <CardTitle>Generated Email</CardTitle>
               {generatedContent && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={copyToClipboard}
-                  className="w-fit"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Email
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={copyToClipboard}
+                    className="w-fit"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
+                  <ExportDropdown
+                    content={generatedContent}
+                    filename={`email-${Date.now()}`}
+                  />
+                </div>
               )}
             </CardHeader>
             <CardContent>
