@@ -102,8 +102,10 @@ export default function Landing() {
 
       {/* Hero Section with 3D Animation */}
       <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.1),transparent_50%)]" />
+        {/* Animated Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-glow/10 to-accent/20 animate-gradient-shift" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-primary/10 to-transparent animate-gradient-rotate" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.15),transparent_60%)] animate-gradient-pulse" />
         
         <div className="container mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
@@ -234,6 +236,9 @@ export default function Landing() {
 
       {/* Features Section */}
       <section id="features" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30 relative overflow-hidden">
+        {/* Animated Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-bl from-primary/5 via-transparent to-primary-glow/5 animate-gradient-shift" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-accent/5 via-transparent to-primary/5 animate-gradient-rotate opacity-60" />
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <img src={abstractBg} alt="" className="w-full h-full object-cover" />
