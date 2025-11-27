@@ -416,9 +416,9 @@ export default function Templates() {
       </div>
 
       {/* Templates Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 flex md:flex-none overflow-x-auto md:overflow-visible pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory md:snap-none gap-4 md:gap-6">
         {templates.map((template) => (
-          <Card key={template.id} className="group hover:shadow-elegant transition-all duration-200 cursor-pointer">
+          <Card key={template.id} className="group hover:shadow-elegant transition-all duration-200 cursor-pointer min-w-[280px] md:min-w-0 snap-start flex-shrink-0 md:flex-shrink">
             <CardHeader className="pb-3">
               <div className={`w-12 h-12 ${template.bgColor} rounded-lg flex items-center justify-center mb-3`}>
                 <template.icon className={`w-6 h-6 ${template.color}`} />
