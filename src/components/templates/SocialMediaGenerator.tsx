@@ -49,6 +49,8 @@ export default function SocialMediaGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('social');
+
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
@@ -136,6 +138,7 @@ export default function SocialMediaGenerator() {
 
       setGeneratedContent(generatedContentText);
       await refreshProfile();
+      await loadRecentContent();
       
       toast({
         title: "Social media post generated!",
@@ -177,177 +180,184 @@ export default function SocialMediaGenerator() {
         </p>
       </div>
 
-      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
+      <div className="space-y-6">
         {/* Generator Form */}
-        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                Post Details
-              </CardTitle>
-              <CardDescription>
-                Configure your social media post settings
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              Post Details
+            </CardTitle>
+            <CardDescription>
+              Configure your social media post settings
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="topic">What do you want to post about?</Label>
+              <Textarea
+                id="topic"
+                placeholder="Describe your post content..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="topic">What do you want to post about?</Label>
-                <Textarea
-                  id="topic"
-                  placeholder="Describe your post content..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="platform">Platform</Label>
-                  <Select value={platform} onValueChange={setPlatform}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select platform" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {platforms.map((platformOption) => (
-                        <SelectItem key={platformOption.value} value={platformOption.value}>
-                          {platformOption.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {selectedPlatformInfo && (
-                    <p className="text-xs text-muted-foreground">
-                      Limit: {selectedPlatformInfo.limit}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="type">Post Type</Label>
-                  <Select value={postType} onValueChange={setPostType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {postTypes.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="hashtags" className="flex items-center gap-2">
-                  <Hash className="w-4 h-4" />
-                  Hashtags (optional)
-                </Label>
-                <Input
-                  id="hashtags"
-                  placeholder="Enter hashtags separated by commas..."
-                  value={hashtags}
-                  onChange={(e) => setHashtags(e.target.value)}
-                />
-              </div>
-
-              <Button 
-                onClick={handleGenerate} 
-                disabled={isGenerating || !prompt.trim()}
-                className="w-full"
-                size="lg"
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Generating Post...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Generate Social Post
-                  </>
+                <Label htmlFor="platform">Platform</Label>
+                <Select value={platform} onValueChange={setPlatform}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select platform" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {platforms.map((platformOption) => (
+                      <SelectItem key={platformOption.value} value={platformOption.value}>
+                        {platformOption.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedPlatformInfo && (
+                  <p className="text-xs text-muted-foreground">
+                    Limit: {selectedPlatformInfo.limit}
+                  </p>
                 )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Examples */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lightbulb className="w-5 h-5" />
-                Example Ideas
-              </CardTitle>
-              <CardDescription>
-                Click on any example to use it as your starting point
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-2">
-                {socialExamples.map((example, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="justify-start text-left h-auto p-3 whitespace-normal"
-                    onClick={() => setPrompt(example)}
-                  >
-                    <span className="text-sm">{example}</span>
-                  </Button>
-                ))}
               </div>
-            </CardContent>
-          </Card>
-        </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="type">Post Type</Label>
+                <Select value={postType} onValueChange={setPostType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {postTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="hashtags" className="flex items-center gap-2">
+                <Hash className="w-4 h-4" />
+                Hashtags (optional)
+              </Label>
+              <Input
+                id="hashtags"
+                placeholder="Enter hashtags separated by commas..."
+                value={hashtags}
+                onChange={(e) => setHashtags(e.target.value)}
+              />
+            </div>
+
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating || !prompt.trim()}
+              className="w-full"
+              size="lg"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Generating Post...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Generate Social Post
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Generated Content */}
-        <div className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle>Generated Post</CardTitle>
-              {generatedContent && (
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={copyToClipboard}
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy
-                  </Button>
-                  <ExportDropdown
-                    content={generatedContent}
-                    filename={`social-post-${Date.now()}`}
-                  />
+        <Card className="h-fit">
+          <CardHeader>
+            <CardTitle>Generated Post</CardTitle>
+            {generatedContent && (
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={copyToClipboard}
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy
+                </Button>
+                <ExportDropdown
+                  content={generatedContent}
+                  filename={`social-post-${Date.now()}`}
+                />
+              </div>
+            )}
+          </CardHeader>
+          <CardContent>
+            {generatedContent ? (
+              <div className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                    {generatedContent}
+                  </pre>
                 </div>
-              )}
-            </CardHeader>
-            <CardContent>
-              {generatedContent ? (
-                <div className="space-y-4">
-                  <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                    <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                      {generatedContent}
-                    </pre>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Character count: {generatedContent.length} / {selectedPlatformInfo?.limit}
-                  </div>
+                <div className="text-xs text-muted-foreground">
+                  Character count: {generatedContent.length} / {selectedPlatformInfo?.limit}
                 </div>
-              ) : (
-                <div className="text-center py-8">
-                  <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Your social media post will appear here
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Your social media post will appear here
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Content */}
+        <RecentContent
+          recentContent={recentContent}
+          templateTitle="Social Posts"
+          templateIcon={MessageSquare}
+          templateBgColor="bg-purple-500/20"
+          templateColor="text-purple-600 dark:text-purple-400"
+          onCopyContent={copyContentToClipboard}
+          onDeleteContent={handleDeleteContent}
+        />
+
+        {/* Examples */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Example Ideas
+            </CardTitle>
+            <CardDescription>
+              Click on any example to use it as your starting point
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-2">
+              {socialExamples.map((example, index) => (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  className="justify-start text-left h-auto p-3 whitespace-normal"
+                  onClick={() => setPrompt(example)}
+                >
+                  <span className="text-sm">{example}</span>
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

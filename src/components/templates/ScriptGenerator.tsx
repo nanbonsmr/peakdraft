@@ -10,6 +10,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Video, Sparkles, Copy, CreditCard, Lightbulb } from 'lucide-react';
+import { useRecentContent } from '@/hooks/useRecentContent';
+import { RecentContent } from './RecentContent';
 
 const scriptExamples = [
   "Create a 2-minute explainer video script about blockchain technology for beginners",
@@ -45,6 +47,8 @@ export default function ScriptGenerator() {
   const [duration, setDuration] = useState('2min');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('script');
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -127,6 +131,7 @@ export default function ScriptGenerator() {
 
       setGeneratedContent(generatedContentText);
       await refreshProfile();
+      await loadRecentContent();
       
       toast({
         title: "Script generated!",
@@ -165,158 +170,165 @@ export default function ScriptGenerator() {
         </p>
       </div>
 
-      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
-        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                Script Details
-              </CardTitle>
-              <CardDescription>
-                Provide information about the script you need
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              Script Details
+            </CardTitle>
+            <CardDescription>
+              Provide information about the script you need
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title (optional)</Label>
+              <Input
+                id="title"
+                placeholder="e.g., Top 5 Productivity Hacks"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Title (optional)</Label>
-                <Input
-                  id="title"
-                  placeholder="e.g., Top 5 Productivity Hacks"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="scriptType">Script Type</Label>
-                  <Select value={scriptType} onValueChange={setScriptType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {scriptTypes.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="duration">Duration</Label>
-                  <Select value={duration} onValueChange={setDuration}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select duration" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {durations.map((dur) => (
-                        <SelectItem key={dur.value} value={dur.value}>
-                          {dur.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Label htmlFor="scriptType">Script Type</Label>
+                <Select value={scriptType} onValueChange={setScriptType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {scriptTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="topic">Script Topic & Content</Label>
-                <Textarea
-                  id="topic"
-                  placeholder="Describe what the script is about, key points to cover, target audience..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  rows={6}
-                />
+                <Label htmlFor="duration">Duration</Label>
+                <Select value={duration} onValueChange={setDuration}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select duration" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {durations.map((dur) => (
+                      <SelectItem key={dur.value} value={dur.value}>
+                        {dur.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+            </div>
 
-              <Button 
-                onClick={handleGenerate} 
-                disabled={isGenerating || !prompt.trim()}
-                className="w-full"
-                size="lg"
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Generating Script...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Generate Script
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+            <div className="space-y-2">
+              <Label htmlFor="topic">Script Topic & Content</Label>
+              <Textarea
+                id="topic"
+                placeholder="Describe what the script is about, key points to cover, target audience..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={6}
+              />
+            </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lightbulb className="w-5 h-5" />
-                Example Scripts
-              </CardTitle>
-              <CardDescription>
-                Click on any example to use it as your starting point
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-2">
-                {scriptExamples.map((example, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="justify-start text-left h-auto p-3 whitespace-normal"
-                    onClick={() => setPrompt(example)}
-                  >
-                    <span className="text-sm">{example}</span>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle>Generated Script</CardTitle>
-              {generatedContent && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={copyToClipboard}
-                  className="w-fit"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Content
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent>
-              {generatedContent ? (
-                <div className="space-y-4">
-                  <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                    <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                      {generatedContent}
-                    </pre>
-                  </div>
-                </div>
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating || !prompt.trim()}
+              className="w-full"
+              size="lg"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Generating Script...
+                </>
               ) : (
-                <div className="text-center py-8">
-                  <Video className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Your script will appear here
-                  </p>
-                </div>
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Generate Script
+                </>
               )}
-            </CardContent>
-          </Card>
-        </div>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="h-fit">
+          <CardHeader>
+            <CardTitle>Generated Script</CardTitle>
+            {generatedContent && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={copyToClipboard}
+                className="w-fit"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copy Content
+              </Button>
+            )}
+          </CardHeader>
+          <CardContent>
+            {generatedContent ? (
+              <div className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                    {generatedContent}
+                  </pre>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Video className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Your script will appear here
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Content */}
+        <RecentContent
+          recentContent={recentContent}
+          templateTitle="Scripts"
+          templateIcon={Video}
+          templateBgColor="bg-amber-500/20"
+          templateColor="text-amber-600 dark:text-amber-400"
+          onCopyContent={copyContentToClipboard}
+          onDeleteContent={handleDeleteContent}
+        />
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Example Scripts
+            </CardTitle>
+            <CardDescription>
+              Click on any example to use it as your starting point
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-2">
+              {scriptExamples.map((example, index) => (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  className="justify-start text-left h-auto p-3 whitespace-normal"
+                  onClick={() => setPrompt(example)}
+                >
+                  <span className="text-sm">{example}</span>
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

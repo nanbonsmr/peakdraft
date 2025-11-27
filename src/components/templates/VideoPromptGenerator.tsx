@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Copy, Film, Sparkles } from 'lucide-react';
+import { Loader2, Copy, Film, Sparkles, Lightbulb } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useRecentContent } from '@/hooks/useRecentContent';
+import { RecentContent } from './RecentContent';
 
 const videoPromptExamples = [
   "A time-lapse of a flower blooming in spring",
@@ -26,6 +28,8 @@ export default function VideoPromptGenerator() {
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('video-prompt');
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -89,6 +93,7 @@ export default function VideoPromptGenerator() {
       });
 
       await refreshProfile();
+      await loadRecentContent();
 
       toast({
         title: "Success!",
@@ -121,86 +126,66 @@ export default function VideoPromptGenerator() {
         <p className="text-muted-foreground">Create detailed prompts for AI video generation and production planning</p>
       </div>
 
-      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
-        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
-            <CardHeader>
-              <CardTitle>Video Details</CardTitle>
-              <CardDescription>Describe the video you want to create</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="duration">Duration</Label>
-                <Input
-                  id="duration"
-                  placeholder="e.g., 30 seconds, 2 minutes"
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
-                />
-              </div>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Video Details</CardTitle>
+            <CardDescription>Describe the video you want to create</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="duration">Duration</Label>
+              <Input
+                id="duration"
+                placeholder="e.g., 30 seconds, 2 minutes"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="style">Video Style</Label>
-                <Input
-                  id="style"
-                  placeholder="e.g., Cinematic, Documentary, Animated"
-                  value={style}
-                  onChange={(e) => setStyle(e.target.value)}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="style">Video Style</Label>
+              <Input
+                id="style"
+                placeholder="e.g., Cinematic, Documentary, Animated"
+                value={style}
+                onChange={(e) => setStyle(e.target.value)}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="prompt">Video Concept</Label>
-                <Textarea
-                  id="prompt"
-                  placeholder="Describe what you want to see in the video..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  rows={4}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="prompt">Video Concept</Label>
+              <Textarea
+                id="prompt"
+                placeholder="Describe what you want to see in the video..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={4}
+              />
+            </div>
 
-              <Button 
-                onClick={handleGenerate} 
-                disabled={isGenerating}
-                className="w-full"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Generate Video Prompt
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating}
+              className="w-full"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Generate Video Prompt
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Example Concepts</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {videoPromptExamples.map((example, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="w-full justify-start text-left h-auto py-3 px-4"
-                  onClick={() => setPrompt(example)}
-                >
-                  <Film className="mr-2 h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">{example}</span>
-                </Button>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
+        {/* Generated Content */}
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Generated Video Prompt
@@ -223,6 +208,39 @@ export default function VideoPromptGenerator() {
                 <p>Your video prompt will appear here</p>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Content */}
+        <RecentContent
+          recentContent={recentContent}
+          templateTitle="Video Prompts"
+          templateIcon={Film}
+          templateBgColor="bg-red-500/20"
+          templateColor="text-red-600 dark:text-red-400"
+          onCopyContent={copyContentToClipboard}
+          onDeleteContent={handleDeleteContent}
+        />
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Example Concepts
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {videoPromptExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                className="w-full justify-start text-left h-auto py-3 px-4"
+                onClick={() => setPrompt(example)}
+              >
+                <Film className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="text-sm">{example}</span>
+              </Button>
+            ))}
           </CardContent>
         </Card>
       </div>

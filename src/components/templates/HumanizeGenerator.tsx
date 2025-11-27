@@ -8,6 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Bot, Sparkles, Copy, CreditCard, Lightbulb } from 'lucide-react';
+import { useRecentContent } from '@/hooks/useRecentContent';
+import { RecentContent } from './RecentContent';
 
 const humanizeExamples = [
   "Transform this AI-generated text into natural, human-like writing: 'The implementation of strategic methodologies facilitates optimal outcomes...'",
@@ -23,6 +25,8 @@ export default function HumanizeGenerator() {
   const [prompt, setPrompt] = useState('');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('humanize');
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -103,6 +107,7 @@ export default function HumanizeGenerator() {
 
       setGeneratedContent(generatedContentText);
       await refreshProfile();
+      await loadRecentContent();
       
       toast({
         title: "Text humanized!",
@@ -141,114 +146,121 @@ export default function HumanizeGenerator() {
         </p>
       </div>
 
-      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
-        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                Text to Humanize
-              </CardTitle>
-              <CardDescription>
-                Paste the text you want to make more human and natural
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="text">AI or Robotic Text</Label>
-                <Textarea
-                  id="text"
-                  placeholder="Paste your AI-generated or formal text here..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  rows={8}
-                />
-              </div>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              Text to Humanize
+            </CardTitle>
+            <CardDescription>
+              Paste the text you want to make more human and natural
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="text">AI or Robotic Text</Label>
+              <Textarea
+                id="text"
+                placeholder="Paste your AI-generated or formal text here..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={8}
+              />
+            </div>
 
-              <Button 
-                onClick={handleGenerate} 
-                disabled={isGenerating || !prompt.trim()}
-                className="w-full"
-                size="lg"
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Humanizing Text...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Humanize Text
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lightbulb className="w-5 h-5" />
-                Example Prompts
-              </CardTitle>
-              <CardDescription>
-                Click on any example to use it as your starting point
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-2">
-                {humanizeExamples.map((example, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="justify-start text-left h-auto p-3 whitespace-normal"
-                    onClick={() => setPrompt(example)}
-                  >
-                    <span className="text-sm">{example}</span>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle>Humanized Content</CardTitle>
-              {generatedContent && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={copyToClipboard}
-                  className="w-fit"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Content
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent>
-              {generatedContent ? (
-                <div className="space-y-4">
-                  <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                    <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                      {generatedContent}
-                    </pre>
-                  </div>
-                </div>
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating || !prompt.trim()}
+              className="w-full"
+              size="lg"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Humanizing Text...
+                </>
               ) : (
-                <div className="text-center py-8">
-                  <Bot className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Your humanized text will appear here
-                  </p>
-                </div>
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Humanize Text
+                </>
               )}
-            </CardContent>
-          </Card>
-        </div>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="h-fit">
+          <CardHeader>
+            <CardTitle>Humanized Content</CardTitle>
+            {generatedContent && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={copyToClipboard}
+                className="w-fit"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copy Content
+              </Button>
+            )}
+          </CardHeader>
+          <CardContent>
+            {generatedContent ? (
+              <div className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                    {generatedContent}
+                  </pre>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Bot className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Your humanized text will appear here
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Content */}
+        <RecentContent
+          recentContent={recentContent}
+          templateTitle="Humanized Texts"
+          templateIcon={Bot}
+          templateBgColor="bg-cyan-500/20"
+          templateColor="text-cyan-600 dark:text-cyan-400"
+          onCopyContent={copyContentToClipboard}
+          onDeleteContent={handleDeleteContent}
+        />
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Example Prompts
+            </CardTitle>
+            <CardDescription>
+              Click on any example to use it as your starting point
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-2">
+              {humanizeExamples.map((example, index) => (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  className="justify-start text-left h-auto p-3 whitespace-normal"
+                  onClick={() => setPrompt(example)}
+                >
+                  <span className="text-sm">{example}</span>
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

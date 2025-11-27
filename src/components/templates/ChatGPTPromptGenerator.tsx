@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Copy, Bot, Sparkles } from 'lucide-react';
+import { Loader2, Copy, Bot, Sparkles, Lightbulb } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useRecentContent } from '@/hooks/useRecentContent';
+import { RecentContent } from './RecentContent';
 
 const promptExamples = [
   "Create a prompt for generating marketing copy for a SaaS product",
@@ -26,6 +28,8 @@ export default function ChatGPTPromptGenerator() {
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('chatgpt-prompt');
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -89,6 +93,7 @@ export default function ChatGPTPromptGenerator() {
       });
 
       await refreshProfile();
+      await loadRecentContent();
 
       toast({
         title: "Success!",
@@ -121,88 +126,66 @@ export default function ChatGPTPromptGenerator() {
         <p className="text-muted-foreground">Create effective and detailed prompts for ChatGPT and other AI assistants</p>
       </div>
 
-      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
-        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
-            <CardHeader>
-              <CardTitle>Prompt Requirements</CardTitle>
-              <CardDescription>Describe the AI assistant you want to create</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="purpose">Purpose/Use Case</Label>
-                <Input
-                  id="purpose"
-                  placeholder="e.g., Content creation, Code review, Tutoring"
-                  value={purpose}
-                  onChange={(e) => setPurpose(e.target.value)}
-                />
-              </div>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Prompt Requirements</CardTitle>
+            <CardDescription>Describe the AI assistant you want to create</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="purpose">Purpose/Use Case</Label>
+              <Input
+                id="purpose"
+                placeholder="e.g., Content creation, Code review, Tutoring"
+                value={purpose}
+                onChange={(e) => setPurpose(e.target.value)}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="context">Additional Context</Label>
-                <Input
-                  id="context"
-                  placeholder="e.g., Target audience, tone, constraints"
-                  value={context}
-                  onChange={(e) => setContext(e.target.value)}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="context">Additional Context</Label>
+              <Input
+                id="context"
+                placeholder="e.g., Target audience, tone, constraints"
+                value={context}
+                onChange={(e) => setContext(e.target.value)}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="prompt">What should the prompt do?</Label>
-                <Textarea
-                  id="prompt"
-                  placeholder="Describe in detail what you want the AI to help with..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  rows={4}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="prompt">What should the prompt do?</Label>
+              <Textarea
+                id="prompt"
+                placeholder="Describe in detail what you want the AI to help with..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={4}
+              />
+            </div>
 
-              <Button 
-                onClick={handleGenerate} 
-                disabled={isGenerating}
-                className="w-full"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Generate Prompt
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Example Requests</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {promptExamples.map((example, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="w-full justify-start text-left h-auto py-3 px-4"
-                  onClick={() => setPrompt(example)}
-                >
-                  <Bot className="mr-2 h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">{example}</span>
-                </Button>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating}
+              className="w-full"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Generate Prompt
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
         
         {/* Generated Content */}
-        <div className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Generated Prompt
@@ -226,8 +209,40 @@ export default function ChatGPTPromptGenerator() {
               </div>
             )}
           </CardContent>
-          </Card>
-        </div>
+        </Card>
+
+        {/* Recent Content */}
+        <RecentContent
+          recentContent={recentContent}
+          templateTitle="ChatGPT Prompts"
+          templateIcon={Bot}
+          templateBgColor="bg-teal-500/20"
+          templateColor="text-teal-600 dark:text-teal-400"
+          onCopyContent={copyContentToClipboard}
+          onDeleteContent={handleDeleteContent}
+        />
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Example Requests
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {promptExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                className="w-full justify-start text-left h-auto py-3 px-4"
+                onClick={() => setPrompt(example)}
+              >
+                <Bot className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="text-sm">{example}</span>
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

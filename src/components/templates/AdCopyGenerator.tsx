@@ -50,6 +50,8 @@ export default function AdCopyGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('ads');
+
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
@@ -139,6 +141,7 @@ export default function AdCopyGenerator() {
 
       setGeneratedContent(generatedContentText);
       await refreshProfile();
+      await loadRecentContent();
       
       toast({
         title: "Ad copy generated!",
@@ -180,148 +183,119 @@ export default function AdCopyGenerator() {
         </p>
       </div>
 
-      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
+      <div className="space-y-6">
         {/* Generator Form */}
-        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                Ad Campaign Details
-              </CardTitle>
-              <CardDescription>
-                Provide details about your advertising campaign
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              Ad Campaign Details
+            </CardTitle>
+            <CardDescription>
+              Provide details about your advertising campaign
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="product">Product/Service Description</Label>
+              <Textarea
+                id="product"
+                placeholder="Describe your product or service..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="product">Product/Service Description</Label>
-                <Textarea
-                  id="product"
-                  placeholder="Describe your product or service..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="platform">Ad Platform</Label>
-                  <Select value={platform} onValueChange={setPlatform}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select platform" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {adPlatforms.map((platformOption) => (
-                        <SelectItem key={platformOption.value} value={platformOption.value}>
-                          {platformOption.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {selectedPlatformInfo && (
-                    <p className="text-xs text-muted-foreground">
-                      {selectedPlatformInfo.limit}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="objective">Campaign Objective</Label>
-                  <Select value={objective} onValueChange={setObjective}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select objective" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {adObjectives.map((obj) => (
-                        <SelectItem key={obj.value} value={obj.value}>
-                          {obj.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="audience" className="flex items-center gap-2">
-                  <Target className="w-4 h-4" />
-                  Target Audience (optional)
-                </Label>
-                <Input
-                  id="audience"
-                  placeholder="e.g., Working professionals aged 25-40..."
-                  value={targetAudience}
-                  onChange={(e) => setTargetAudience(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="offer">Special Offer (optional)</Label>
-                <Input
-                  id="offer"
-                  placeholder="e.g., 20% off, Free trial, Limited time..."
-                  value={offer}
-                  onChange={(e) => setOffer(e.target.value)}
-                />
-              </div>
-
-              <Button 
-                onClick={handleGenerate} 
-                disabled={isGenerating || !prompt.trim()}
-                className="w-full"
-                size="lg"
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Creating Ad Copy...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Generate Ad Copy
-                  </>
+                <Label htmlFor="platform">Ad Platform</Label>
+                <Select value={platform} onValueChange={setPlatform}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select platform" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {adPlatforms.map((platformOption) => (
+                      <SelectItem key={platformOption.value} value={platformOption.value}>
+                        {platformOption.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedPlatformInfo && (
+                  <p className="text-xs text-muted-foreground">
+                    {selectedPlatformInfo.limit}
+                  </p>
                 )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Examples */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lightbulb className="w-5 h-5" />
-                Example Campaigns
-              </CardTitle>
-              <CardDescription>
-                Click on any example to use it as your starting point
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-2">
-                {adExamples.map((example, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="justify-start text-left h-auto p-3 whitespace-normal"
-                    onClick={() => setPrompt(example)}
-                  >
-                    <span className="text-sm">{example}</span>
-                  </Button>
-                ))}
               </div>
-            </CardContent>
-          </Card>
-        </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="objective">Campaign Objective</Label>
+                <Select value={objective} onValueChange={setObjective}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select objective" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {adObjectives.map((obj) => (
+                      <SelectItem key={obj.value} value={obj.value}>
+                        {obj.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="audience" className="flex items-center gap-2">
+                <Target className="w-4 h-4" />
+                Target Audience (optional)
+              </Label>
+              <Input
+                id="audience"
+                placeholder="e.g., Working professionals aged 25-40..."
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="offer">Special Offer (optional)</Label>
+              <Input
+                id="offer"
+                placeholder="e.g., 20% off, Free trial, Limited time..."
+                value={offer}
+                onChange={(e) => setOffer(e.target.value)}
+              />
+            </div>
+
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating || !prompt.trim()}
+              className="w-full"
+              size="lg"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Creating Ad Copy...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Generate Ad Copy
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Generated Content */}
-        <div className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle>Generated Ad Copy</CardTitle>
-              {generatedContent && (
+        <Card className="h-fit">
+          <CardHeader>
+            <CardTitle>Generated Ad Copy</CardTitle>
+            {generatedContent && (
+              <div className="flex gap-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -331,28 +305,70 @@ export default function AdCopyGenerator() {
                   <Copy className="w-4 h-4 mr-2" />
                   Copy Ad Copy
                 </Button>
-              )}
-            </CardHeader>
-            <CardContent>
-              {generatedContent ? (
-                <div className="space-y-4">
-                  <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                    <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                      {generatedContent}
-                    </pre>
-                  </div>
+                <ExportDropdown
+                  content={generatedContent}
+                  filename={`ad-copy-${Date.now()}`}
+                />
+              </div>
+            )}
+          </CardHeader>
+          <CardContent>
+            {generatedContent ? (
+              <div className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                    {generatedContent}
+                  </pre>
                 </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Megaphone className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Your generated ad copy will appear here
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Megaphone className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Your generated ad copy will appear here
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Content */}
+        <RecentContent
+          recentContent={recentContent}
+          templateTitle="Ad Copies"
+          templateIcon={Megaphone}
+          templateBgColor="bg-orange-500/20"
+          templateColor="text-orange-600 dark:text-orange-400"
+          onCopyContent={copyContentToClipboard}
+          onDeleteContent={handleDeleteContent}
+        />
+
+        {/* Examples */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Example Campaigns
+            </CardTitle>
+            <CardDescription>
+              Click on any example to use it as your starting point
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-2">
+              {adExamples.map((example, index) => (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  className="justify-start text-left h-auto p-3 whitespace-normal"
+                  onClick={() => setPrompt(example)}
+                >
+                  <span className="text-sm">{example}</span>
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -9,6 +9,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useRecentContent } from '@/hooks/useRecentContent';
+import { RecentContent } from './RecentContent';
 
 const postIdeasExamples = [
   "Generate 10 post ideas for a fitness coach targeting beginners",
@@ -26,6 +28,8 @@ export default function PostIdeasGenerator() {
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('post-ideas');
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -89,6 +93,7 @@ export default function PostIdeasGenerator() {
       });
 
       await refreshProfile();
+      await loadRecentContent();
 
       toast({
         title: "Success!",
@@ -121,88 +126,66 @@ export default function PostIdeasGenerator() {
         <p className="text-muted-foreground">Get creative post ideas for your social media and content strategy</p>
       </div>
 
-      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
-        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
-            <CardHeader>
-              <CardTitle>Content Strategy</CardTitle>
-              <CardDescription>Tell us about your content needs</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="niche">Niche/Industry</Label>
-                <Input
-                  id="niche"
-                  placeholder="e.g., Fitness, Marketing, Technology"
-                  value={niche}
-                  onChange={(e) => setNiche(e.target.value)}
-                />
-              </div>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Content Strategy</CardTitle>
+            <CardDescription>Tell us about your content needs</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="niche">Niche/Industry</Label>
+              <Input
+                id="niche"
+                placeholder="e.g., Fitness, Marketing, Technology"
+                value={niche}
+                onChange={(e) => setNiche(e.target.value)}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="audience">Target Audience</Label>
-                <Input
-                  id="audience"
-                  placeholder="e.g., Young professionals, Parents, Students"
-                  value={audience}
-                  onChange={(e) => setAudience(e.target.value)}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="audience">Target Audience</Label>
+              <Input
+                id="audience"
+                placeholder="e.g., Young professionals, Parents, Students"
+                value={audience}
+                onChange={(e) => setAudience(e.target.value)}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="prompt">What kind of post ideas do you need?</Label>
-                <Textarea
-                  id="prompt"
-                  placeholder="Describe your content goals, themes, or specific topics..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  rows={4}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="prompt">What kind of post ideas do you need?</Label>
+              <Textarea
+                id="prompt"
+                placeholder="Describe your content goals, themes, or specific topics..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={4}
+              />
+            </div>
 
-              <Button 
-                onClick={handleGenerate} 
-                disabled={isGenerating}
-                className="w-full"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Generate Post Ideas
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Example Prompts</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {postIdeasExamples.map((example, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="w-full justify-start text-left h-auto py-3 px-4"
-                  onClick={() => setPrompt(example)}
-                >
-                  <Lightbulb className="mr-2 h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">{example}</span>
-                </Button>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating}
+              className="w-full"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Generate Post Ideas
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
         
         {/* Generated Content */}
-        <div className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Generated Post Ideas
@@ -226,8 +209,40 @@ export default function PostIdeasGenerator() {
               </div>
             )}
           </CardContent>
-          </Card>
-        </div>
+        </Card>
+
+        {/* Recent Content */}
+        <RecentContent
+          recentContent={recentContent}
+          templateTitle="Post Ideas"
+          templateIcon={Lightbulb}
+          templateBgColor="bg-yellow-500/20"
+          templateColor="text-yellow-600 dark:text-yellow-400"
+          onCopyContent={copyContentToClipboard}
+          onDeleteContent={handleDeleteContent}
+        />
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Example Prompts
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {postIdeasExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                className="w-full justify-start text-left h-auto py-3 px-4"
+                onClick={() => setPrompt(example)}
+              >
+                <Lightbulb className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="text-sm">{example}</span>
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Copy, Image, Sparkles } from 'lucide-react';
+import { Loader2, Copy, Image, Sparkles, Lightbulb } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useRecentContent } from '@/hooks/useRecentContent';
+import { RecentContent } from './RecentContent';
 
 const imagePromptExamples = [
   "A futuristic cityscape at sunset with flying cars",
@@ -26,6 +28,8 @@ export default function ImagePromptGenerator() {
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('image-prompt');
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -89,6 +93,7 @@ export default function ImagePromptGenerator() {
       });
 
       await refreshProfile();
+      await loadRecentContent();
 
       toast({
         title: "Success!",
@@ -121,88 +126,66 @@ export default function ImagePromptGenerator() {
         <p className="text-muted-foreground">Create detailed prompts for AI image generation tools</p>
       </div>
 
-      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
-        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
-            <CardHeader>
-              <CardTitle>Image Details</CardTitle>
-              <CardDescription>Describe the image you want to generate</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="style">Art Style</Label>
-                <Input
-                  id="style"
-                  placeholder="e.g., Photorealistic, Anime, Oil painting, 3D render"
-                  value={style}
-                  onChange={(e) => setStyle(e.target.value)}
-                />
-              </div>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Image Details</CardTitle>
+            <CardDescription>Describe the image you want to generate</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="style">Art Style</Label>
+              <Input
+                id="style"
+                placeholder="e.g., Photorealistic, Anime, Oil painting, 3D render"
+                value={style}
+                onChange={(e) => setStyle(e.target.value)}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="details">Additional Details</Label>
-                <Input
-                  id="details"
-                  placeholder="e.g., 4K, cinematic lighting, high detail"
-                  value={details}
-                  onChange={(e) => setDetails(e.target.value)}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="details">Additional Details</Label>
+              <Input
+                id="details"
+                placeholder="e.g., 4K, cinematic lighting, high detail"
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="prompt">Image Description</Label>
-                <Textarea
-                  id="prompt"
-                  placeholder="Describe what you want to see in the image..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  rows={4}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="prompt">Image Description</Label>
+              <Textarea
+                id="prompt"
+                placeholder="Describe what you want to see in the image..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={4}
+              />
+            </div>
 
-              <Button 
-                onClick={handleGenerate} 
-                disabled={isGenerating}
-                className="w-full"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Generate Image Prompt
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Example Ideas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {imagePromptExamples.map((example, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="w-full justify-start text-left h-auto py-3 px-4"
-                  onClick={() => setPrompt(example)}
-                >
-                  <Image className="mr-2 h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">{example}</span>
-                </Button>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating}
+              className="w-full"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Generate Image Prompt
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
         
         {/* Generated Content */}
-        <div className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-          <Card>
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Generated Image Prompt
@@ -226,8 +209,40 @@ export default function ImagePromptGenerator() {
               </div>
             )}
           </CardContent>
-          </Card>
-        </div>
+        </Card>
+
+        {/* Recent Content */}
+        <RecentContent
+          recentContent={recentContent}
+          templateTitle="Image Prompts"
+          templateIcon={Image}
+          templateBgColor="bg-fuchsia-500/20"
+          templateColor="text-fuchsia-600 dark:text-fuchsia-400"
+          onCopyContent={copyContentToClipboard}
+          onDeleteContent={handleDeleteContent}
+        />
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              Example Ideas
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {imagePromptExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                className="w-full justify-start text-left h-auto py-3 px-4"
+                onClick={() => setPrompt(example)}
+              >
+                <Image className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="text-sm">{example}</span>
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
