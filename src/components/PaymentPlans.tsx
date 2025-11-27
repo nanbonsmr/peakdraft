@@ -114,6 +114,11 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
         });
 
         if (data?.clientToken && window.Paddle) {
+          // Determine environment based on client token prefix
+          const isLive = data.clientToken.startsWith('live_');
+          
+          window.Paddle.Environment.set(isLive ? 'production' : 'sandbox');
+          
           window.Paddle.Initialize({
             token: data.clientToken,
             eventCallback: (event: any) => {
@@ -123,11 +128,16 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
               } else if (event.name === 'checkout.closed') {
                 setIsProcessing(false);
                 setSelectedPlan(null);
+              } else if (event.name === 'checkout.error') {
+                console.error('Paddle checkout error:', event);
+                toast.error('Payment error. Please try again.');
+                setIsProcessing(false);
+                setSelectedPlan(null);
               }
             }
           });
           setPaddleLoaded(true);
-          console.log('Paddle initialized successfully');
+          console.log('Paddle initialized successfully, environment:', isLive ? 'production' : 'sandbox');
         }
       } catch (error) {
         console.error('Failed to initialize Paddle:', error);
