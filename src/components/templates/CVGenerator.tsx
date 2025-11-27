@@ -154,8 +154,8 @@ export default function CVGenerator() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-        <div className="lg:col-span-2 space-y-4 md:space-y-6">
+      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -252,7 +252,7 @@ export default function CVGenerator() {
           </Card>
         </div>
 
-        <div>
+        <div className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
           <Card className="h-fit">
             <CardHeader>
               <CardTitle>Generated CV</CardTitle>

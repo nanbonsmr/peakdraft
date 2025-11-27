@@ -121,8 +121,8 @@ export default function PostIdeasGenerator() {
         <p className="text-muted-foreground">Get creative post ideas for your social media and content strategy</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-        <div className="lg:col-span-2 space-y-4 md:space-y-6">
+      <div className="lg:grid lg:grid-cols-3 gap-4 md:gap-6 flex lg:flex-none overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6 min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
           <Card>
             <CardHeader>
               <CardTitle>Content Strategy</CardTitle>
@@ -201,7 +201,7 @@ export default function PostIdeasGenerator() {
         </div>
         
         {/* Generated Content */}
-        <div>
+        <div className="min-w-[320px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
           <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
