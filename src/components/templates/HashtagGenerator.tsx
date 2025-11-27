@@ -121,8 +121,8 @@ export default function HashtagGenerator() {
         <p className="text-muted-foreground">Generate relevant and trending hashtags for your social media posts</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Content Details</CardTitle>
@@ -204,8 +204,10 @@ export default function HashtagGenerator() {
             </CardContent>
           </Card>
         </div>
-
-        <Card>
+        
+        {/* Generated Content */}
+        <div>
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Generated Hashtags
@@ -229,7 +231,8 @@ export default function HashtagGenerator() {
               </div>
             )}
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );

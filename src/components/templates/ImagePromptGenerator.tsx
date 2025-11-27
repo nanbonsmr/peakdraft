@@ -121,8 +121,8 @@ export default function ImagePromptGenerator() {
         <p className="text-muted-foreground">Create detailed prompts for AI image generation tools</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Image Details</CardTitle>
@@ -199,8 +199,10 @@ export default function ImagePromptGenerator() {
             </CardContent>
           </Card>
         </div>
-
-        <Card>
+        
+        {/* Generated Content */}
+        <div>
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Generated Image Prompt
@@ -224,7 +226,8 @@ export default function ImagePromptGenerator() {
               </div>
             )}
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );
