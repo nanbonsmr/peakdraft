@@ -13,54 +13,40 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, Link } from "react-router-dom";
 import { ExportDropdown } from "@/components/ExportDropdown";
-
-const templates = [
-  {
-    title: "Blog Post Generator",
-    description: "Create engaging blog posts with AI assistance",
-    icon: <Sparkles className="w-6 h-6 text-primary" />,
-    href: "/templates/blog",
-    examples: [
-      "Write a blog post about sustainable living",
-      "Create content about digital marketing trends"
-    ]
-  },
-  {
-    title: "Social Media Captions",
-    description: "Generate catchy captions for your social posts",
-    icon: <Zap className="w-6 h-6 text-primary" />,
-    href: "/templates/social",
-    examples: [
-      "Instagram caption for a coffee shop",
-      "LinkedIn post about productivity"
-    ]
-  },
-  {
-    title: "Email Writer",
-    description: "Craft professional emails in seconds",
-    icon: <TrendingUp className="w-6 h-6 text-primary" />,
-    href: "/templates/email",
-    examples: [
-      "Follow-up email after meeting",
-      "Welcome email for new customers"
-    ]
-  },
-  {
-    title: "Ad Copy Maker",
-    description: "Create compelling advertisements",
-    icon: <Crown className="w-6 h-6 text-primary" />,
-    href: "/templates/ads",
-    examples: [
-      "Facebook ad for fitness app",
-      "Google ad for online course"
-    ]
-  }
-];
-
+const templates = [{
+  title: "Blog Post Generator",
+  description: "Create engaging blog posts with AI assistance",
+  icon: <Sparkles className="w-6 h-6 text-primary" />,
+  href: "/templates/blog",
+  examples: ["Write a blog post about sustainable living", "Create content about digital marketing trends"]
+}, {
+  title: "Social Media Captions",
+  description: "Generate catchy captions for your social posts",
+  icon: <Zap className="w-6 h-6 text-primary" />,
+  href: "/templates/social",
+  examples: ["Instagram caption for a coffee shop", "LinkedIn post about productivity"]
+}, {
+  title: "Email Writer",
+  description: "Craft professional emails in seconds",
+  icon: <TrendingUp className="w-6 h-6 text-primary" />,
+  href: "/templates/email",
+  examples: ["Follow-up email after meeting", "Welcome email for new customers"]
+}, {
+  title: "Ad Copy Maker",
+  description: "Create compelling advertisements",
+  icon: <Crown className="w-6 h-6 text-primary" />,
+  href: "/templates/ads",
+  examples: ["Facebook ad for fitness app", "Google ad for online course"]
+}];
 export default function Dashboard() {
-  const { profile, refreshProfile } = useAuth();
+  const {
+    profile,
+    refreshProfile
+  } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [prompt, setPrompt] = useState('');
   const [keywords, setKeywords] = useState('');
@@ -69,26 +55,20 @@ export default function Dashboard() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [recentContent, setRecentContent] = useState<any[]>([]);
   const [selectedContent, setSelectedContent] = useState<any>(null);
-
   const loadRecentContent = async () => {
     if (!profile) return;
-    
-    const { data } = await supabase
-      .from('content_generations')
-      .select('*')
-      .eq('user_id', profile.user_id)
-      .order('created_at', { ascending: false })
-      .limit(5);
-    
+    const {
+      data
+    } = await supabase.from('content_generations').select('*').eq('user_id', profile.user_id).order('created_at', {
+      ascending: false
+    }).limit(5);
     if (data) {
       setRecentContent(data);
     }
   };
-
   useEffect(() => {
     loadRecentContent();
   }, [profile]);
-
   const handleGenerate = async () => {
     if (!selectedTemplate || !prompt.trim()) {
       toast({
@@ -98,7 +78,6 @@ export default function Dashboard() {
       });
       return;
     }
-
     if (!profile) {
       toast({
         title: "Authentication required",
@@ -114,26 +93,20 @@ export default function Dashboard() {
         title: "Word limit reached",
         description: "Please upgrade your plan to generate more content.",
         variant: "destructive",
-        action: (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate('/app/pricing')}
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
-          >
+        action: <Button variant="outline" size="sm" onClick={() => navigate('/app/pricing')} className="bg-primary text-primary-foreground hover:bg-primary/90">
             <CreditCard className="w-4 h-4 mr-2" />
             Upgrade Now
           </Button>
-        )
       });
       return;
     }
-
     setIsGenerating(true);
-
     try {
       // Call the edge function to generate content with Gemini API
-      const { data, error } = await supabase.functions.invoke('generate-content', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('generate-content', {
         body: {
           template_type: selectedTemplate,
           prompt: prompt,
@@ -141,51 +114,45 @@ export default function Dashboard() {
           keywords: keywords.split(',').map(k => k.trim()).filter(k => k)
         }
       });
-
       if (error) {
         console.error('Edge function error:', error);
         throw new Error(error.message || 'Failed to generate content');
       }
-
       if (!data || !data.generated_content) {
         throw new Error('No content generated');
       }
-
       const generatedContentText = data.generated_content;
       const wordCount = data.word_count || generatedContentText.split(' ').length;
-      
-      // Save to database
-      const { error: insertError } = await supabase
-        .from('content_generations')
-        .insert({
-          user_id: profile.user_id,
-          template_type: selectedTemplate,
-          prompt: prompt,
-          generated_content: generatedContentText,
-          word_count: wordCount,
-          language: language,
-          keywords: keywords.split(',').map(k => k.trim()).filter(k => k)
-        });
 
+      // Save to database
+      const {
+        error: insertError
+      } = await supabase.from('content_generations').insert({
+        user_id: profile.user_id,
+        template_type: selectedTemplate,
+        prompt: prompt,
+        generated_content: generatedContentText,
+        word_count: wordCount,
+        language: language,
+        keywords: keywords.split(',').map(k => k.trim()).filter(k => k)
+      });
       if (insertError) throw insertError;
 
       // Update word usage
-      const { error: updateError } = await supabase.rpc('update_word_usage', {
+      const {
+        error: updateError
+      } = await supabase.rpc('update_word_usage', {
         user_uuid: profile.user_id,
         words_to_add: wordCount
       });
-
       if (updateError) throw updateError;
-
       setGeneratedContent(generatedContentText);
       await refreshProfile();
       await loadRecentContent();
-      
       toast({
         title: "Content generated!",
         description: `Generated ${wordCount} words successfully using Google Gemini AI.`
       });
-
     } catch (error: any) {
       console.error('Content generation error:', error);
       toast({
@@ -197,7 +164,6 @@ export default function Dashboard() {
       setIsGenerating(false);
     }
   };
-
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatedContent);
     toast({
@@ -205,7 +171,6 @@ export default function Dashboard() {
       description: "Content copied to clipboard."
     });
   };
-
   const copyContentToClipboard = (content: string) => {
     navigator.clipboard.writeText(content);
     toast({
@@ -213,18 +178,13 @@ export default function Dashboard() {
       description: "Content copied to clipboard."
     });
   };
-
   const handleDeleteContent = async (contentId: string) => {
     try {
-      const { error } = await supabase
-        .from('content_generations')
-        .delete()
-        .eq('id', contentId);
-
+      const {
+        error
+      } = await supabase.from('content_generations').delete().eq('id', contentId);
       if (error) throw error;
-
       setRecentContent(prev => prev.filter(item => item.id !== contentId));
-      
       toast({
         title: "Deleted!",
         description: "Content deleted successfully."
@@ -237,12 +197,9 @@ export default function Dashboard() {
       });
     }
   };
-
   const wordsRemaining = profile ? profile.words_limit - profile.words_used : 0;
-  const usagePercentage = profile ? (profile.words_used / profile.words_limit) * 100 : 0;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/[0.02] to-accent/[0.03]">
+  const usagePercentage = profile ? profile.words_used / profile.words_limit * 100 : 0;
+  return <div className="min-h-screen bg-gradient-to-br from-background via-primary/[0.02] to-accent/[0.03]">
       <div className="space-y-6 sm:space-y-8 p-4 sm:p-6">
         {/* Welcome Header */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary/95 to-primary/80 p-8 sm:p-10 text-white shadow-2xl animate-gradient-shift">
@@ -279,10 +236,9 @@ export default function Dashboard() {
               </div>
               <div className="space-y-2">
                 <div className="w-full bg-blue-200/60 dark:bg-blue-800/40 rounded-full h-2.5 overflow-hidden shadow-inner">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 h-2.5 rounded-full transition-all duration-700 ease-out shadow-sm"
-                    style={{ width: `${Math.min(usagePercentage, 100)}%` }}
-                  ></div>
+                  <div className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 h-2.5 rounded-full transition-all duration-700 ease-out shadow-sm" style={{
+                  width: `${Math.min(usagePercentage, 100)}%`
+                }}></div>
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-blue-600 dark:text-blue-400 font-medium">{Math.round(usagePercentage)}% used</span>
@@ -344,212 +300,17 @@ export default function Dashboard() {
                 <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
                   {profile?.subscription_plan === 'free' ? '✨ Upgrade for unlimited power' : '🎉 Premium features unlocked'}
                 </p>
-                {profile?.subscription_plan === 'free' && (
-                  <Button
-                    size="sm"
-                    onClick={() => navigate('/app/pricing')}
-                    className="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
+                {profile?.subscription_plan === 'free' && <Button size="sm" onClick={() => navigate('/app/pricing')} className="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                     <Crown className="w-4 h-4 mr-2" />
                     Upgrade Now
-                  </Button>
-                )}
+                  </Button>}
               </div>
             </div>
           </div>
         </div>
 
         {/* Content Generator */}
-        <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
-          <Card className="border-0 shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-br from-background via-background to-primary/5 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent pb-8 border-b border-primary/10">
-              <CardTitle className="flex items-center gap-4 text-2xl">
-                <div className="p-4 bg-gradient-to-br from-primary/30 to-primary/10 rounded-2xl shadow-lg border border-primary/20">
-                  <Sparkles className="h-7 w-7 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold">AI Content Generator</h3>
-                  <p className="text-sm text-muted-foreground font-normal mt-1">Powered by Google Gemini</p>
-                </div>
-              </CardTitle>
-              <CardDescription className="text-base mt-2">
-                Describe what you want to create and let our AI work its magic ✨
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8 p-8">
-              {!selectedTemplate && (
-                <div className="text-center p-12 bg-gradient-to-br from-muted/50 to-muted/30 rounded-3xl border-2 border-dashed border-muted-foreground/20">
-                  <div className="p-6 bg-primary/10 rounded-full w-fit mx-auto mb-4 border border-primary/20">
-                    <Sparkles className="h-16 w-16 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Ready to Create?</h3>
-                  <p className="text-muted-foreground text-lg">Select a template above to get started with AI content generation</p>
-                </div>
-              )}
-              
-              {selectedTemplate && (
-                <>
-                  <div className="p-6 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-2xl border-2 border-primary/20 shadow-sm">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Badge variant="secondary" className="bg-gradient-to-r from-primary/30 to-primary/20 text-primary border border-primary/30 px-3 py-1.5 shadow-sm">
-                        <Sparkles className="w-3 h-3 mr-1.5" />
-                        {templates.find(t => t.href.split('/').pop() === selectedTemplate)?.title}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground font-medium">
-                      {templates.find(t => t.href.split('/').pop() === selectedTemplate)?.description}
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <Label className="text-base font-bold flex items-center gap-2">
-                      <span className="text-primary">✨</span>
-                      What do you want to write about?
-                    </Label>
-                    <Textarea 
-                      placeholder="Describe your topic in detail. The more specific you are, the better the AI can help you create amazing content..."
-                      rows={6}
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      className="resize-none rounded-2xl border-2 border-muted focus:border-primary/50 transition-all shadow-sm"
-                    />
-                  </div>
-                  
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <div className="space-y-3">
-                      <Label className="text-base font-bold">🌍 Language</Label>
-                      <Select value={language} onValueChange={setLanguage}>
-                        <SelectTrigger className="rounded-xl border-2 shadow-sm">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="en">🇺🇸 English</SelectItem>
-                          <SelectItem value="es">🇪🇸 Spanish</SelectItem>
-                          <SelectItem value="fr">🇫🇷 French</SelectItem>
-                          <SelectItem value="de">🇩🇪 German</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <Label className="text-base font-bold">🏷️ Keywords (optional)</Label>
-                      <Input 
-                        placeholder="SEO, marketing, growth..." 
-                        value={keywords}
-                        onChange={(e) => setKeywords(e.target.value)}
-                        className="rounded-xl border-2 shadow-sm"
-                      />
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    className="w-full h-16 text-lg font-bold rounded-2xl bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/90 hover:via-primary/80 hover:to-primary/70 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-primary/20" 
-                    onClick={handleGenerate}
-                    disabled={isGenerating || !selectedTemplate || !prompt.trim()}
-                  >
-                    {isGenerating ? (
-                      <>
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
-                        <span className="animate-pulse">Generating Magic...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="h-6 w-6 mr-3" />
-                        Generate Content with AI
-                      </>
-                    )}
-                  </Button>
-                  
-                  {wordsRemaining <= 0 && (
-                    <div className="p-6 bg-gradient-to-r from-destructive/15 via-destructive/10 to-destructive/5 rounded-2xl border-2 border-destructive/30 shadow-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-destructive/20 rounded-xl">
-                          <Crown className="h-6 w-6 text-destructive" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-bold text-lg text-destructive">Word Limit Reached</div>
-                          <div className="text-sm text-destructive/80 mt-1">Upgrade your plan to continue generating amazing content with unlimited words.</div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Generated Content */}
-          <Card className="border-0 shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-br from-background via-background to-emerald-500/5 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent pb-8 border-b border-emerald-500/10">
-              <CardTitle className="flex items-center gap-4 text-2xl">
-                <div className="p-4 bg-gradient-to-br from-emerald-500/30 to-emerald-500/10 rounded-2xl shadow-lg border border-emerald-500/20">
-                  <Copy className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold">Your Generated Content</h3>
-                  <p className="text-sm text-muted-foreground font-normal mt-1">AI-crafted content ready to use</p>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-8">
-              <div className="min-h-[500px] rounded-3xl border-2 border-primary/20 bg-gradient-to-br from-background via-muted/20 to-primary/5 shadow-inner">
-                {generatedContent ? (
-                  <div className="p-8 space-y-6">
-                    <div className="flex items-center justify-between flex-wrap gap-4">
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="bg-gradient-to-r from-primary/20 to-primary/10 text-primary border-primary/30 px-4 py-2 text-sm font-semibold shadow-sm">
-                          <Sparkles className="w-3.5 h-3.5 mr-2" />
-                          {templates.find(t => t.href.split('/').pop() === selectedTemplate)?.title}
-                        </Badge>
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-lg border border-muted-foreground/20">
-                          <FileText className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground font-medium">
-                            {generatedContent.split(' ').length} words
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={copyToClipboard}
-                          className="rounded-xl hover:bg-primary/10 shadow-sm border-primary/20"
-                        >
-                          <Copy className="h-4 w-4 mr-2" />
-                          Copy
-                        </Button>
-                        <ExportDropdown
-                          content={generatedContent}
-                          filename={`${selectedTemplate}-content-${Date.now()}`}
-                        />
-                      </div>
-                    </div>
-                    <div className="bg-background rounded-2xl p-8 shadow-lg border-2 border-primary/10">
-                      <div className="prose prose-sm max-w-none dark:prose-invert">
-                        <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                          {generatedContent}
-                        </pre>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-center p-12">
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full"></div>
-                      <div className="relative p-8 bg-gradient-to-br from-primary/20 to-primary/5 rounded-3xl mb-6 border border-primary/20 shadow-lg">
-                        <Sparkles className="h-20 w-20 text-primary animate-pulse" />
-                      </div>
-                    </div>
-                    <h3 className="text-2xl font-bold mb-3 bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">Your Content Appears Here</h3>
-                    <p className="text-muted-foreground text-lg max-w-md leading-relaxed">
-                      Select a template and describe your content. Our AI will generate professional, engaging content in seconds.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        
 
         {/* Recent Activity */}
         <Card className="border-0 shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-br from-background to-violet-500/5">
@@ -566,20 +327,10 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4">
-              {recentContent.length > 0 ? (
-                recentContent.map((content, index) => (
-                  <div key={index} className="group flex items-center justify-between p-5 bg-gradient-to-r from-muted/40 to-muted/20 rounded-2xl hover:from-muted/60 hover:to-muted/30 transition-all duration-300 border border-muted-foreground/20 hover:border-primary/30 hover:shadow-lg">
+              {recentContent.length > 0 ? recentContent.map((content, index) => <div key={index} className="group flex items-center justify-between p-5 bg-gradient-to-r from-muted/40 to-muted/20 rounded-2xl hover:from-muted/60 hover:to-muted/30 transition-all duration-300 border border-muted-foreground/20 hover:border-primary/30 hover:shadow-lg">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <div className={`p-4 rounded-2xl shadow-md border ${
-                        content.template_type === 'blog' ? 'bg-gradient-to-br from-pink-500/30 to-pink-500/10 border-pink-400/30' :
-                        content.template_type === 'social' ? 'bg-gradient-to-br from-blue-500/30 to-blue-500/10 border-blue-400/30' :
-                        content.template_type === 'ads' ? 'bg-gradient-to-br from-purple-500/30 to-purple-500/10 border-purple-400/30' :
-                        'bg-gradient-to-br from-green-500/30 to-green-500/10 border-green-400/30'
-                      }`}>
-                        {content.template_type === 'blog' ? <Sparkles className="h-6 w-6 text-pink-600 dark:text-pink-400" /> :
-                         content.template_type === 'social' ? <Zap className="h-6 w-6 text-blue-600 dark:text-blue-400" /> :
-                         content.template_type === 'ads' ? <Crown className="h-6 w-6 text-purple-600 dark:text-purple-400" /> :
-                         <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />}
+                      <div className={`p-4 rounded-2xl shadow-md border ${content.template_type === 'blog' ? 'bg-gradient-to-br from-pink-500/30 to-pink-500/10 border-pink-400/30' : content.template_type === 'social' ? 'bg-gradient-to-br from-blue-500/30 to-blue-500/10 border-blue-400/30' : content.template_type === 'ads' ? 'bg-gradient-to-br from-purple-500/30 to-purple-500/10 border-purple-400/30' : 'bg-gradient-to-br from-green-500/30 to-green-500/10 border-green-400/30'}`}>
+                        {content.template_type === 'blog' ? <Sparkles className="h-6 w-6 text-pink-600 dark:text-pink-400" /> : content.template_type === 'social' ? <Zap className="h-6 w-6 text-blue-600 dark:text-blue-400" /> : content.template_type === 'ads' ? <Crown className="h-6 w-6 text-purple-600 dark:text-purple-400" /> : <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-lg mb-1 truncate">{content.template_type.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}</p>
@@ -599,22 +350,14 @@ export default function Dashboard() {
                     <div className="flex items-center gap-2">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors"
-                            onClick={() => setSelectedContent(content)}
-                          >
+                          <Button variant="ghost" size="sm" className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors" onClick={() => setSelectedContent(content)}>
                             View
                           </Button>
                         </DialogTrigger>
                       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle className="flex items-center gap-2">
-                            {content.template_type === 'blog' ? <Sparkles className="h-5 w-5" /> :
-                             content.template_type === 'social' ? <Zap className="h-5 w-5" /> :
-                             content.template_type === 'ads' ? <Crown className="h-5 w-5" /> :
-                             <TrendingUp className="h-5 w-5" />}
+                            {content.template_type === 'blog' ? <Sparkles className="h-5 w-5" /> : content.template_type === 'social' ? <Zap className="h-5 w-5" /> : content.template_type === 'ads' ? <Crown className="h-5 w-5" /> : <TrendingUp className="h-5 w-5" />}
                             {content.template_type.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())} Content
                           </DialogTitle>
                         </DialogHeader>
@@ -645,19 +388,11 @@ export default function Dashboard() {
                             <div className="flex items-center justify-between">
                               <Label className="font-semibold">Generated Content:</Label>
                               <div className="flex gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => copyContentToClipboard(content.generated_content)}
-                                  className="flex items-center gap-2"
-                                >
+                                <Button variant="outline" size="sm" onClick={() => copyContentToClipboard(content.generated_content)} className="flex items-center gap-2">
                                   <Copy className="w-4 h-4" />
                                   Copy
                                 </Button>
-                                <ExportDropdown
-                                  content={content.generated_content}
-                                  filename={`${content.template_type}-${Date.now()}`}
-                                />
+                                <ExportDropdown content={content.generated_content} filename={`${content.template_type}-${Date.now()}`} />
                               </div>
                             </div>
                             <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
@@ -669,19 +404,11 @@ export default function Dashboard() {
                         </div>
                       </DialogContent>
                     </Dialog>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteContent(content.id)}
-                      className="rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => handleDeleteContent(content.id)} className="rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
-                </div>
-                ))
-              ) : (
-                <div className="text-center py-16">
+                </div>) : <div className="text-center py-16">
                   <div className="relative">
                     <div className="absolute inset-0 bg-violet-500/20 blur-3xl rounded-full"></div>
                     <div className="relative p-10 bg-gradient-to-br from-violet-500/20 to-violet-500/5 rounded-3xl mb-6 mx-auto w-fit border border-violet-500/20 shadow-lg">
@@ -692,12 +419,10 @@ export default function Dashboard() {
                   <p className="text-muted-foreground text-lg max-w-md mx-auto leading-relaxed">
                     Your generated content will appear here. Choose a template above and start creating amazing content with AI!
                   </p>
-                </div>
-              )}
+                </div>}
             </div>
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 }
