@@ -12,6 +12,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { MessageSquare, Sparkles, Copy, CreditCard, Lightbulb, Hash } from 'lucide-react';
 import { ExportDropdown } from '@/components/ExportDropdown';
+import { useRecentContent } from '@/hooks/useRecentContent';
+import { RecentContent } from './RecentContent';
 
 const socialExamples = [
   "Promote a new product launch with excitement and call-to-action",

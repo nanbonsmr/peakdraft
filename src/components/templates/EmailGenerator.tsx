@@ -11,6 +11,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Sparkles, Copy, CreditCard, Lightbulb, Send } from 'lucide-react';
 import { ExportDropdown } from '@/components/ExportDropdown';
+import { useRecentContent } from '@/hooks/useRecentContent';
+import { RecentContent } from './RecentContent';
 
 const emailExamples = [
   "Welcome new subscribers to our newsletter with a special offer",

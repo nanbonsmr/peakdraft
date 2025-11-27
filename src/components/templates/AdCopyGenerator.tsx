@@ -10,6 +10,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Megaphone, Sparkles, Copy, CreditCard, Lightbulb, Target } from 'lucide-react';
+import { ExportDropdown } from '@/components/ExportDropdown';
+import { useRecentContent } from '@/hooks/useRecentContent';
+import { RecentContent } from './RecentContent';
 
 const adExamples = [
   "Create compelling ad copy for a new fitness app targeting busy professionals",
