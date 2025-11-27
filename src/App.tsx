@@ -25,6 +25,7 @@ import TermsAndConditions from "./pages/TermsAndConditions";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import PublicPricing from "./pages/PublicPricing";
+import Features from "./pages/Features";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ function AnimatedRoutes() {
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
         <Route path="/pricing" element={<PageTransition><PublicPricing /></PageTransition>} />
+        <Route path="/features" element={<PageTransition><Features /></PageTransition>} />
         <Route path="/app/*" element={
           <ProtectedRoute>
             <SidebarProvider>

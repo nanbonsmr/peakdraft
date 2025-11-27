@@ -95,7 +95,7 @@ export default function Landing() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex gap-6">
-              <Button variant="ghost" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}>
+              <Button variant="ghost" onClick={() => navigate('/features')}>
                 Features
               </Button>
               <Button variant="ghost" onClick={() => navigate('/pricing')}>
@@ -131,7 +131,7 @@ export default function Landing() {
                       variant="ghost" 
                       className="justify-start text-lg"
                       onClick={() => {
-                        document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                        navigate('/features');
                         setMobileMenuOpen(false);
                       }}
                     >
