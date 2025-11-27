@@ -1,11 +1,22 @@
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Home } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function PrivacyPolicy() {
+  const navigate = useNavigate();
+
   return (
     <div className="max-w-4xl mx-auto space-y-6 p-6">
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight">Privacy Policy</h1>
-        <p className="text-muted-foreground">Last updated: {new Date().toLocaleDateString()}</p>
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight">Privacy Policy</h1>
+          <p className="text-muted-foreground">Last updated: {new Date().toLocaleDateString()}</p>
+        </div>
+        <Button variant="outline" onClick={() => navigate('/')}>
+          <Home className="mr-2 h-4 w-4" />
+          Home
+        </Button>
       </div>
 
       <Card className="p-6 space-y-6">

@@ -323,9 +323,9 @@ export default function Landing() {
               <h3 className="font-bold mb-4">Product</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Templates</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">API</a></li>
+                <li><a href="/app/pricing" className="hover:text-primary transition-colors">Pricing</a></li>
+                <li><a href="/app/templates" className="hover:text-primary transition-colors">Templates</a></li>
+                <li><a href="/faq" className="hover:text-primary transition-colors">FAQ</a></li>
               </ul>
             </div>
 
