@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Mail, Phone, MapPin, Send, Loader2, Home } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Loader2, Home, MessageCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -90,6 +90,15 @@ export default function Contact() {
           </div>
           <h3 className="font-bold mb-2">Call Us</h3>
           <p className="text-sm text-muted-foreground">+251976892311</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3 bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600"
+            onClick={() => window.open('https://wa.me/251976892311', '_blank')}
+          >
+            <MessageCircle className="mr-2 h-4 w-4" />
+            WhatsApp
+          </Button>
         </Card>
 
         <Card className="p-6 text-center hover:shadow-elegant transition-all">
