@@ -200,21 +200,29 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
         throw new Error('Failed to create checkout session');
       }
 
-      console.log('Opening Paddle checkout:', data);
+      console.log('Opening Paddle checkout with data:', JSON.stringify(data, null, 2));
 
-      // Open Paddle checkout
-      window.Paddle.Checkout.open({
-        items: [{ priceId: data.priceId, quantity: 1 }],
-        customer: {
-          email: data.customerEmail
-        },
-        customData: data.customData,
-        settings: {
-          displayMode: 'overlay',
-          theme: 'light',
-          locale: 'en'
-        }
-      });
+      // Open Paddle checkout with proper error handling
+      try {
+        await window.Paddle.Checkout.open({
+          items: [{ priceId: data.priceId, quantity: 1 }],
+          customer: {
+            email: data.customerEmail
+          },
+          customData: data.customData,
+          settings: {
+            displayMode: 'overlay',
+            theme: 'light',
+            locale: 'en',
+            allowLogout: false
+          }
+        });
+      } catch (checkoutError: any) {
+        console.error('Paddle Checkout.open error:', checkoutError);
+        toast.error(checkoutError?.message || 'Failed to open checkout');
+        setIsProcessing(false);
+        setSelectedPlan(null);
+      }
 
     } catch (error: any) {
       console.error('Error creating checkout:', error);
