@@ -95,8 +95,8 @@ serve(async (req) => {
 
       // Map plan IDs to subscription details
       const planConfig: Record<string, { words_limit: number; plan_name: string }> = {
-        'basic': { words_limit: 10000, plan_name: 'Basic' },
-        'pro': { words_limit: 50000, plan_name: 'Pro' },
+        'basic': { words_limit: 50000, plan_name: 'Basic' },
+        'pro': { words_limit: 100000, plan_name: 'Pro' },
         'enterprise': { words_limit: 200000, plan_name: 'Enterprise' }
       };
 

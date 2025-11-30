@@ -19,11 +19,11 @@ const plans = [
     id: 'basic',
     name: 'Basic',
     price: 9.99,
-    words: 10000,
+    words: 50000,
     tier: 1,
     description: 'Perfect for individuals and small projects',
     features: [
-      '10,000 words per month',
+      '50,000 words per month',
       'All content templates',
       'Basic support',
       'Export to multiple formats'
@@ -34,11 +34,11 @@ const plans = [
     id: 'pro',
     name: 'Pro',
     price: 19.99,
-    words: 50000,
+    words: 100000,
     tier: 2,
     description: 'Ideal for professionals and growing businesses',
     features: [
-      '50,000 words per month',
+      '100,000 words per month',
       'All content templates',
       'Priority support',
       'API access',

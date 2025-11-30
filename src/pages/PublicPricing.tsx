@@ -11,10 +11,10 @@ const plans = [
     id: 'basic',
     name: 'Basic',
     price: 9.99,
-    words: 10000,
+    words: 50000,
     description: 'Perfect for individuals and small projects',
     features: [
-      '10,000 words per month',
+      '50,000 words per month',
       'All content templates',
       'Basic support',
       'Export to multiple formats'
@@ -25,10 +25,10 @@ const plans = [
     id: 'pro',
     name: 'Pro',
     price: 19.99,
-    words: 50000,
+    words: 100000,
     description: 'Ideal for professionals and growing businesses',
     features: [
-      '50,000 words per month',
+      '100,000 words per month',
       'All content templates',
       'Priority support',
       'API access',
@@ -58,7 +58,7 @@ const plans = [
 
 const comparisonFeatures = [
   { category: 'Content Generation', features: [
-    { name: 'Words per month', basic: '10,000', pro: '50,000', enterprise: '200,000' },
+    { name: 'Words per month', basic: '50,000', pro: '100,000', enterprise: '200,000' },
     { name: 'All content templates', basic: true, pro: true, enterprise: true },
     { name: 'Export formats', basic: 'Basic', pro: 'Advanced', enterprise: 'All formats' },
   ]},
