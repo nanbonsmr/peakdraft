@@ -41,20 +41,45 @@ export default function Pricing() {
   const renderValue = (value: boolean | string) => {
     if (typeof value === 'boolean') {
       return value ? (
-        <Check className="h-5 w-5 text-primary mx-auto" />
+        <Check className="h-4 w-4 sm:h-5 sm:w-5 text-primary mx-auto" />
       ) : (
-        <X className="h-5 w-5 text-muted-foreground/50 mx-auto" />
+        <X className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground/50 mx-auto" />
       );
     }
-    return <span className="text-sm">{value}</span>;
+    return <span className="text-xs sm:text-sm">{value}</span>;
   };
 
+  // Mobile card view for comparison
+  const MobileComparisonCard = ({ planName, planKey }: { planName: string; planKey: 'basic' | 'pro' | 'enterprise' }) => (
+    <Card className={`p-4 ${planKey === 'pro' ? 'border-primary' : ''}`}>
+      <h4 className="font-semibold text-lg mb-4 flex items-center gap-2">
+        {planName}
+        {planKey === 'pro' && (
+          <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded">Popular</span>
+        )}
+      </h4>
+      {comparisonFeatures.map((section, sectionIdx) => (
+        <div key={sectionIdx} className="mb-4">
+          <h5 className="text-sm font-medium text-muted-foreground mb-2">{section.category}</h5>
+          <ul className="space-y-2">
+            {section.features.map((feature, featureIdx) => (
+              <li key={featureIdx} className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{feature.name}</span>
+                <span className="font-medium">{renderValue(feature[planKey])}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </Card>
+  );
+
   return (
-    <div className="max-w-7xl mx-auto space-y-12">
+    <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12 px-4 sm:px-6">
       {/* Header */}
-      <div className="space-y-0.5 text-center">
-        <h2 className="text-3xl font-bold tracking-tight">Billing & Pricing</h2>
-        <p className="text-muted-foreground text-lg">
+      <div className="space-y-1 text-center">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Billing & Pricing</h2>
+        <p className="text-muted-foreground text-sm sm:text-lg">
           Choose the plan that works best for you and upgrade your content creation experience.
         </p>
       </div>
@@ -62,28 +87,29 @@ export default function Pricing() {
       <PaymentPlans onSuccess={handlePaymentSuccess} />
 
       {/* Comparison Table */}
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         <div className="text-center space-y-2">
-          <h3 className="text-2xl font-bold">Detailed Plan Comparison</h3>
-          <p className="text-muted-foreground">
+          <h3 className="text-xl sm:text-2xl font-bold">Detailed Plan Comparison</h3>
+          <p className="text-muted-foreground text-sm sm:text-base">
             Compare all features across our plans to find the perfect fit
           </p>
         </div>
 
-        <Card className="overflow-hidden">
+        {/* Desktop Table - Hidden on mobile */}
+        <Card className="overflow-hidden hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-muted/50">
                 <tr>
                   <th className="text-left p-4 font-semibold min-w-[200px]">Features</th>
-                  <th className="text-center p-4 font-semibold min-w-[150px]">Basic</th>
-                  <th className="text-center p-4 font-semibold min-w-[150px]">
+                  <th className="text-center p-4 font-semibold min-w-[120px]">Basic</th>
+                  <th className="text-center p-4 font-semibold min-w-[120px]">
                     <div className="flex items-center justify-center gap-2">
                       Pro
                       <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded">Popular</span>
                     </div>
                   </th>
-                  <th className="text-center p-4 font-semibold min-w-[150px]">Enterprise</th>
+                  <th className="text-center p-4 font-semibold min-w-[120px]">Enterprise</th>
                 </tr>
               </thead>
               <tbody>
@@ -112,24 +138,31 @@ export default function Pricing() {
           </div>
         </Card>
 
+        {/* Mobile Cards - Shown only on mobile */}
+        <div className="md:hidden space-y-4">
+          <MobileComparisonCard planName="Basic" planKey="basic" />
+          <MobileComparisonCard planName="Pro" planKey="pro" />
+          <MobileComparisonCard planName="Enterprise" planKey="enterprise" />
+        </div>
+
         {/* Additional Info */}
-        <Card className="p-6 bg-muted/30">
-          <div className="grid md:grid-cols-3 gap-6 text-center">
+        <Card className="p-4 sm:p-6 bg-muted/30">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 text-center">
             <div>
-              <h4 className="font-semibold mb-2">30-Day Money Back</h4>
-              <p className="text-sm text-muted-foreground">
+              <h4 className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">30-Day Money Back</h4>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Not satisfied? Get a full refund within 30 days, no questions asked.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-2">Cancel Anytime</h4>
-              <p className="text-sm text-muted-foreground">
+              <h4 className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">Cancel Anytime</h4>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 No long-term contracts. Cancel your subscription at any time.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-2">Need Help Choosing?</h4>
-              <p className="text-sm text-muted-foreground">
+              <h4 className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">Need Help Choosing?</h4>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 <a href="/contact" className="text-primary hover:underline">Contact us</a> and we'll help you find the right plan.
               </p>
             </div>

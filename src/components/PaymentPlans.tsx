@@ -249,17 +249,17 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-4">
-        <h2 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="text-center space-y-2 sm:space-y-4">
+        <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
           Choose Your Plan
         </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-4">
           Unlock the full potential of AI-powered content generation with our flexible pricing plans
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {plans.map((plan) => {
           const currentPlan = profile?.subscription_plan?.toLowerCase();
           const isCurrentPlan = currentPlan === plan.id;
@@ -294,18 +294,18 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
               )}
               
               <CardHeader className="text-center pb-2">
-                <CardTitle className="text-xl font-semibold">{plan.name}</CardTitle>
-                <div className="flex items-center justify-center space-x-1">
+                <CardTitle className="text-lg sm:text-xl font-semibold">{plan.name}</CardTitle>
+                <div className="flex items-center justify-center space-x-1 flex-wrap">
                   {discount > 0 && (
-                    <span className="text-lg line-through text-muted-foreground">${plan.price}</span>
+                    <span className="text-base sm:text-lg line-through text-muted-foreground">${plan.price}</span>
                   )}
-                  <span className="text-3xl font-bold">${calculateDiscountedPrice(plan.price).toFixed(2)}</span>
-                  <span className="text-muted-foreground">/month</span>
+                  <span className="text-2xl sm:text-3xl font-bold">${calculateDiscountedPrice(plan.price).toFixed(2)}</span>
+                  <span className="text-sm text-muted-foreground">/month</span>
                   {discount > 0 && (
-                    <Badge variant="secondary" className="ml-2">{discount}% OFF</Badge>
+                    <Badge variant="secondary" className="ml-2 text-xs">{discount}% OFF</Badge>
                   )}
                 </div>
-                <CardDescription>{plan.description}</CardDescription>
+                <CardDescription className="text-xs sm:text-sm">{plan.description}</CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-4">
@@ -365,8 +365,8 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
         })}
       </div>
 
-      <div className="text-center space-y-2">
-        <p className="text-sm text-muted-foreground">
+      <div className="text-center space-y-2 px-4">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           All plans include a 7-day free trial. Cancel anytime.
         </p>
         <p className="text-xs text-muted-foreground">
