@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const geminiApiKey = Deno.env.get('GOOGLE_GEMINI_API_KEY');
+const deepseekApiKey = Deno.env.get('DEEPSEEK_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -141,8 +141,8 @@ serve(async (req) => {
   }
 
   try {
-    if (!geminiApiKey) {
-      console.error('Google Gemini API key not found');
+    if (!deepseekApiKey) {
+      console.error('DeepSeek API key not found');
       return new Response(JSON.stringify({ error: 'API key not configured' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -159,43 +159,30 @@ serve(async (req) => {
     }
 
     const systemPrompt = buildSystemPrompt(template_type, language, keywords);
-    const fullPrompt = `${systemPrompt}\n\nUser Request: ${prompt}`;
 
-    console.log('Calling Gemini API with prompt:', fullPrompt);
+    console.log('Calling DeepSeek API with template:', template_type);
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`, {
+    const response = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${deepseekApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: fullPrompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2048,
-        },
-        safetySettings: [
-          {
-            category: "HARM_CATEGORY_HARASSMENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_HATE_SPEECH",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          }
-        ]
+        model: 'deepseek-chat',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt }
+        ],
+        max_tokens: 2048,
+        temperature: 0.7,
+        stream: false
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API error:', response.status, errorText);
+      console.error('DeepSeek API error:', response.status, errorText);
       return new Response(JSON.stringify({ error: `API error: ${response.status}` }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -203,9 +190,9 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('Gemini API response:', JSON.stringify(data, null, 2));
+    console.log('DeepSeek API response received');
 
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
       console.error('Unexpected API response structure:', data);
       return new Response(JSON.stringify({ error: 'Unexpected API response format' }), {
         status: 500,
@@ -213,7 +200,7 @@ serve(async (req) => {
       });
     }
 
-    const generatedContent = data.candidates[0].content.parts[0].text;
+    const generatedContent = data.choices[0].message.content;
     const wordCount = generatedContent.split(' ').length;
 
     return new Response(JSON.stringify({ 
