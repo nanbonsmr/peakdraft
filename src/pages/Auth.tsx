@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { PenTool, Sparkles } from 'lucide-react';
+import { PenTool, Sparkles, Mail, CheckCircle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 export default function Auth() {
@@ -17,6 +17,7 @@ export default function Auth() {
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [verificationSent, setVerificationSent] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
@@ -28,10 +29,17 @@ export default function Auth() {
     const { error } = await signIn(email, password);
     
     if (error) {
-      setError(error.message);
+      // Handle unconfirmed email error
+      if (error.message.includes('Email not confirmed')) {
+        setError('Please verify your email address before signing in. Check your inbox for the verification link.');
+      } else {
+        setError(error.message);
+      }
       toast({
         title: "Error signing in",
-        description: error.message,
+        description: error.message.includes('Email not confirmed') 
+          ? 'Please verify your email first' 
+          : error.message,
         variant: "destructive"
       });
     } else {
@@ -50,11 +58,11 @@ export default function Auth() {
     setLoading(true);
     setError('');
 
-    const { error } = await supabase.auth.signUp({
+    const { error, data } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/`,
+        emailRedirectTo: `${window.location.origin}/app`,
         data: {
           display_name: displayName,
         }
@@ -68,13 +76,47 @@ export default function Auth() {
         description: error.message,
         variant: "destructive"
       });
-    } else {
+    } else if (data.user && !data.session) {
+      // User created but needs email verification
+      setVerificationSent(true);
+      toast({
+        title: "Verification email sent!",
+        description: "Please check your inbox to verify your email address."
+      });
+    } else if (data.session) {
+      // Email confirmation is disabled, user is signed in
       toast({
         title: "Account created!",
-        description: "You can now sign in with your credentials."
+        description: "Welcome to QuickWrite AI!"
       });
+      navigate('/app');
     }
     
+    setLoading(false);
+  };
+
+  const handleResendVerification = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/app`,
+      }
+    });
+    
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Email sent!",
+        description: "Verification email has been resent."
+      });
+    }
     setLoading(false);
   };
 
@@ -155,45 +197,81 @@ export default function Auth() {
               </TabsContent>
 
               <TabsContent value="signup" className="space-y-4">
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name">Display Name</Label>
-                    <Input
-                      id="signup-name"
-                      type="text"
-                      placeholder="Enter your name"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      required
-                    />
+                {verificationSent ? (
+                  <div className="text-center space-y-4 py-4">
+                    <div className="flex justify-center">
+                      <div className="p-3 bg-primary/10 rounded-full">
+                        <Mail className="h-8 w-8 text-primary" />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">Check your email</h3>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        We've sent a verification link to <strong>{email}</strong>
+                      </p>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Click the link in the email to verify your account, then come back here to sign in.
+                    </p>
+                    <div className="pt-2 space-y-2">
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={handleResendVerification}
+                        disabled={loading}
+                      >
+                        {loading ? 'Sending...' : 'Resend verification email'}
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full"
+                        onClick={() => setVerificationSent(false)}
+                      >
+                        Use different email
+                      </Button>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      placeholder="Create a password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      minLength={6}
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Creating Account...' : 'Create Account'}
-                  </Button>
-                </form>
+                ) : (
+                  <form onSubmit={handleSignUp} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-name">Display Name</Label>
+                      <Input
+                        id="signup-name"
+                        type="text"
+                        placeholder="Enter your name"
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email">Email</Label>
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password">Password</Label>
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        placeholder="Create a password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        minLength={6}
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? 'Creating Account...' : 'Create Account'}
+                    </Button>
+                  </form>
+                )}
               </TabsContent>
             </Tabs>
           </CardContent>
