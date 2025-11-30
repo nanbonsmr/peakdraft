@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Settings, LogOut, Bell, CreditCard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { NotificationPanel } from "./NotificationPanel";
 import {
   DropdownMenu,
@@ -25,6 +26,43 @@ export function Header() {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      if (!profile) return;
+      
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('id')
+        .eq('is_active', true);
+      
+      if (!error && data) {
+        // Add dynamic notifications count based on user state
+        let dynamicCount = 0;
+        if (profile.words_used === 0) dynamicCount++;
+        if (profile.words_used && profile.words_limit) {
+          const usage = (profile.words_used / profile.words_limit) * 100;
+          if (usage >= 75) dynamicCount++;
+        }
+        setUnreadCount(data.length + dynamicCount);
+      }
+    };
+
+    fetchUnreadCount();
+
+    // Subscribe to real-time notification changes
+    const channel = supabase
+      .channel('notifications-header')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
+        fetchUnreadCount();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [profile]);
   
   const handleSignOut = async () => {
     await signOut();
@@ -67,10 +105,14 @@ export function Header() {
           <PopoverTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="w-5 h-5" />
-              <Badge 
-                variant="destructive" 
-                className="absolute -top-1 -right-1 w-2 h-2 p-0 text-xs"
-              />
+              {unreadCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-1 -right-1 h-5 min-w-5 p-0 text-xs flex items-center justify-center"
+                >
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </Badge>
+              )}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-80 p-0" align="end">

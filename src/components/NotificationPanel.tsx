@@ -44,6 +44,7 @@ export function NotificationPanel() {
         const { data: dbNotifications, error } = await supabase
           .from('notifications')
           .select('*')
+          .eq('is_active', true)
           .order('created_at', { ascending: false });
 
         if (error) {
@@ -58,7 +59,7 @@ export function NotificationPanel() {
           title: notif.title,
           message: notif.message,
           timestamp: new Date(notif.created_at),
-          read: true // Default to read for now, we can add read status later
+          read: false
         }));
 
         // Add dynamic notifications based on user state
@@ -71,10 +72,10 @@ export function NotificationPanel() {
             type: 'info',
             title: 'Welcome to QuickWrite AI!',
             message: 'Start creating amazing content with our AI-powered templates.',
-            timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
+            timestamp: new Date(Date.now() - 5 * 60 * 1000),
             read: false,
             actionLabel: 'Get Started',
-            actionUrl: '/templates'
+            actionUrl: '/app/templates'
           });
         }
 
@@ -88,10 +89,10 @@ export function NotificationPanel() {
               type: 'warning',
               title: 'Word Limit Almost Reached',
               message: `You've used ${Math.round(usagePercentage)}% of your monthly word limit. Consider upgrading your plan.`,
-              timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+              timestamp: new Date(Date.now() - 30 * 60 * 1000),
               read: false,
               actionLabel: 'Upgrade Plan',
-              actionUrl: '/pricing'
+              actionUrl: '/app/pricing'
             });
           } else if (usagePercentage >= 75) {
             dynamicNotifications.push({
@@ -99,7 +100,7 @@ export function NotificationPanel() {
               type: 'info',
               title: 'Word Usage Update',
               message: `You've used ${Math.round(usagePercentage)}% of your monthly word limit.`,
-              timestamp: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
+              timestamp: new Date(Date.now() - 60 * 60 * 1000),
               read: false
             });
           }
@@ -118,6 +119,20 @@ export function NotificationPanel() {
     if (profile) {
       fetchNotifications();
     }
+
+    // Subscribe to real-time notification changes
+    const channel = supabase
+      .channel('notifications-panel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
+        if (profile) {
+          fetchNotifications();
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [profile]);
 
   const getNotificationIcon = (type: Notification['type']) => {

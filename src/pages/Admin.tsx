@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { AlertCircle, Bell, Percent, Users, Settings } from "lucide-react";
+import { AlertCircle, Bell, Percent, Users, Settings, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -181,6 +181,54 @@ export default function Admin() {
     }
   };
 
+  const deleteNotification = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Notification deleted successfully",
+      });
+      await loadNotifications();
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete notification",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteDiscountCode = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('discount_codes')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Discount code deleted successfully",
+      });
+      await loadDiscountCodes();
+    } catch (error) {
+      console.error('Error deleting discount code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete discount code",
+        variant: "destructive",
+      });
+    }
+  };
+
   const toggleDiscountCodeStatus = async (id: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
@@ -318,7 +366,7 @@ export default function Admin() {
                 {notifications.map((notification) => (
                   <div key={notification.id} className="border rounded-lg p-4 space-y-2">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-semibold">{notification.title}</h3>
                         <Badge variant={notification.type as any}>{notification.type}</Badge>
                         <Badge variant="outline">{notification.target_users}</Badge>
@@ -331,6 +379,14 @@ export default function Admin() {
                         <span className="text-sm text-muted-foreground">
                           {notification.is_active ? "Active" : "Inactive"}
                         </span>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => deleteNotification(notification.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                     <p className="text-sm text-muted-foreground">{notification.message}</p>
@@ -417,7 +473,7 @@ export default function Admin() {
                 {discountCodes.map((code) => (
                   <div key={code.id} className="border rounded-lg p-4 space-y-2">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-semibold font-mono">{code.code}</h3>
                         <Badge>{code.discount_percent}% OFF</Badge>
                         {code.max_uses && (
@@ -432,6 +488,14 @@ export default function Admin() {
                         <span className="text-sm text-muted-foreground">
                           {code.is_active ? "Active" : "Inactive"}
                         </span>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => deleteDiscountCode(code.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
