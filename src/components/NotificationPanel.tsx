@@ -14,7 +14,8 @@ import {
   Sparkles, 
   CreditCard,
   MoreVertical,
-  X
+  X,
+  Trash2
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -22,6 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
 
 interface Notification {
   id: string;
@@ -32,13 +34,28 @@ interface Notification {
   read: boolean;
   actionLabel?: string;
   actionUrl?: string;
+  isDynamic?: boolean;
 }
 
 export function NotificationPanel() {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    const fetchDismissedNotifications = async () => {
+      if (!user) return;
+      
+      const { data, error } = await supabase
+        .from('dismissed_notifications')
+        .select('notification_id')
+        .eq('user_id', user.id);
+      
+      if (!error && data) {
+        setDismissedIds(new Set(data.map(d => d.notification_id)));
+      }
+    };
+
     const fetchNotifications = async () => {
       try {
         const { data: dbNotifications, error } = await supabase
@@ -52,21 +69,27 @@ export function NotificationPanel() {
           return;
         }
 
+        // Filter out dismissed notifications
+        const filteredDbNotifications = (dbNotifications || []).filter(
+          notif => !dismissedIds.has(notif.id)
+        );
+
         // Convert database notifications to component format
-        const formattedNotifications: Notification[] = (dbNotifications || []).map(notif => ({
+        const formattedNotifications: Notification[] = filteredDbNotifications.map(notif => ({
           id: notif.id,
           type: notif.type as Notification['type'],
           title: notif.title,
           message: notif.message,
           timestamp: new Date(notif.created_at),
-          read: false
+          read: false,
+          isDynamic: false
         }));
 
         // Add dynamic notifications based on user state
         const dynamicNotifications: Notification[] = [];
 
         // Welcome notification for new users
-        if (profile?.words_used === 0) {
+        if (profile?.words_used === 0 && !dismissedIds.has('welcome')) {
           dynamicNotifications.push({
             id: 'welcome',
             type: 'info',
@@ -75,7 +98,8 @@ export function NotificationPanel() {
             timestamp: new Date(Date.now() - 5 * 60 * 1000),
             read: false,
             actionLabel: 'Get Started',
-            actionUrl: '/app/templates'
+            actionUrl: '/app/templates',
+            isDynamic: true
           });
         }
 
@@ -83,7 +107,7 @@ export function NotificationPanel() {
         if (profile?.words_used && profile?.words_limit) {
           const usagePercentage = (profile.words_used / profile.words_limit) * 100;
           
-          if (usagePercentage >= 90) {
+          if (usagePercentage >= 90 && !dismissedIds.has('usage-critical')) {
             dynamicNotifications.push({
               id: 'usage-critical',
               type: 'warning',
@@ -92,16 +116,18 @@ export function NotificationPanel() {
               timestamp: new Date(Date.now() - 30 * 60 * 1000),
               read: false,
               actionLabel: 'Upgrade Plan',
-              actionUrl: '/app/pricing'
+              actionUrl: '/app/pricing',
+              isDynamic: true
             });
-          } else if (usagePercentage >= 75) {
+          } else if (usagePercentage >= 75 && !dismissedIds.has('usage-warning')) {
             dynamicNotifications.push({
               id: 'usage-warning',
               type: 'info',
               title: 'Word Usage Update',
               message: `You've used ${Math.round(usagePercentage)}% of your monthly word limit.`,
               timestamp: new Date(Date.now() - 60 * 60 * 1000),
-              read: false
+              read: false,
+              isDynamic: true
             });
           }
         }
@@ -116,8 +142,12 @@ export function NotificationPanel() {
       }
     };
 
-    if (profile) {
-      fetchNotifications();
+    if (user) {
+      fetchDismissedNotifications().then(() => {
+        if (profile) {
+          fetchNotifications();
+        }
+      });
     }
 
     // Subscribe to real-time notification changes
@@ -133,7 +163,7 @@ export function NotificationPanel() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [profile]);
+  }, [user, profile, dismissedIds]);
 
   const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
@@ -156,8 +186,68 @@ export function NotificationPanel() {
     );
   };
 
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(notif => notif.id !== id));
+  const removeNotification = async (id: string, isDynamic: boolean = false) => {
+    if (!user) return;
+
+    try {
+      // For database notifications, record the dismissal
+      if (!isDynamic) {
+        const { error } = await supabase
+          .from('dismissed_notifications')
+          .insert({ user_id: user.id, notification_id: id });
+
+        if (error) {
+          console.error('Error dismissing notification:', error);
+          toast.error('Failed to dismiss notification');
+          return;
+        }
+      }
+
+      // Update local state
+      setDismissedIds(prev => new Set([...prev, id]));
+      setNotifications(prev => prev.filter(notif => notif.id !== id));
+      toast.success('Notification dismissed');
+    } catch (error) {
+      console.error('Error removing notification:', error);
+      toast.error('Failed to dismiss notification');
+    }
+  };
+
+  const clearAllNotifications = async () => {
+    if (!user) return;
+
+    try {
+      // Get all database notification ids that aren't dismissed yet
+      const dbNotificationIds = notifications
+        .filter(n => !n.isDynamic)
+        .map(n => n.id);
+
+      if (dbNotificationIds.length > 0) {
+        const dismissals = dbNotificationIds.map(id => ({
+          user_id: user.id,
+          notification_id: id
+        }));
+
+        const { error } = await supabase
+          .from('dismissed_notifications')
+          .upsert(dismissals, { onConflict: 'user_id,notification_id' });
+
+        if (error) {
+          console.error('Error clearing notifications:', error);
+          toast.error('Failed to clear notifications');
+          return;
+        }
+      }
+
+      // Update local state for all notifications including dynamic
+      const allIds = notifications.map(n => n.id);
+      setDismissedIds(prev => new Set([...prev, ...allIds]));
+      setNotifications([]);
+      toast.success('All notifications cleared');
+    } catch (error) {
+      console.error('Error clearing notifications:', error);
+      toast.error('Failed to clear notifications');
+    }
   };
 
   const markAllAsRead = () => {
@@ -186,22 +276,35 @@ export function NotificationPanel() {
           <CardTitle className="flex items-center gap-2 text-lg">
             <Bell className="w-5 h-5" />
             Notifications
-            {unreadCount > 0 && (
+            {notifications.length > 0 && (
               <Badge variant="default" className="ml-2">
-                {unreadCount}
+                {notifications.length}
               </Badge>
             )}
           </CardTitle>
-          {unreadCount > 0 && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={markAllAsRead}
-              className="text-xs"
-            >
-              Mark all read
-            </Button>
-          )}
+          <div className="flex items-center gap-1">
+            {unreadCount > 0 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={markAllAsRead}
+                className="text-xs"
+              >
+                Mark all read
+              </Button>
+            )}
+            {notifications.length > 0 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={clearAllNotifications}
+                className="text-xs text-destructive hover:text-destructive"
+              >
+                <Trash2 className="w-3 h-3 mr-1" />
+                Clear all
+              </Button>
+            )}
+          </div>
         </div>
         <CardDescription>
           Stay updated with your account activity and new features
@@ -252,11 +355,11 @@ export function NotificationPanel() {
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuItem 
-                                onClick={() => removeNotification(notification.id)}
+                                onClick={() => removeNotification(notification.id, notification.isDynamic)}
                                 className="text-red-600"
                               >
-                                <X className="w-4 h-4 mr-2" />
-                                Remove
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
