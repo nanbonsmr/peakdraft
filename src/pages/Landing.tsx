@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -69,7 +69,14 @@ export default function Landing() {
   const { ref: ctaRef, isInView: ctaInView } = useInView();
   const { ref: newFeaturesRef, isInView: newFeaturesInView } = useInView();
   const { ref: templatesRef, isInView: templatesInView } = useInView();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/app');
+    }
+  }, [user, loading, navigate]);
 
   const handleSelectPlan = () => {
     if (user) {
