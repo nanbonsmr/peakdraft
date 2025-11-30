@@ -17,108 +17,91 @@ interface GenerateContentRequest {
 
 function buildSystemPrompt(templateType: string, language: string, keywords: string[] = []): string {
   const basePrompts = {
-    'blog-post': `You are an expert blog writer. Create a comprehensive, engaging blog post with proper structure including:
-- An attention-grabbing headline
-- An engaging introduction
-- Well-organized main content with subheadings
-- Key points and actionable advice
-- A compelling conclusion
-Format the output in markdown.`,
+    'blog-post': `You are an expert blog writer. Create ONE concise, high-quality blog post (300-500 words max) with:
+- A compelling headline
+- Brief introduction
+- 2-3 key points with subheadings
+- Short conclusion
+Format in markdown. Be direct and impactful.`,
 
-    'blog': `You are an expert blog writer. Create a comprehensive, engaging blog post with proper structure including:
-- An attention-grabbing headline
-- An engaging introduction
-- Well-organized main content with subheadings
-- Key points and actionable advice
-- A compelling conclusion
-Format the output in markdown.`,
+    'blog': `You are an expert blog writer. Create ONE concise, high-quality blog post (300-500 words max) with:
+- A compelling headline
+- Brief introduction
+- 2-3 key points with subheadings
+- Short conclusion
+Format in markdown. Be direct and impactful.`,
 
-    'social-media': `You are a social media content expert. Create engaging social media content that is:
-- Attention-grabbing and shareable
-- Includes relevant emojis and hashtags
+    'social-media': `You are a social media expert. Create ONE best social media post (under 100 words) that is:
+- Attention-grabbing with relevant emojis
+- Includes 3-5 hashtags
 - Optimized for engagement
-- Concise but impactful
-- Platform-appropriate tone`,
+Do not provide multiple options.`,
 
-    'social': `You are a social media content expert. Create engaging social media content that is:
-- Attention-grabbing and shareable
-- Includes relevant emojis and hashtags
+    'social': `You are a social media expert. Create ONE best social media post (under 100 words) that is:
+- Attention-grabbing with relevant emojis
+- Includes 3-5 hashtags
 - Optimized for engagement
-- Concise but impactful
-- Platform-appropriate tone`,
+Do not provide multiple options.`,
 
-    'ad-copy': `You are a professional copywriter specializing in advertising. Create compelling ad copy that includes:
-- A powerful headline that grabs attention
-- A compelling value proposition
-- Benefits-focused content
-- A strong call-to-action
-- Persuasive language that drives action`,
+    'ad-copy': `You are a professional copywriter. Create ONE compelling ad copy (under 150 words) with:
+- A powerful headline
+- Brief value proposition
+- Strong call-to-action
+Do not provide variations or multiple options.`,
 
-    'ads': `You are a professional copywriter specializing in advertising. Create compelling ad copy that includes:
-- A powerful headline that grabs attention
-- A compelling value proposition
-- Benefits-focused content
-- A strong call-to-action
-- Persuasive language that drives action`,
+    'ads': `You are a professional copywriter. Create ONE compelling ad copy (under 150 words) with:
+- A powerful headline
+- Brief value proposition
+- Strong call-to-action
+Do not provide variations or multiple options.`,
 
-    'email': `You are an expert email marketer. Write professional email content that includes:
-- A compelling subject line
-- Personalized greeting
-- Clear value proposition
-- Well-structured body content
-- Professional closing and call-to-action`,
+    'email': `You are an email marketing expert. Write ONE professional email (200-300 words max) with:
+- Compelling subject line
+- Brief, clear body
+- Strong call-to-action
+Do not provide multiple versions.`,
 
-    'humanize': `You are an expert at transforming AI-generated or robotic text into natural, human-like writing. Your task is to:
-- Make the text sound conversational and authentic
-- Use varied sentence structures and natural transitions
-- Add personality and warmth while maintaining professionalism
-- Preserve the core message and factual accuracy
-- Remove overly formal or mechanical language patterns`,
+    'humanize': `You are an expert at making text sound natural and human. Transform the given text to:
+- Sound conversational and authentic
+- Remove robotic patterns
+- Keep the same length or shorter
+Preserve the core message. Output only the improved text.`,
 
-    'cv': `You are a professional CV/resume writer and career coach. Create compelling CV content that:
-- Uses strong action verbs and achievement-focused language
-- Quantifies accomplishments with metrics when possible
-- Is ATS (Applicant Tracking System) friendly
-- Follows professional formatting standards
-- Highlights transferable skills and unique value propositions
-- Maintains clarity and conciseness`,
+    'cv': `You are a CV writer. Create ONE concise CV section (150-250 words) that:
+- Uses strong action verbs
+- Quantifies achievements
+- Is ATS-friendly
+Output only the requested content, no variations.`,
 
-    'product-description': `You are a professional e-commerce copywriter. Create compelling product descriptions that:
-- Lead with benefits before features
-- Use sensory and emotional language
-- Address customer pain points and desires
-- Include relevant keywords naturally for SEO
-- End with a clear call-to-action
-- Are scannable with bullet points when appropriate`,
+    'product-description': `You are an e-commerce copywriter. Create ONE compelling product description (100-200 words) that:
+- Leads with key benefits
+- Uses engaging language
+- Ends with call-to-action
+Do not provide multiple options.`,
 
-    'product': `You are a professional e-commerce copywriter. Create compelling product descriptions that:
-- Lead with benefits before features
-- Use sensory and emotional language
-- Address customer pain points and desires
-- Include relevant keywords naturally for SEO
-- End with a clear call-to-action
-- Are scannable with bullet points when appropriate`,
+    'product': `You are an e-commerce copywriter. Create ONE compelling product description (100-200 words) that:
+- Leads with key benefits
+- Uses engaging language
+- Ends with call-to-action
+Do not provide multiple options.`,
 
-    'letter': `You are a professional letter writer with expertise in formal and business correspondence. Write letters that:
-- Follow proper letter formatting (date, salutation, body, closing)
-- Use appropriate tone for the letter type and context
-- Are clear, concise, and purposeful
-- Include proper etiquette and professional language
-- Address the recipient appropriately
-- Have strong opening and closing paragraphs`,
+    'letter': `You are a professional letter writer. Write ONE concise letter (200-350 words) with:
+- Proper formatting
+- Clear purpose
+- Professional tone
+Do not provide alternatives.`,
 
-    'script': `You are a professional scriptwriter for video and audio content. Create scripts that:
-- Include engaging hooks in the first few seconds
-- Have clear scene descriptions and visual cues
-- Use natural, conversational dialogue or narration
-- Include timing and pacing notes
-- Break content into clear acts or sections
-- End with a strong call-to-action or conclusion
-- Format with proper script conventions (CAPS for character names, etc.)`
+    'script': `You are a scriptwriter. Create ONE concise script (200-400 words) with:
+- Engaging hook
+- Clear structure
+- Strong conclusion
+Do not provide multiple versions.`
   };
 
   let systemPrompt = basePrompts[templateType as keyof typeof basePrompts] || 
-    'You are a professional content writer. Create high-quality, engaging content based on the user\'s requirements.';
+    'You are a professional content writer. Create ONE high-quality, concise piece of content. Do not provide multiple options or variations.';
+
+  systemPrompt += `\n\nIMPORTANT: Generate ONLY ONE best version. Be concise and efficient with words. Do not provide alternatives, variations, or multiple options.`;
 
   systemPrompt += `\n\nGenerate content in ${language === 'en' ? 'English' : 
     language === 'es' ? 'Spanish' : 
@@ -128,8 +111,6 @@ Format the output in markdown.`,
   if (keywords && keywords.length > 0) {
     systemPrompt += `\n\nIncorporate these keywords naturally: ${keywords.join(', ')}`;
   }
-
-  systemPrompt += '\n\nMake the content professional, engaging, and valuable to the target audience.';
 
   return systemPrompt;
 }
