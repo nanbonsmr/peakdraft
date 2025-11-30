@@ -20,7 +20,7 @@ const pricingPlans = [
     price: 9.99,
     description: 'Perfect for individuals',
     features: [
-      '10,000 words per month',
+      '50,000 words per month',
       'All content templates',
       'Basic support',
       'Export to multiple formats'
@@ -33,7 +33,7 @@ const pricingPlans = [
     price: 19.99,
     description: 'Ideal for professionals',
     features: [
-      '50,000 words per month',
+      '100,000 words per month',
       'All content templates',
       'Priority support',
       'API access',
