@@ -71,8 +71,17 @@ export default function Landing() {
   const { ref: templatesRef, isInView: templatesInView } = useInView();
   const { user, loading } = useAuth();
 
-  // Redirect authenticated users to dashboard
+  // Handle OAuth callback and redirect authenticated users to dashboard
   useEffect(() => {
+    // Check if this is an OAuth callback (has access_token in hash)
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const hasAccessToken = hashParams.has('access_token');
+    
+    if (hasAccessToken) {
+      // Clear the hash to clean up the URL
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+    
     if (!loading && user) {
       navigate('/app');
     }
