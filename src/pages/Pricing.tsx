@@ -1,3 +1,4 @@
+import React from 'react';
 import { PaymentPlans } from '@/components/PaymentPlans';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -114,8 +115,8 @@ export default function Pricing() {
               </thead>
               <tbody>
                 {comparisonFeatures.map((section, sectionIdx) => (
-                  <>
-                    <tr key={`section-${sectionIdx}`} className="bg-muted/30">
+                  <React.Fragment key={`section-${sectionIdx}`}>
+                    <tr className="bg-muted/30">
                       <td colSpan={4} className="p-4 font-semibold text-sm">
                         {section.category}
                       </td>
@@ -131,7 +132,7 @@ export default function Pricing() {
                         <td className="p-4 text-center">{renderValue(feature.enterprise)}</td>
                       </tr>
                     ))}
-                  </>
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
