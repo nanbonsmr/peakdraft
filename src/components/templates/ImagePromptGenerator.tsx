@@ -68,13 +68,14 @@ export default function ImagePromptGenerator() {
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: { 
           prompt: enhancedPrompt,
-          templateType: 'image-prompt'
+          template_type: 'image-prompt',
+          language: 'en'
         }
       });
 
       if (error) throw error;
 
-      const content = data.content;
+      const content = data.generated_content;
       const wordCount = content.split(/\s+/).length;
 
       setGeneratedContent(content);
