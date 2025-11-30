@@ -8,8 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { PenTool, Sparkles, Mail, ArrowLeft } from 'lucide-react';
+import { PenTool, Sparkles } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 export default function Auth() {
@@ -18,11 +17,6 @@ export default function Auth() {
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [otpStep, setOtpStep] = useState(false);
-  const [otp, setOtp] = useState('');
-  const [signupEmail, setSignupEmail] = useState('');
-  const [signupPassword, setSignupPassword] = useState('');
-  const [signupDisplayName, setSignupDisplayName] = useState('');
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
@@ -56,211 +50,33 @@ export default function Auth() {
     setLoading(true);
     setError('');
 
-    try {
-      // Store credentials for verification step
-      setSignupEmail(email);
-      setSignupPassword(password);
-      setSignupDisplayName(displayName);
-
-      // Call edge function to send OTP
-      const { data, error } = await supabase.functions.invoke('send-signup-otp', {
-        body: { email, displayName }
-      });
-
-      if (error) {
-        throw new Error(error.message);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`,
+        data: {
+          display_name: displayName,
+        }
       }
-
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-
-      setOtpStep(true);
+    });
+    
+    if (error) {
+      setError(error.message);
       toast({
-        title: "Verification code sent!",
-        description: "Please check your email for the 6-digit code."
-      });
-    } catch (err: any) {
-      setError(err.message);
-      toast({
-        title: "Error",
-        description: err.message,
+        title: "Error signing up",
+        description: error.message,
         variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Account created!",
+        description: "You can now sign in with your credentials."
       });
     }
     
     setLoading(false);
   };
-
-  const handleVerifyOtp = async () => {
-    if (otp.length !== 6) {
-      setError('Please enter a valid 6-digit code');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-
-    try {
-      // Call edge function to verify OTP and create account
-      const { data, error } = await supabase.functions.invoke('verify-signup-otp', {
-        body: { 
-          email: signupEmail, 
-          otp, 
-          password: signupPassword 
-        }
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-
-      toast({
-        title: "Account created!",
-        description: "Signing you in..."
-      });
-
-      // Sign in the user
-      const { error: signInError } = await signIn(signupEmail, signupPassword);
-      
-      if (signInError) {
-        toast({
-          title: "Account created",
-          description: "Please sign in with your credentials."
-        });
-        setOtpStep(false);
-        setOtp('');
-      } else {
-        navigate('/app');
-      }
-    } catch (err: any) {
-      setError(err.message);
-      toast({
-        title: "Verification failed",
-        description: err.message,
-        variant: "destructive"
-      });
-    }
-
-    setLoading(false);
-  };
-
-  const handleResendOtp = async () => {
-    setLoading(true);
-    setError('');
-
-    try {
-      const { data, error } = await supabase.functions.invoke('send-signup-otp', {
-        body: { email: signupEmail, displayName: signupDisplayName }
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-
-      toast({
-        title: "Code resent!",
-        description: "Please check your email for the new verification code."
-      });
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message,
-        variant: "destructive"
-      });
-    }
-
-    setLoading(false);
-  };
-
-  const handleBackToSignup = () => {
-    setOtpStep(false);
-    setOtp('');
-    setError('');
-  };
-
-  if (otpStep) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
-        <div className="w-full max-w-md">
-          <Button 
-            variant="ghost" 
-            onClick={handleBackToSignup} 
-            className="mb-6"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Sign Up
-          </Button>
-
-          <Card className="border-elegant shadow-elegant">
-            <CardHeader className="text-center">
-              <div className="mx-auto p-3 bg-primary/10 rounded-full w-fit mb-4">
-                <Mail className="h-8 w-8 text-primary" />
-              </div>
-              <CardTitle>Verify Your Email</CardTitle>
-              <CardDescription>
-                We sent a 6-digit code to <span className="font-medium text-foreground">{signupEmail}</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <div className="flex justify-center">
-                <InputOTP
-                  maxLength={6}
-                  value={otp}
-                  onChange={(value) => setOtp(value)}
-                >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
-              </div>
-
-              <Button 
-                onClick={handleVerifyOtp} 
-                className="w-full" 
-                disabled={loading || otp.length !== 6}
-              >
-                {loading ? 'Verifying...' : 'Verify Email'}
-              </Button>
-
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground mb-2">
-                  Didn't receive the code?
-                </p>
-                <Button 
-                  variant="link" 
-                  onClick={handleResendOtp} 
-                  disabled={loading}
-                  className="text-primary"
-                >
-                  Resend Code
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
