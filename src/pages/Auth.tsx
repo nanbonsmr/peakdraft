@@ -62,7 +62,7 @@ export default function Auth() {
       email,
       password,
       options: {
-        emailRedirectTo: 'https://quickwriteaiapp.netlify.app/app',
+        emailRedirectTo: 'https://quickwriteapp.netlify.app/app',
         data: {
           display_name: displayName,
         }
@@ -101,7 +101,7 @@ export default function Auth() {
       type: 'signup',
       email: email,
       options: {
-        emailRedirectTo: 'https://quickwriteaiapp.netlify.app/app',
+        emailRedirectTo: 'https://quickwriteapp.netlify.app/app',
       }
     });
     
