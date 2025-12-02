@@ -38,23 +38,23 @@ export function RecentContent({
         <div className="space-y-4">
           {recentContent.length > 0 ? (
             recentContent.map((content, index) => (
-              <div key={index} className="group flex items-center justify-between p-4 bg-gradient-to-r from-muted/30 to-muted/10 rounded-2xl hover:from-muted/50 hover:to-muted/20 transition-all duration-300 border border-muted-foreground/10">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className={`p-3 rounded-xl ${templateBgColor} ${templateColor} flex-shrink-0`}>
-                    <Icon className="h-5 w-5" />
+              <div key={index} className="group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between p-3 sm:p-4 bg-gradient-to-r from-muted/30 to-muted/10 rounded-2xl hover:from-muted/50 hover:to-muted/20 transition-all duration-300 border border-muted-foreground/10">
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <div className={`p-2 sm:p-3 rounded-xl ${templateBgColor} ${templateColor} flex-shrink-0`}>
+                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm truncate" title={content.prompt}>
+                    <p className="font-semibold text-xs sm:text-sm line-clamp-1" title={content.prompt}>
                       {content.prompt}
                     </p>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 sm:gap-3 text-xs text-muted-foreground flex-wrap">
                       <span className="font-medium">{content.word_count} words</span>
-                      <span>•</span>
-                      <span>{new Date(content.created_at).toLocaleDateString()}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span className="truncate">{new Date(content.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 flex-shrink-0">
+                <div className="flex items-center gap-1 flex-shrink-0 self-end sm:self-auto">
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button variant="ghost" size="sm" className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors">
