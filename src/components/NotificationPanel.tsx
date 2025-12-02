@@ -271,26 +271,28 @@ export function NotificationPanel() {
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Bell className="w-5 h-5" />
-            Notifications
+      <CardHeader className="pb-3 px-3 sm:px-6">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="flex items-center gap-1 sm:gap-2 text-base sm:text-lg">
+            <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline">Notifications</span>
+            <span className="sm:hidden">Notifs</span>
             {notifications.length > 0 && (
-              <Badge variant="default" className="ml-2">
+              <Badge variant="default" className="ml-1 sm:ml-2 text-xs px-1.5">
                 {notifications.length}
               </Badge>
             )}
           </CardTitle>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1">
             {unreadCount > 0 && (
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={markAllAsRead}
-                className="text-xs"
+                className="text-[10px] sm:text-xs h-7 px-2"
               >
-                Mark all read
+                <span className="hidden sm:inline">Mark all read</span>
+                <CheckCircle className="w-3 h-3 sm:hidden" />
               </Button>
             )}
             {notifications.length > 0 && (
@@ -298,31 +300,31 @@ export function NotificationPanel() {
                 variant="ghost" 
                 size="sm" 
                 onClick={clearAllNotifications}
-                className="text-xs text-destructive hover:text-destructive"
+                className="text-[10px] sm:text-xs h-7 px-2 text-destructive hover:text-destructive"
               >
-                <Trash2 className="w-3 h-3 mr-1" />
-                Clear all
+                <Trash2 className="w-3 h-3 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Clear all</span>
               </Button>
             )}
           </div>
         </div>
-        <CardDescription>
-          Stay updated with your account activity and new features
+        <CardDescription className="text-xs sm:text-sm mt-1">
+          Stay updated with your account activity
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0">
-        <ScrollArea className="h-96">
-          <div className="space-y-1 p-4">
+        <ScrollArea className="h-[70vh] sm:h-96">
+          <div className="space-y-1 p-2 sm:p-4">
             {notifications.length === 0 ? (
               <div className="text-center py-8">
-                <Bell className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">No notifications yet</p>
+                <Bell className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-xs sm:text-sm text-muted-foreground">No notifications yet</p>
               </div>
             ) : (
               notifications.map((notification, index) => (
                 <div key={notification.id}>
                   <div 
-                    className={`flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer ${
+                    className={`flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer ${
                       !notification.read ? 'bg-muted/30' : ''
                     }`}
                     onClick={() => !notification.read && markAsRead(notification.id)}
@@ -331,19 +333,19 @@ export function NotificationPanel() {
                       {getNotificationIcon(notification.type)}
                     </div>
                     <div className="flex-1 space-y-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <p className={`text-sm font-medium leading-none ${
+                      <div className="flex items-start justify-between gap-1 sm:gap-2">
+                        <p className={`text-xs sm:text-sm font-medium leading-tight ${
                           !notification.read ? 'text-foreground' : 'text-muted-foreground'
                         }`}>
                           {notification.title}
                         </p>
-                        <div className="flex items-center gap-1">
-                          <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        <div className="flex items-center gap-0.5 sm:gap-1">
+                          <span className="text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
                             {formatTimestamp(notification.timestamp)}
                           </span>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="w-6 h-6">
+                              <Button variant="ghost" size="icon" className="w-5 h-5 sm:w-6 sm:h-6">
                                 <MoreVertical className="w-3 h-3" />
                               </Button>
                             </DropdownMenuTrigger>
@@ -365,14 +367,14 @@ export function NotificationPanel() {
                           </DropdownMenu>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                         {notification.message}
                       </p>
                       {notification.actionLabel && notification.actionUrl && (
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          className="h-auto p-0 text-xs text-primary hover:text-primary-foreground"
+                          className="h-auto p-0 text-[10px] sm:text-xs text-primary hover:text-primary-foreground"
                           asChild
                         >
                           <a href={notification.actionUrl}>
