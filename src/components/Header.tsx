@@ -30,39 +30,55 @@ export function Header() {
   
   useEffect(() => {
     const fetchUnreadCount = async () => {
-      if (!profile) return;
+      if (!user || !profile) return;
       
-      const { data, error } = await supabase
+      // Fetch dismissed notifications
+      const { data: dismissedData } = await supabase
+        .from('dismissed_notifications')
+        .select('notification_id')
+        .eq('user_id', user.id);
+      
+      const dismissedIds = new Set(dismissedData?.map(d => d.notification_id) || []);
+      
+      // Fetch active notifications
+      const { data: dbNotifications, error } = await supabase
         .from('notifications')
         .select('id')
         .eq('is_active', true);
       
-      if (!error && data) {
+      if (!error && dbNotifications) {
+        // Filter out dismissed notifications
+        const activeNotifications = dbNotifications.filter(n => !dismissedIds.has(n.id));
+        
         // Add dynamic notifications count based on user state
         let dynamicCount = 0;
-        if (profile.words_used === 0) dynamicCount++;
+        if (profile.words_used === 0 && !dismissedIds.has('welcome')) dynamicCount++;
         if (profile.words_used && profile.words_limit) {
           const usage = (profile.words_used / profile.words_limit) * 100;
-          if (usage >= 75) dynamicCount++;
+          if (usage >= 90 && !dismissedIds.has('usage-critical')) dynamicCount++;
+          else if (usage >= 75 && !dismissedIds.has('usage-warning')) dynamicCount++;
         }
-        setUnreadCount(data.length + dynamicCount);
+        setUnreadCount(activeNotifications.length + dynamicCount);
       }
     };
 
     fetchUnreadCount();
 
     // Subscribe to real-time notification changes
-    const channel = supabase
+    const notifChannel = supabase
       .channel('notifications-header')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
+        fetchUnreadCount();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'dismissed_notifications' }, () => {
         fetchUnreadCount();
       })
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(notifChannel);
     };
-  }, [profile]);
+  }, [user, profile]);
   
   const handleSignOut = async () => {
     await signOut();
@@ -115,7 +131,7 @@ export function Header() {
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80 p-0" align="end">
+          <PopoverContent className="w-[calc(100vw-2rem)] sm:w-80 p-0" align="end">
             <NotificationPanel />
           </PopoverContent>
         </Popover>
