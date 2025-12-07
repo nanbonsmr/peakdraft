@@ -16,7 +16,7 @@ export default function TermsAndConditions() {
             </div>
             <h1 className="text-4xl font-bold tracking-tight">Terms and Conditions</h1>
           </div>
-          <p className="text-muted-foreground">Last updated: November 27, 2024</p>
+          <p className="text-muted-foreground">Last updated: December 7, 2024</p>
         </div>
         <Button variant="outline" onClick={() => navigate('/')}>
           <Home className="mr-2 h-4 w-4" />
@@ -28,7 +28,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Introduction</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Welcome to QuickWrite AI. These Terms and Conditions ("Terms," "Agreement") constitute a legally binding agreement between you ("User," "you," or "your") and QuickWrite AI ("Company," "we," "our," or "us") governing your access to and use of our AI-powered content generation platform, task management tools, and related services (collectively, the "Service").
+            Welcome to quickwriteapp. These Terms and Conditions ("Terms," "Agreement") constitute a legally binding agreement between you ("User," "you," or "your") and quickwriteapp ("Company," "we," "our," or "us") governing your access to and use of our AI-powered content generation platform, task management tools, and related services (collectively, the "Service").
           </p>
           <p className="text-muted-foreground leading-relaxed">
             By creating an account, accessing, or using our Service, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree to these Terms, you must not access or use the Service. We reserve the right to modify these Terms at any time, and your continued use of the Service following any changes constitutes acceptance of those changes.
@@ -38,7 +38,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">1. Acceptance of Terms</h2>
           <p className="text-muted-foreground leading-relaxed">
-            By accessing and using the QuickWrite AI Service, you represent and warrant that:
+            By accessing and using the quickwriteapp Service, you represent and warrant that:
           </p>
           <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
             <li>You are at least 18 years of age or the age of legal majority in your jurisdiction</li>
@@ -55,7 +55,10 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">2. Description of Service</h2>
           <p className="text-muted-foreground leading-relaxed">
-            QuickWrite AI provides an AI-powered content generation platform that enables users to create various types of written content, including but not limited to:
+            quickwriteapp provides a fully automated AI-powered content generation platform that enables users to create various types of written content. <strong>No human-driven services are involved in our offering.</strong> All content generation is performed entirely by artificial intelligence without human intervention.
+          </p>
+          <p className="text-muted-foreground leading-relaxed mt-4">
+            Our services include, but are not limited to:
           </p>
           <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
             <li>Blog posts and articles</li>
@@ -103,36 +106,41 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">4. Subscription and Payment</h2>
           
-          <h3 className="text-lg font-medium mt-4">4.1 Subscription Plans</h3>
+          <h3 className="text-lg font-medium mt-4">4.1 Merchant of Record</h3>
+          <p className="text-muted-foreground leading-relaxed">
+            quickwriteapp uses Paddle.com as our Merchant of Record for all subscription transactions. When you purchase a subscription, you are purchasing from Paddle, who is the authorized reseller of our services.
+          </p>
+
+          <h3 className="text-lg font-medium mt-4">4.2 Subscription Plans</h3>
           <p className="text-muted-foreground leading-relaxed">
             Access to certain features of the Service requires a paid subscription. Subscription plans are offered on a monthly or annual basis, with pricing and features as described on our website. By subscribing to a paid plan, you agree to pay the applicable subscription fees.
           </p>
 
-          <h3 className="text-lg font-medium mt-4">4.2 Billing and Payment</h3>
+          <h3 className="text-lg font-medium mt-4">4.3 Billing and Payment</h3>
           <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
             <li>Subscriptions are billed in advance on a recurring basis (monthly or annually)</li>
             <li>Payment is due at the time of subscription and at each renewal date</li>
             <li>All fees are quoted and payable in US dollars unless otherwise specified</li>
-            <li>You authorize us to charge your designated payment method for all applicable fees</li>
+            <li>You authorize Paddle to charge your designated payment method for all applicable fees</li>
             <li>If your payment method fails, we may suspend or terminate your access to the Service</li>
           </ul>
 
-          <h3 className="text-lg font-medium mt-4">4.3 Automatic Renewal</h3>
+          <h3 className="text-lg font-medium mt-4">4.4 Automatic Renewal</h3>
           <p className="text-muted-foreground leading-relaxed">
-            Subscriptions automatically renew at the end of each billing period unless you cancel before the renewal date. You will be charged the then-current subscription fee unless you cancel prior to the renewal date. You can cancel your subscription at any time through your account settings.
+            Subscriptions automatically renew at the end of each billing period unless you cancel before the renewal date. You will be charged the then-current subscription fee unless you cancel prior to the renewal date. You can cancel your subscription at any time through your account settings or by contacting us.
           </p>
 
-          <h3 className="text-lg font-medium mt-4">4.4 Price Changes</h3>
+          <h3 className="text-lg font-medium mt-4">4.5 Price Changes</h3>
           <p className="text-muted-foreground leading-relaxed">
-            We reserve the right to modify subscription fees at any time. Any price changes will be communicated to you at least 30 days in advance and will take effect at your next billing cycle. Your continued use of the Service after a price change constitutes acceptance of the new pricing.
+            We reserve the right to modify subscription fees at any time. Any price changes will be communicated to you in advance and will take effect at your next billing cycle. Your continued use of the Service after a price change constitutes acceptance of the new pricing.
           </p>
 
-          <h3 className="text-lg font-medium mt-4">4.5 Refunds</h3>
+          <h3 className="text-lg font-medium mt-4">4.6 Refunds</h3>
           <p className="text-muted-foreground leading-relaxed">
-            Subscription fees are generally non-refundable. However, we may consider refund requests on a case-by-case basis at our sole discretion. If you believe you are entitled to a refund, please contact our support team within 14 days of your payment. Refunds, if granted, will be processed using the original payment method.
+            Refunds are processed in accordance with our Refund Policy and Paddle's Consumer Terms. You have a 14-day right to cancel from the date of purchase. Please see our Refund Policy page for complete details.
           </p>
 
-          <h3 className="text-lg font-medium mt-4">4.6 Free Trials</h3>
+          <h3 className="text-lg font-medium mt-4">4.7 Free Trials</h3>
           <p className="text-muted-foreground leading-relaxed">
             We may offer free trials of paid subscription plans. At the end of the trial period, you will be automatically charged for the subscription unless you cancel before the trial ends. Free trials are limited to one per user, and we reserve the right to revoke trial access if we detect abuse.
           </p>
@@ -188,7 +196,7 @@ export default function TermsAndConditions() {
 
           <h3 className="text-lg font-medium mt-4">6.4 Our Intellectual Property</h3>
           <p className="text-muted-foreground leading-relaxed">
-            The Service, including its original content, features, functionality, software, and technology, is owned by QuickWrite AI and is protected by international copyright, trademark, patent, trade secret, and other intellectual property laws. Our trademarks, logos, and service marks may not be used without our prior written consent.
+            The Service, including its original content, features, functionality, software, and technology, is owned by quickwriteapp and is protected by international copyright, trademark, patent, trade secret, and other intellectual property laws. Our trademarks, logos, and service marks may not be used without our prior written consent.
           </p>
         </section>
 
@@ -274,7 +282,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">10. Limitation of Liability</h2>
           <p className="text-muted-foreground leading-relaxed">
-            TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL QUICKWRITE AI, ITS AFFILIATES, DIRECTORS, OFFICERS, EMPLOYEES, AGENTS, OR LICENSORS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA, OR OTHER INTANGIBLE LOSSES, ARISING OUT OF OR RELATING TO YOUR USE OF OR INABILITY TO USE THE SERVICE.
+            TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL QUICKWRITEAPP, ITS AFFILIATES, DIRECTORS, OFFICERS, EMPLOYEES, AGENTS, OR LICENSORS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA, OR OTHER INTANGIBLE LOSSES, ARISING OUT OF OR RELATING TO YOUR USE OF OR INABILITY TO USE THE SERVICE.
           </p>
           <p className="text-muted-foreground leading-relaxed mt-4">
             IN NO EVENT SHALL OUR TOTAL LIABILITY TO YOU FOR ALL CLAIMS EXCEED THE AMOUNT YOU PAID TO US FOR THE SERVICE IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM, OR ONE HUNDRED US DOLLARS ($100), WHICHEVER IS GREATER.
@@ -287,7 +295,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">11. Indemnification</h2>
           <p className="text-muted-foreground leading-relaxed">
-            You agree to indemnify, defend, and hold harmless QuickWrite AI and its affiliates, officers, directors, employees, agents, and licensors from and against any claims, liabilities, damages, losses, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to:
+            You agree to indemnify, defend, and hold harmless quickwriteapp and its affiliates, officers, directors, employees, agents, and licensors from and against any claims, liabilities, damages, losses, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to:
           </p>
           <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
             <li>Your use of the Service</li>
@@ -341,7 +349,7 @@ export default function TermsAndConditions() {
 
           <h3 className="text-lg font-medium mt-4">13.3 Class Action Waiver</h3>
           <p className="text-muted-foreground leading-relaxed">
-            You agree that any dispute resolution proceedings will be conducted only on an individual basis and not in a class, consolidated, or representative action. You waive any right to participate in class action lawsuits or class-wide arbitration against QuickWrite AI.
+            You agree that any dispute resolution proceedings will be conducted only on an individual basis and not in a class, consolidated, or representative action. You waive any right to participate in class action lawsuits or class-wide arbitration against quickwriteapp.
           </p>
         </section>
 
@@ -350,7 +358,7 @@ export default function TermsAndConditions() {
           
           <h3 className="text-lg font-medium mt-4">14.1 Entire Agreement</h3>
           <p className="text-muted-foreground leading-relaxed">
-            These Terms, together with our Privacy Policy, constitute the entire agreement between you and QuickWrite AI regarding the Service and supersede all prior agreements and understandings.
+            These Terms, together with our Privacy Policy, constitute the entire agreement between you and quickwriteapp regarding the Service and supersede all prior agreements and understandings.
           </p>
 
           <h3 className="text-lg font-medium mt-4">14.2 Severability</h3>
@@ -387,7 +395,7 @@ export default function TermsAndConditions() {
             If you have any questions, concerns, or feedback regarding these Terms and Conditions, please contact us at:
           </p>
           <div className="bg-muted/50 p-4 rounded-lg mt-4">
-            <p className="font-medium">QuickWrite AI Legal Department</p>
+            <p className="font-medium">quickwriteapp Legal Department</p>
             <p className="text-muted-foreground">Email: nanbonkayu@gmail.com</p>
             <p className="text-muted-foreground">Address: Addis Ababa, Ethiopia</p>
             <p className="text-muted-foreground">Phone: +251976892311</p>
