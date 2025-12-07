@@ -47,7 +47,7 @@ export default function RefundPolicy() {
           
           <h3 className="text-lg font-medium mt-4">2.1 How to Cancel</h3>
           <p className="text-muted-foreground leading-relaxed">
-            To cancel your order, contact us at support@quickwriteai.com or through our Contact page. To meet the cancellation deadline, it is sufficient that you send your cancellation request before the expiration of the 14-day period.
+            To cancel your order, contact us at nanbonkayu@gmail.com or through our Contact page. To meet the cancellation deadline, it is sufficient that you send your cancellation request before the expiration of the 14-day period.
           </p>
 
           <h3 className="text-lg font-medium mt-4">2.2 Effect of Cancellation</h3>
@@ -109,7 +109,7 @@ export default function RefundPolicy() {
             If you have any questions about this Refund Policy or need to request a refund, please contact us:
           </p>
           <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-            <li><strong>Email:</strong> support@quickwriteai.com</li>
+            <li><strong>Email:</strong> nanbonkayu@gmail.com</li>
             <li><strong>Contact Page:</strong> Visit our Contact page on the website</li>
           </ul>
           <p className="text-muted-foreground leading-relaxed mt-4">
