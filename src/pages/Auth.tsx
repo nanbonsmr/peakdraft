@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PenTool, Sparkles, ArrowLeft, Zap, Shield, Globe } from 'lucide-react';
-
+import FloatingParticles from '@/components/FloatingParticles';
 export default function Auth() {
   const { isSignedIn, isLoaded } = useAuth();
   const navigate = useNavigate();
@@ -33,6 +33,7 @@ export default function Auth() {
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 rounded-full blur-3xl"></div>
+        <FloatingParticles />
       </div>
 
       {/* Left side - Branding */}
