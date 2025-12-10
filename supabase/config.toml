@@ -50,3 +50,6 @@ verify_jwt = true
 
 [functions.paddle-webhook]
 verify_jwt = false
+
+[functions.admin-operations]
+verify_jwt = false
