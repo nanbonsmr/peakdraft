@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { useClerk } from '@clerk/clerk-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { User, Mail, Save, Trash2, CreditCard, ArrowUpRight, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -24,7 +25,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 
 export default function Settings() {
-  const { user, profile, refreshProfile, signOut } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
+  const { signOut } = useClerk();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -102,6 +104,7 @@ export default function Settings() {
   const handleDeleteAccount = async () => {
     try {
       await signOut();
+      navigate('/');
       toast({
         title: "Account deletion initiated",
         description: "Please contact support to complete account deletion.",
@@ -141,6 +144,7 @@ export default function Settings() {
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4">
             <Avatar className="w-20 h-20">
+              {user?.imageUrl && <AvatarImage src={user.imageUrl} alt={profile?.display_name || 'User'} />}
               <AvatarFallback className="bg-gradient-primary text-primary-foreground text-lg">
                 {initials}
               </AvatarFallback>
@@ -148,7 +152,7 @@ export default function Settings() {
             <div className="space-y-1">
               <p className="text-sm font-medium">Profile Picture</p>
               <p className="text-sm text-muted-foreground">
-                Avatar is generated from your display name
+                {user?.imageUrl ? 'Synced from your social account' : 'Avatar is generated from your display name'}
               </p>
             </div>
           </div>

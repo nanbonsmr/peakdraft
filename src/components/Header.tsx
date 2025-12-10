@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useClerk } from "@clerk/clerk-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Settings, LogOut, Bell, CreditCard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,7 +24,8 @@ import {
 } from "@/components/ui/popover";
 
 export function Header() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile } = useAuth();
+  const { signOut } = useClerk();
   const navigate = useNavigate();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -82,6 +84,7 @@ export function Header() {
   
   const handleSignOut = async () => {
     await signOut();
+    navigate('/');
   };
 
   const handleSettingsClick = () => {
@@ -141,6 +144,7 @@ export function Header() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
               <Avatar className="h-10 w-10">
+                {user?.imageUrl && <AvatarImage src={user.imageUrl} alt={profile?.display_name || 'User'} />}
                 <AvatarFallback className="bg-gradient-primary text-white">
                   {initials}
                 </AvatarFallback>

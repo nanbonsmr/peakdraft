@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Profile {
@@ -17,21 +17,17 @@ interface Profile {
 }
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  user: { id: string; email: string; firstName?: string; lastName?: string; imageUrl?: string } | null;
   profile: Profile | null;
-  signUp: (email: string, password: string, displayName: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signOut: () => Promise<void>;
   loading: boolean;
   refreshProfile: () => Promise<void>;
+  isSignedIn: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const { user: clerkUser, isLoaded, isSignedIn } = useUser();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -47,87 +43,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const createProfile = async (userId: string, displayName: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .insert({
+        user_id: userId,
+        display_name: displayName,
+        subscription_plan: 'free',
+        words_limit: 500,
+        words_used: 0,
+      })
+      .select()
+      .single();
+
+    if (data && !error) {
+      setProfile(data);
+    }
+    return { data, error };
+  };
+
   const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user.id);
+    if (clerkUser) {
+      await fetchProfile(clerkUser.id);
     }
   };
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-          }, 0);
+    const syncUserProfile = async () => {
+      if (isLoaded) {
+        if (isSignedIn && clerkUser) {
+          // Try to fetch existing profile
+          const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', clerkUser.id)
+            .single();
+
+          if (existingProfile) {
+            setProfile(existingProfile);
+          } else {
+            // Create new profile for Clerk user
+            const displayName = clerkUser.firstName 
+              ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim()
+              : clerkUser.emailAddresses[0]?.emailAddress || 'User';
+            await createProfile(clerkUser.id, displayName);
+          }
         } else {
           setProfile(null);
         }
-        
         setLoading(false);
       }
-    );
+    };
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-      
-      setLoading(false);
-    });
+    syncUserProfile();
+  }, [isLoaded, isSignedIn, clerkUser]);
 
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const signUp = async (email: string, password: string, displayName: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          display_name: displayName,
-        }
-      }
-    });
-    
-    return { error };
-  };
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    return { error };
-  };
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setProfile(null);
-  };
+  const user = clerkUser ? {
+    id: clerkUser.id,
+    email: clerkUser.emailAddresses[0]?.emailAddress || '',
+    firstName: clerkUser.firstName || undefined,
+    lastName: clerkUser.lastName || undefined,
+    imageUrl: clerkUser.imageUrl,
+  } : null;
 
   return (
     <AuthContext.Provider value={{
       user,
-      session,
       profile,
-      signUp,
-      signIn,
-      signOut,
-      loading,
-      refreshProfile
+      loading: !isLoaded || loading,
+      refreshProfile,
+      isSignedIn: isSignedIn || false,
     }}>
       {children}
     </AuthContext.Provider>
