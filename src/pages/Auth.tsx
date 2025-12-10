@@ -117,20 +117,22 @@ export default function Auth() {
             <p className="text-white/60 text-sm">AI-powered content generation</p>
           </div>
 
-          <Card className="border-0 bg-white/10 backdrop-blur-xl shadow-2xl shadow-black/20">
-            <CardHeader className="text-center pb-2">
-              <CardTitle className="flex items-center justify-center gap-2 text-white text-2xl">
-                <Sparkles className="h-5 w-5 text-violet-400" />
+          <Card className="border border-white/10 bg-gradient-to-br from-white/15 via-white/10 to-white/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_80px_rgba(139,92,246,0.15),inset_0_1px_0_rgba(255,255,255,0.1)] rounded-2xl overflow-hidden">
+            <CardHeader className="text-center pb-2 relative">
+              <div className="absolute inset-0 bg-gradient-to-b from-violet-500/10 to-transparent pointer-events-none" />
+              <CardTitle className="flex items-center justify-center gap-2 text-white text-2xl relative z-10">
+                <Sparkles className="h-5 w-5 text-violet-400 drop-shadow-[0_0_8px_rgba(167,139,250,0.5)]" />
                 {activeTab === 'signin' ? 'Welcome Back' : 'Get Started'}
               </CardTitle>
-              <CardDescription className="text-white/60">
+              <CardDescription className="text-white/70 relative z-10">
                 {activeTab === 'signin' 
                   ? 'Sign in to continue creating amazing content' 
                   : 'Create your account and start writing'}
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-4">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <CardContent className="pt-4 relative">
+              <div className="absolute inset-0 bg-gradient-to-t from-fuchsia-500/5 to-transparent pointer-events-none" />
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 relative z-10">
                 <TabsList className="grid w-full grid-cols-2 bg-white/10 p-1">
                   <TabsTrigger 
                     value="signin" 
