@@ -2,6 +2,9 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
 import { supabase } from '@/integrations/supabase/client';
 
+// Admin email - you can add more emails here
+const ADMIN_EMAILS = ['nanbondev@gmail.com'];
+
 interface Profile {
   id: string;
   user_id: string;
@@ -22,6 +25,7 @@ interface AuthContextType {
   loading: boolean;
   refreshProfile: () => Promise<void>;
   isSignedIn: boolean;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +34,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { user: clerkUser, isLoaded, isSignedIn } = useUser();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const userEmail = clerkUser?.emailAddresses[0]?.emailAddress || '';
+  const isAdmin = ADMIN_EMAILS.includes(userEmail.toLowerCase());
 
   const fetchProfile = async (userId: string) => {
     const { data, error } = await supabase
@@ -41,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (data && !error) {
       setProfile(data);
     }
+    return { data, error };
   };
 
   const createProfile = async (userId: string, displayName: string) => {
@@ -73,16 +81,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (isLoaded) {
         if (isSignedIn && clerkUser) {
           // Try to fetch existing profile
-          const { data: existingProfile } = await supabase
+          const { data: existingProfile, error } = await supabase
             .from('profiles')
             .select('*')
             .eq('user_id', clerkUser.id)
             .single();
 
-          if (existingProfile) {
+          if (existingProfile && !error) {
             setProfile(existingProfile);
-          } else {
-            // Create new profile for Clerk user
+          } else if (error?.code === 'PGRST116') {
+            // Profile doesn't exist, create one
             const displayName = clerkUser.firstName 
               ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim()
               : clerkUser.emailAddresses[0]?.emailAddress || 'User';
@@ -113,6 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading: !isLoaded || loading,
       refreshProfile,
       isSignedIn: isSignedIn || false,
+      isAdmin,
     }}>
       {children}
     </AuthContext.Provider>

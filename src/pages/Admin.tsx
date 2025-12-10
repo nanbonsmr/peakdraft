@@ -25,9 +25,8 @@ interface Notification {
 
 
 export default function Admin() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { toast } = useToast();
-  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
@@ -40,25 +39,12 @@ export default function Admin() {
   });
 
   useEffect(() => {
-    checkAdminAccess();
-  }, [user]);
-
-  const checkAdminAccess = async () => {
-    if (!user) return;
-    
-    try {
-      const { data, error } = await supabase.rpc('is_admin', { user_uuid: user.id });
-      if (error) throw error;
-      setIsAdmin(data);
-      if (data) {
-        await loadData();
-      }
-    } catch (error) {
-      console.error('Error checking admin access:', error);
-    } finally {
+    if (isAdmin) {
+      loadData().finally(() => setLoading(false));
+    } else {
       setLoading(false);
     }
-  };
+  }, [isAdmin]);
 
   const loadData = async () => {
     await loadNotifications();
