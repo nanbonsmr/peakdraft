@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const geminiApiKey = Deno.env.get('GOOGLE_GEMINI_API_KEY');
+const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -122,8 +122,8 @@ serve(async (req) => {
   }
 
   try {
-    if (!geminiApiKey) {
-      console.error('Google Gemini API key not found');
+    if (!lovableApiKey) {
+      console.error('Lovable API key not found');
       return new Response(JSON.stringify({ error: 'API key not configured' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -144,39 +144,42 @@ serve(async (req) => {
     }
 
     const systemPrompt = buildSystemPrompt(template_type, language, keywords);
-    const fullPrompt = `${systemPrompt}\n\nUser Request: ${prompt}`;
 
-    console.log('Calling Gemini API with template:', template_type);
+    console.log('Calling Lovable AI Gateway with template:', template_type);
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`, {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${lovableApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: fullPrompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2048,
-        },
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt }
+        ],
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API error:', response.status, errorText);
+      console.error('Lovable AI Gateway error:', response.status, errorText);
       
       if (response.status === 429) {
         return new Response(JSON.stringify({ 
           error: 'AI service is temporarily busy. Please wait a moment and try again.' 
         }), {
           status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ 
+          error: 'AI credits exhausted. Please add funds to continue.' 
+        }), {
+          status: 402,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
@@ -188,9 +191,11 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('Gemini API response received');
+    console.log('Lovable AI Gateway response received');
 
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+    const generatedContent = data.choices?.[0]?.message?.content;
+    
+    if (!generatedContent) {
       console.error('Unexpected API response structure:', data);
       return new Response(JSON.stringify({ error: 'Unexpected API response format' }), {
         status: 500,
@@ -198,7 +203,6 @@ serve(async (req) => {
       });
     }
 
-    const generatedContent = data.candidates[0].content.parts[0].text;
     const wordCount = generatedContent.split(' ').length;
 
     return new Response(JSON.stringify({ 
