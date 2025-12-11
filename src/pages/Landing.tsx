@@ -8,8 +8,8 @@ import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle
 import featuresShowcase from '@/assets/features-showcase-new.jpg';
 import workflowIllustration from '@/assets/workflow-illustration-new.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
+import heroContentGeneration from '@/assets/hero-content-generation.jpg';
 import { useAuth } from '@/contexts/AuthContext';
-import Hero3DScene from '@/components/Hero3DScene';
 import { useInView } from '@/hooks/useInView';
 import { useParallax } from '@/hooks/useParallax';
 
@@ -251,9 +251,13 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Right Column - 3D Scene */}
+            {/* Right Column - Hero Image */}
             <div className="relative animate-fade-in h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
-              <Hero3DScene />
+              <img 
+                src={heroContentGeneration} 
+                alt="AI Content Generation Platform - Create blog posts, social media content, and more with AI"
+                className="w-full h-full object-contain rounded-2xl shadow-elegant"
+              />
             </div>
           </div>
         </div>
