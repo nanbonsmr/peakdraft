@@ -538,7 +538,7 @@ export type Database = {
       is_admin_by_user_id: { Args: { _user_id: string }; Returns: boolean }
       trigger_subscription_expiration: { Args: never; Returns: undefined }
       update_word_usage: {
-        Args: { user_uuid: string; words_to_add: number }
+        Args: { user_id_param: string; words_to_add: number }
         Returns: undefined
       }
       validate_discount_code: {
