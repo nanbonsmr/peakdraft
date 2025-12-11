@@ -28,7 +28,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Introduction</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Welcome to quickwriteapp. These Terms and Conditions ("Terms," "Agreement") constitute a legally binding agreement between you ("User," "you," or "your") and quickwriteapp ("Company," "we," "our," or "us") governing your access to and use of our AI-powered content generation platform, task management tools, and related services (collectively, the "Service").
+            Welcome to peakdraftapp. These Terms and Conditions ("Terms," "Agreement") constitute a legally binding agreement between you ("User," "you," or "your") and peakdraftapp ("Company," "we," "our," or "us") governing your access to and use of our AI-powered content generation platform, task management tools, and related services (collectively, the "Service").
           </p>
           <p className="text-muted-foreground leading-relaxed">
             By creating an account, accessing, or using our Service, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree to these Terms, you must not access or use the Service. We reserve the right to modify these Terms at any time, and your continued use of the Service following any changes constitutes acceptance of those changes.
@@ -38,7 +38,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">1. Acceptance of Terms</h2>
           <p className="text-muted-foreground leading-relaxed">
-            By accessing and using the quickwriteapp Service, you represent and warrant that:
+            By accessing and using the peakdraftapp Service, you represent and warrant that:
           </p>
           <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
             <li>You are at least 18 years of age or the age of legal majority in your jurisdiction</li>
@@ -55,7 +55,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">2. Description of Service</h2>
           <p className="text-muted-foreground leading-relaxed">
-            quickwriteapp provides a fully automated AI-powered content generation platform that enables users to create various types of written content. <strong>No human-driven services are involved in our offering.</strong> All content generation is performed entirely by artificial intelligence without human intervention.
+            peakdraftapp provides a fully automated AI-powered content generation platform that enables users to create various types of written content. <strong>No human-driven services are involved in our offering.</strong> All content generation is performed entirely by artificial intelligence without human intervention.
           </p>
           <p className="text-muted-foreground leading-relaxed mt-4">
             Our services include, but are not limited to:
@@ -108,7 +108,7 @@ export default function TermsAndConditions() {
           
           <h3 className="text-lg font-medium mt-4">4.1 Merchant of Record</h3>
           <p className="text-muted-foreground leading-relaxed">
-            quickwriteapp uses Paddle.com as our Merchant of Record for all subscription transactions. When you purchase a subscription, you are purchasing from Paddle, who is the authorized reseller of our services.
+            peakdraftapp uses Paddle.com as our Merchant of Record for all subscription transactions. When you purchase a subscription, you are purchasing from Paddle, who is the authorized reseller of our services.
           </p>
 
           <h3 className="text-lg font-medium mt-4">4.2 Subscription Plans</h3>
@@ -196,7 +196,7 @@ export default function TermsAndConditions() {
 
           <h3 className="text-lg font-medium mt-4">6.4 Our Intellectual Property</h3>
           <p className="text-muted-foreground leading-relaxed">
-            The Service, including its original content, features, functionality, software, and technology, is owned by quickwriteapp and is protected by international copyright, trademark, patent, trade secret, and other intellectual property laws. Our trademarks, logos, and service marks may not be used without our prior written consent.
+            The Service, including its original content, features, functionality, software, and technology, is owned by peakdraftapp and is protected by international copyright, trademark, patent, trade secret, and other intellectual property laws. Our trademarks, logos, and service marks may not be used without our prior written consent.
           </p>
         </section>
 
@@ -282,7 +282,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">10. Limitation of Liability</h2>
           <p className="text-muted-foreground leading-relaxed">
-            TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL QUICKWRITEAPP, ITS AFFILIATES, DIRECTORS, OFFICERS, EMPLOYEES, AGENTS, OR LICENSORS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA, OR OTHER INTANGIBLE LOSSES, ARISING OUT OF OR RELATING TO YOUR USE OF OR INABILITY TO USE THE SERVICE.
+            TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL PEAKDRAFTAPP, ITS AFFILIATES, DIRECTORS, OFFICERS, EMPLOYEES, AGENTS, OR LICENSORS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA, OR OTHER INTANGIBLE LOSSES, ARISING OUT OF OR RELATING TO YOUR USE OF OR INABILITY TO USE THE SERVICE.
           </p>
           <p className="text-muted-foreground leading-relaxed mt-4">
             IN NO EVENT SHALL OUR TOTAL LIABILITY TO YOU FOR ALL CLAIMS EXCEED THE AMOUNT YOU PAID TO US FOR THE SERVICE IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM, OR ONE HUNDRED US DOLLARS ($100), WHICHEVER IS GREATER.
@@ -295,7 +295,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">11. Indemnification</h2>
           <p className="text-muted-foreground leading-relaxed">
-            You agree to indemnify, defend, and hold harmless quickwriteapp and its affiliates, officers, directors, employees, agents, and licensors from and against any claims, liabilities, damages, losses, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to:
+            You agree to indemnify, defend, and hold harmless peakdraftapp and its affiliates, officers, directors, employees, agents, and licensors from and against any claims, liabilities, damages, losses, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to:
           </p>
           <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
             <li>Your use of the Service</li>
@@ -349,7 +349,7 @@ export default function TermsAndConditions() {
 
           <h3 className="text-lg font-medium mt-4">13.3 Class Action Waiver</h3>
           <p className="text-muted-foreground leading-relaxed">
-            You agree that any dispute resolution proceedings will be conducted only on an individual basis and not in a class, consolidated, or representative action. You waive any right to participate in class action lawsuits or class-wide arbitration against quickwriteapp.
+            You agree that any dispute resolution proceedings will be conducted only on an individual basis and not in a class, consolidated, or representative action. You waive any right to participate in class action lawsuits or class-wide arbitration against peakdraftapp.
           </p>
         </section>
 
@@ -358,7 +358,7 @@ export default function TermsAndConditions() {
           
           <h3 className="text-lg font-medium mt-4">14.1 Entire Agreement</h3>
           <p className="text-muted-foreground leading-relaxed">
-            These Terms, together with our Privacy Policy, constitute the entire agreement between you and quickwriteapp regarding the Service and supersede all prior agreements and understandings.
+            These Terms, together with our Privacy Policy, constitute the entire agreement between you and peakdraftapp regarding the Service and supersede all prior agreements and understandings.
           </p>
 
           <h3 className="text-lg font-medium mt-4">14.2 Severability</h3>
@@ -395,7 +395,7 @@ export default function TermsAndConditions() {
             If you have any questions, concerns, or feedback regarding these Terms and Conditions, please contact us at:
           </p>
           <div className="bg-muted/50 p-4 rounded-lg mt-4">
-            <p className="font-medium">quickwriteapp Legal Department</p>
+            <p className="font-medium">peakdraftapp Legal Department</p>
             <p className="text-muted-foreground">Email: nanbonkayu@gmail.com</p>
             <p className="text-muted-foreground">Address: Addis Ababa, Ethiopia</p>
             <p className="text-muted-foreground">Phone: +251976892311</p>

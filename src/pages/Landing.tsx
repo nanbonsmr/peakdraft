@@ -103,10 +103,8 @@ export default function Landing() {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-primary rounded-lg">
-                <PenTool className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-lg sm:text-xl font-bold">QuickWrite AI</span>
+              <img src="/favicon.png" alt="PeakDraft Logo" className="w-9 h-9 rounded-lg" />
+              <span className="text-lg sm:text-xl font-bold">PeakDraft</span>
             </div>
 
             {/* Desktop Navigation */}
@@ -263,14 +261,14 @@ export default function Landing() {
                 </div>
                 {/* URL Bar */}
                 <div className="flex-1 bg-background/50 rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs text-muted-foreground font-mono truncate">
-                  quickwriteai.app/dashboard
+                  peakdraft.app/dashboard
                 </div>
               </div>
               {/* Browser Content */}
               <div className="bg-background/30 backdrop-blur-sm rounded-b-lg sm:rounded-b-xl border border-t-0 border-border/50 overflow-hidden">
                 <img 
                   src={dashboardPreview} 
-                  alt="QuickWrite AI Dashboard - Create blog posts, social media content, emails and ad copy with AI"
+                  alt="PeakDraft Dashboard - Create blog posts, social media content, emails and ad copy with AI"
                   className="w-full h-auto object-contain"
                 />
               </div>
@@ -399,7 +397,7 @@ export default function Landing() {
       </section>
 
       {/* About Section */}
-      <section ref={aboutRef} id="about" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="About QuickWrite AI">
+      <section ref={aboutRef} id="about" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="About PeakDraft">
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-16">
             {/* Left Column - Image with Parallax */}
@@ -410,7 +408,7 @@ export default function Landing() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
                   src={featuresShowcase} 
-                  alt="QuickWrite AI content generation features and templates showcase" 
+                  alt="PeakDraft content generation features and templates showcase" 
                   className="w-full h-auto object-cover"
                   loading="lazy"
                 />
@@ -419,7 +417,7 @@ export default function Landing() {
 
             {/* Right Column - Text */}
             <div className={`order-1 lg:order-2 text-center lg:text-left scroll-animate ${aboutInView ? 'animate-slide-in-right' : ''}`}>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Why Content Creators Choose QuickWrite AI</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Why Content Creators Choose PeakDraft</h2>
               <p className="text-base sm:text-lg text-muted-foreground mb-8">
                 The ultimate AI writing assistant combining cutting-edge language models with intuitive task management. 
                 Create blog posts, marketing copy, social media content, and more - all organized in one powerful platform.
@@ -520,7 +518,7 @@ export default function Landing() {
           >
             <img 
               src={workflowIllustration} 
-              alt="QuickWrite AI workflow process" 
+              alt="PeakDraft workflow process" 
               className="w-full h-auto rounded-2xl shadow-xl"
             />
           </div>
@@ -628,14 +626,14 @@ export default function Landing() {
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${testimonialInView ? 'animate-fade-up' : ''}`}>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Loved by Content Creators</h2>
             <p className="text-base sm:text-lg text-muted-foreground">
-              See what our users have to say about QuickWrite AI
+              See what our users have to say about PeakDraft
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
             {[
-              { name: 'Sarah Johnson', role: 'Content Marketing Manager', text: 'QuickWrite AI has transformed how I create content. Blog posts that took hours now take minutes. The task management feature keeps my team organized!' },
-              { name: 'Michael Chen', role: 'Professional Blogger', text: 'The AI-generated blog posts are SEO-optimized and engaging. I\'ve doubled my organic traffic since using QuickWrite AI.' },
+              { name: 'Sarah Johnson', role: 'Content Marketing Manager', text: 'PeakDraft has transformed how I create content. Blog posts that took hours now take minutes. The task management feature keeps my team organized!' },
+              { name: 'Michael Chen', role: 'Professional Blogger', text: 'The AI-generated blog posts are SEO-optimized and engaging. I\'ve doubled my organic traffic since using PeakDraft.' },
               { name: 'Emily Rodriguez', role: 'Social Media Manager', text: 'Managing content for multiple clients is effortless now. The 14+ templates cover everything from Instagram captions to email newsletters.' },
             ].map((testimonial, idx) => (
               <Card 
@@ -671,12 +669,12 @@ export default function Landing() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto mb-6 sm:mb-8">
-            <Card className="p-4 sm:p-6 text-center hover:shadow-elegant transition-all cursor-pointer" onClick={() => window.location.href = 'mailto:support@quickwriteai.com'}>
+            <Card className="p-4 sm:p-6 text-center hover:shadow-elegant transition-all cursor-pointer" onClick={() => window.location.href = 'mailto:support@peakdraft.com'}>
               <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3 sm:mb-4">
                 <Mail className="h-5 sm:h-6 w-5 sm:w-6 text-primary" />
               </div>
               <h3 className="text-sm sm:text-base font-bold mb-1 sm:mb-2">Email Us</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground break-all">support@quickwriteai.com</p>
+              <p className="text-xs sm:text-sm text-muted-foreground break-all">support@peakdraft.com</p>
             </Card>
 
             <Card className="p-4 sm:p-6 text-center hover:shadow-elegant transition-all cursor-pointer" onClick={() => window.location.href = 'tel:+15551234567'}>
@@ -705,14 +703,14 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section ref={ctaRef} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Get Started with QuickWrite AI">
+      <section ref={ctaRef} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Get Started with PeakDraft">
         <div className="container mx-auto">
           <Card className={`max-w-4xl mx-auto p-6 sm:p-8 lg:p-12 text-center bg-gradient-to-br from-primary/10 via-primary-glow/5 to-accent/10 border-primary/20 scroll-animate ${
             ctaInView ? 'animate-fade-in-scale' : ''
           }`}>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">Start Creating Professional Content Today</h2>
             <p className="text-sm sm:text-base lg:text-lg text-muted-foreground mb-6 sm:mb-8">
-              Join 50,000+ marketers, bloggers, and content creators using QuickWrite AI to generate blog posts, social media content, emails, and more.
+              Join 50,000+ marketers, bloggers, and content creators using PeakDraft to generate blog posts, social media content, emails, and more.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button size="lg" onClick={() => navigate('/auth')} className="group w-full sm:w-auto">
@@ -733,10 +731,8 @@ export default function Landing() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
             <div>
               <div className="flex items-center gap-2 mb-3 sm:mb-4">
-                <div className="p-2 bg-gradient-primary rounded-lg">
-                  <PenTool className="h-4 w-4 text-white" />
-                </div>
-                <span className="text-sm sm:text-base font-bold">QuickWrite AI</span>
+                <img src="/favicon.png" alt="PeakDraft Logo" className="w-9 h-9 rounded-lg" />
+                <span className="text-sm sm:text-base font-bold">PeakDraft</span>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground">
                 AI content generator with 14+ templates and built-in task management. Create blog posts, social media content, emails & more.
@@ -777,7 +773,7 @@ export default function Landing() {
 
           <div className="pt-6 sm:pt-8 border-t border-border/40 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
             <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
-              © 2024 QuickWrite AI. All rights reserved.
+              © 2024 PeakDraft. All rights reserved.
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">

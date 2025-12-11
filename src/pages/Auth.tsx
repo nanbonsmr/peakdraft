@@ -51,10 +51,8 @@ export default function Auth() {
         
         <div className="space-y-8">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl shadow-lg shadow-violet-500/30">
-              <PenTool className="h-8 w-8 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold text-white">quickwriteapp</h1>
+            <img src="/favicon.png" alt="PeakDraft Logo" className="w-14 h-14 rounded-xl shadow-lg" />
+            <h1 className="text-3xl font-bold text-white">PeakDraft</h1>
           </div>
           
           <div className="space-y-6">
@@ -90,7 +88,7 @@ export default function Auth() {
         </div>
 
         <p className="text-white/40 text-sm">
-          © 2024 quickwriteapp. All rights reserved.
+          © 2024 PeakDraft. All rights reserved.
         </p>
       </div>
 
@@ -110,10 +108,8 @@ export default function Auth() {
           {/* Mobile branding */}
           <div className="lg:hidden text-center mb-6 sm:mb-8">
             <div className="flex items-center justify-center gap-2 mb-2 sm:mb-3">
-              <div className="p-1.5 sm:p-2 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-lg">
-                <PenTool className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-              </div>
-              <h1 className="text-lg sm:text-xl font-bold text-white">quickwriteapp</h1>
+              <img src="/favicon.png" alt="PeakDraft Logo" className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg" />
+              <h1 className="text-lg sm:text-xl font-bold text-white">PeakDraft</h1>
             </div>
             <p className="text-white/60 text-xs sm:text-sm">AI-powered content generation</p>
           </div>

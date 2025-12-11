@@ -93,7 +93,7 @@ export function NotificationPanel() {
           dynamicNotifications.push({
             id: 'welcome',
             type: 'info',
-            title: 'Welcome to QuickWrite AI!',
+            title: 'Welcome to PeakDraft!',
             message: 'Start creating amazing content with our AI-powered templates.',
             timestamp: new Date(Date.now() - 5 * 60 * 1000),
             read: false,

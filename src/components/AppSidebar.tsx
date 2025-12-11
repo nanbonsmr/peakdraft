@@ -84,13 +84,11 @@ export function AppSidebar() {
         {/* Logo */}
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-sidebar-primary rounded-lg flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-sidebar-primary-foreground" />
-            </div>
+            <img src="/favicon.png" alt="PeakDraft Logo" className="w-8 h-8 rounded-lg" />
             {state !== "collapsed" && (
               <div>
                 <h1 className="font-bold text-lg text-sidebar-foreground">
-                  QuickWrite AI
+                  PeakDraft
                 </h1>
               </div>
             )}

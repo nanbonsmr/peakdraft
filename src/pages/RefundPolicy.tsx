@@ -28,14 +28,14 @@ export default function RefundPolicy() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Introduction</h2>
           <p className="text-muted-foreground leading-relaxed">
-            quickwriteapp uses Paddle.com as our Merchant of Record for all subscription transactions. This means that when you purchase a subscription, you are purchasing from Paddle, who is the authorized reseller of our services. This Refund Policy follows Paddle's Consumer Terms and Conditions.
+            peakdraftapp uses Paddle.com as our Merchant of Record for all subscription transactions. This means that when you purchase a subscription, you are purchasing from Paddle, who is the authorized reseller of our services. This Refund Policy follows Paddle's Consumer Terms and Conditions.
           </p>
         </section>
 
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">1. Nature of Service</h2>
           <p className="text-muted-foreground leading-relaxed">
-            quickwriteapp is a fully automated AI-powered content generation platform. Our service is entirely digital and software-based. <strong>No human-driven services are involved in our offering.</strong> All content generation is performed by artificial intelligence without human intervention.
+            peakdraftapp is a fully automated AI-powered content generation platform. Our service is entirely digital and software-based. <strong>No human-driven services are involved in our offering.</strong> All content generation is performed by artificial intelligence without human intervention.
           </p>
         </section>
 
@@ -119,7 +119,7 @@ export default function RefundPolicy() {
 
         <section className="space-y-4 pt-4 border-t">
           <p className="text-sm text-muted-foreground">
-            quickwriteapp uses Paddle.com as the Merchant of Record for all transactions. For Paddle's complete terms and conditions, please visit{' '}
+            peakdraftapp uses Paddle.com as the Merchant of Record for all transactions. For Paddle's complete terms and conditions, please visit{' '}
             <a 
               href="https://www.paddle.com/legal/invoiced-consumer-terms" 
               target="_blank" 

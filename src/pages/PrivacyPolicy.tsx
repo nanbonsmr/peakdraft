@@ -28,7 +28,7 @@ export default function PrivacyPolicy() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Introduction</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Welcome to quickwriteapp ("Company," "we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI-powered content generation platform and task management services (collectively, the "Service").
+            Welcome to peakdraftapp ("Company," "we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI-powered content generation platform and task management services (collectively, the "Service").
           </p>
           <p className="text-muted-foreground leading-relaxed">
             By accessing or using our Service, you agree to the collection and use of information in accordance with this Privacy Policy. If you do not agree with our policies and practices, please do not use our Service. We encourage you to read this Privacy Policy carefully to understand our views and practices regarding your personal data and how we will treat it.
@@ -129,12 +129,12 @@ export default function PrivacyPolicy() {
 
           <h3 className="text-lg font-medium mt-4">3.2 Legal Requirements</h3>
           <p className="text-muted-foreground leading-relaxed">
-            We may disclose your information if required to do so by law or in response to valid requests by public authorities (e.g., a court or government agency). This includes complying with legal processes, enforcing our policies, responding to claims that content violates the rights of third parties, or protecting the rights, property, or safety of quickwriteapp, our users, or the public.
+            We may disclose your information if required to do so by law or in response to valid requests by public authorities (e.g., a court or government agency). This includes complying with legal processes, enforcing our policies, responding to claims that content violates the rights of third parties, or protecting the rights, property, or safety of peakdraftapp, our users, or the public.
           </p>
 
           <h3 className="text-lg font-medium mt-4">3.3 Business Transfers</h3>
           <p className="text-muted-foreground leading-relaxed">
-            If quickwriteapp is involved in a merger, acquisition, asset sale, or bankruptcy, your personal information may be transferred as part of that transaction. We will provide notice before your personal information becomes subject to a different privacy policy.
+            If peakdraftapp is involved in a merger, acquisition, asset sale, or bankruptcy, your personal information may be transferred as part of that transaction. We will provide notice before your personal information becomes subject to a different privacy policy.
           </p>
 
           <h3 className="text-lg font-medium mt-4">3.4 With Your Consent</h3>
@@ -270,7 +270,7 @@ export default function PrivacyPolicy() {
             If you have any questions, concerns, or requests regarding this Privacy Policy or our privacy practices, please contact us at:
           </p>
           <div className="bg-muted/50 p-4 rounded-lg mt-4">
-            <p className="font-medium">quickwriteapp</p>
+            <p className="font-medium">peakdraftapp</p>
             <p className="text-muted-foreground">Email: nanbonkayu@gmail.com</p>
             <p className="text-muted-foreground">Address: Addis Ababa, Ethiopia</p>
             <p className="text-muted-foreground">Phone: +251976892311</p>

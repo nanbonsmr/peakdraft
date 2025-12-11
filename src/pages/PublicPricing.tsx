@@ -294,7 +294,7 @@ export default function PublicPricing() {
         <Card className="p-8 sm:p-12 text-center bg-gradient-to-br from-primary/10 via-primary-glow/5 to-accent/10 border-primary/20">
           <h3 className="text-2xl sm:text-3xl font-bold mb-4">Ready to Get Started?</h3>
           <p className="text-muted-foreground mb-6">
-            Join thousands of content creators using QuickWrite AI
+            Join thousands of content creators using PeakDraft
           </p>
           <Button size="lg" onClick={handleSelectPlan}>
             {user ? 'Choose Your Plan' : 'Start Your Free Trial'}

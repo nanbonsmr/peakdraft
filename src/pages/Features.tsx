@@ -159,10 +159,8 @@ export default function Features() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-              <div className="p-2 bg-gradient-primary rounded-lg">
-                <PenTool className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-lg sm:text-xl font-bold">QuickWrite AI</span>
+              <img src="/favicon.png" alt="PeakDraft Logo" className="w-9 h-9 rounded-lg" />
+              <span className="text-lg sm:text-xl font-bold">PeakDraft</span>
             </div>
 
             <div className="hidden md:flex gap-6">
@@ -282,7 +280,7 @@ export default function Features() {
             <Badge className="mb-4">Platform Features</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Why Content Creators Choose Us</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Beyond templates and tasks, QuickWrite AI offers powerful platform features to streamline your workflow.
+              Beyond templates and tasks, PeakDraft offers powerful platform features to streamline your workflow.
             </p>
           </div>
 
@@ -317,7 +315,7 @@ export default function Features() {
               Ready to Supercharge Your Content Creation?
             </h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join 50,000+ content creators who save hours every week with QuickWrite AI. 
+              Join 50,000+ content creators who save hours every week with PeakDraft. 
               Start your free trial today - no credit card required.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -338,13 +336,11 @@ export default function Features() {
         <div className="container mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-primary rounded-lg">
-                <PenTool className="h-4 w-4 text-white" />
-              </div>
-              <span className="font-bold">QuickWrite AI</span>
+              <img src="/favicon.png" alt="PeakDraft Logo" className="w-9 h-9 rounded-lg" />
+              <span className="font-bold">PeakDraft</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2024 QuickWrite AI. All rights reserved.
+              © 2024 PeakDraft. All rights reserved.
             </p>
             <div className="flex gap-4 text-sm text-muted-foreground">
               <button onClick={() => navigate('/privacy')} className="hover:text-primary transition-colors">Privacy</button>

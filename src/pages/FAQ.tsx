@@ -17,7 +17,7 @@ export default function FAQ() {
       <div className="flex items-center justify-between">
         <div className="space-y-2">
           <h1 className="text-4xl font-bold tracking-tight">Frequently Asked Questions</h1>
-          <p className="text-muted-foreground">Find answers to common questions about QuickWrite AI</p>
+          <p className="text-muted-foreground">Find answers to common questions about PeakDraft</p>
         </div>
         <Button variant="outline" onClick={() => navigate('/')}>
           <Home className="mr-2 h-4 w-4" />
@@ -36,9 +36,9 @@ export default function FAQ() {
         
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
-            <AccordionTrigger>What types of content can QuickWrite AI generate?</AccordionTrigger>
+            <AccordionTrigger>What types of content can PeakDraft generate?</AccordionTrigger>
             <AccordionContent>
-              QuickWrite AI can generate a wide variety of content including blog posts, social media posts, 
+              PeakDraft can generate a wide variety of content including blog posts, social media posts, 
               ad copy, email campaigns, product descriptions, video scripts, letters, and much more. We offer 
               over 20+ specialized templates to help you create professional content for any purpose.
             </AccordionContent>
@@ -64,9 +64,9 @@ export default function FAQ() {
           </AccordionItem>
 
           <AccordionItem value="item-4">
-            <AccordionTrigger>What languages does QuickWrite AI support?</AccordionTrigger>
+            <AccordionTrigger>What languages does PeakDraft support?</AccordionTrigger>
             <AccordionContent>
-              QuickWrite AI currently supports multiple languages including English, Spanish, French, German, 
+              PeakDraft currently supports multiple languages including English, Spanish, French, German, 
               Italian, Portuguese, and many more. You can select your preferred language when generating 
               content. We're constantly expanding our language support based on user demand.
             </AccordionContent>
@@ -75,7 +75,7 @@ export default function FAQ() {
           <AccordionItem value="item-5">
             <AccordionTrigger>Can I use the generated content for commercial purposes?</AccordionTrigger>
             <AccordionContent>
-              Yes! All content generated with QuickWrite AI is yours to use however you like, including for 
+              Yes! All content generated with PeakDraft is yours to use however you like, including for 
               commercial purposes. You have full ownership and rights to the content you create with our platform.
             </AccordionContent>
           </AccordionItem>
@@ -155,7 +155,7 @@ export default function FAQ() {
           <AccordionItem value="price-7">
             <AccordionTrigger>What is your refund policy?</AccordionTrigger>
             <AccordionContent>
-              We offer a 30-day money-back guarantee on all plans. If you're not satisfied with QuickWrite AI 
+              We offer a 30-day money-back guarantee on all plans. If you're not satisfied with PeakDraft 
               within the first 30 days, contact our support team for a full refund. No questions asked.
             </AccordionContent>
           </AccordionItem>
@@ -175,7 +175,7 @@ export default function FAQ() {
           <AccordionItem value="support-1">
             <AccordionTrigger>How can I contact support?</AccordionTrigger>
             <AccordionContent>
-              You can reach our support team through multiple channels: email us at support@quickwriteai.com, 
+              You can reach our support team through multiple channels: email us at support@peakdraft.com, 
               use our contact form, or for Pro and Enterprise customers, access our priority support channels. 
               We typically respond within 24 hours on business days.
             </AccordionContent>
@@ -203,7 +203,7 @@ export default function FAQ() {
             <AccordionTrigger>Is there a knowledge base or documentation?</AccordionTrigger>
             <AccordionContent>
               Yes! We maintain comprehensive documentation, video tutorials, and guides to help you get the 
-              most out of QuickWrite AI. You can access these resources from your dashboard or our help center.
+              most out of PeakDraft. You can access these resources from your dashboard or our help center.
             </AccordionContent>
           </AccordionItem>
 
@@ -211,7 +211,7 @@ export default function FAQ() {
             <AccordionTrigger>Can you help with custom integrations?</AccordionTrigger>
             <AccordionContent>
               Custom integrations are available for Enterprise plan customers. Our technical team can work 
-              with you to integrate QuickWrite AI with your existing tools and workflows. Contact our sales 
+              with you to integrate PeakDraft with your existing tools and workflows. Contact our sales 
               team to discuss your specific integration needs.
             </AccordionContent>
           </AccordionItem>
