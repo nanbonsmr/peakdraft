@@ -1,5 +1,5 @@
 import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,19 +7,44 @@ import { Sparkles, ArrowLeft, Zap, Shield, Globe, LogIn, UserPlus } from 'lucide
 import FloatingParticles from '@/components/FloatingParticles';
 
 export default function Auth() {
-  const { isAuthenticated, isLoading, login, register } = useKindeAuth();
+  const { isAuthenticated, isLoading, login, register, getToken } = useKindeAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      navigate('/app', { replace: true });
-    }
-  }, [isAuthenticated, isLoading, navigate]);
+    const checkAuthAndRedirect = async () => {
+      // Wait for Kinde to finish loading
+      if (isLoading) {
+        return;
+      }
 
-  if (isLoading) {
+      // If authenticated, redirect to dashboard
+      if (isAuthenticated) {
+        // Small delay to ensure token is ready
+        try {
+          await getToken();
+        } catch (e) {
+          // Token might not be ready yet, that's okay
+        }
+        navigate('/app', { replace: true });
+        return;
+      }
+
+      setIsCheckingAuth(false);
+    };
+
+    checkAuthAndRedirect();
+  }, [isAuthenticated, isLoading, navigate, getToken]);
+
+  // Show loading while checking auth status
+  if (isLoading || isCheckingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-10 w-10 border-2 border-primary border-t-transparent"></div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-primary border-t-transparent"></div>
+          <p className="text-muted-foreground text-sm">Checking authentication...</p>
+        </div>
       </div>
     );
   }
