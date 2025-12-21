@@ -17,11 +17,12 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { planId, userId } = await req.json();
+    const { planId, userId, userEmail } = await req.json();
 
     console.log('Creating Dodo Payments checkout:', { 
       planId, 
       userId,
+      userEmail,
       timestamp: new Date().toISOString()
     });
 
@@ -35,11 +36,24 @@ serve(async (req) => {
       throw new Error('Dodo Payments API key not configured');
     }
 
-    // Get user email from Supabase
-    const { data: userData, error: userError } = await supabaseClient.auth.admin.getUserById(userId);
+    // Get user profile from the profiles table (since we use Clerk, not Supabase Auth)
+    let email = userEmail;
+    let displayName = 'Customer';
     
-    if (userError || !userData) {
-      throw new Error('Failed to get user data');
+    if (!email) {
+      const { data: profileData, error: profileError } = await supabaseClient
+        .from('profiles')
+        .select('display_name')
+        .eq('user_id', userId)
+        .single();
+      
+      if (profileData) {
+        displayName = profileData.display_name || 'Customer';
+      }
+    }
+
+    if (!email) {
+      throw new Error('User email is required for checkout');
     }
 
     // Map plan IDs to Dodo product IDs
@@ -68,8 +82,8 @@ serve(async (req) => {
       body: JSON.stringify({
         product_cart: [{ product_id: productId, quantity: 1 }],
         customer: { 
-          email: userData.user.email,
-          name: userData.user.user_metadata?.display_name || userData.user.email
+          email: email,
+          name: displayName
         },
         return_url: `${req.headers.get('origin') || 'https://peakdraftapp.netlify.app'}/pricing?payment=success`,
         metadata: {

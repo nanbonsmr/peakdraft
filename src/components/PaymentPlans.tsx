@@ -87,11 +87,12 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
     setIsProcessing(true);
 
     try {
-      // Get checkout URL from edge function
+      // Get checkout URL from edge function - pass email since we use Clerk
       const { data, error } = await supabase.functions.invoke('create-dodo-checkout', {
         body: {
           planId: plan.id,
-          userId: user.id
+          userId: user.id,
+          userEmail: user.email
         }
       });
 
