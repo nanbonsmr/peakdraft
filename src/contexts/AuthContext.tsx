@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
+import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
 import { supabase } from '@/integrations/supabase/client';
 
 // Admin email - you can add more emails here
@@ -26,16 +26,17 @@ interface AuthContextType {
   refreshProfile: () => Promise<void>;
   isSignedIn: boolean;
   isAdmin: boolean;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { user: clerkUser, isLoaded, isSignedIn } = useUser();
+  const { user: kindeUser, isLoading: kindeLoading, isAuthenticated, logout: kindeLogout } = useKindeAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const userEmail = clerkUser?.emailAddresses[0]?.emailAddress || '';
+  const userEmail = kindeUser?.email || '';
   const isAdmin = ADMIN_EMAILS.includes(userEmail.toLowerCase());
 
   const fetchProfile = async (userId: string) => {
@@ -71,30 +72,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const refreshProfile = async () => {
-    if (clerkUser) {
-      await fetchProfile(clerkUser.id);
+    if (kindeUser?.id) {
+      await fetchProfile(kindeUser.id);
     }
   };
 
   useEffect(() => {
     const syncUserProfile = async () => {
-      if (isLoaded) {
-        if (isSignedIn && clerkUser) {
+      if (!kindeLoading) {
+        if (isAuthenticated && kindeUser) {
           // Try to fetch existing profile
           const { data: existingProfile, error } = await supabase
             .from('profiles')
             .select('*')
-            .eq('user_id', clerkUser.id)
+            .eq('user_id', kindeUser.id)
             .single();
 
           if (existingProfile && !error) {
             setProfile(existingProfile);
           } else if (error?.code === 'PGRST116') {
             // Profile doesn't exist, create one
-            const displayName = clerkUser.firstName 
-              ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim()
-              : clerkUser.emailAddresses[0]?.emailAddress || 'User';
-            await createProfile(clerkUser.id, displayName);
+            const displayName = kindeUser.givenName 
+              ? `${kindeUser.givenName} ${kindeUser.familyName || ''}`.trim()
+              : kindeUser.email || 'User';
+            await createProfile(kindeUser.id, displayName);
           }
         } else {
           setProfile(null);
@@ -104,24 +105,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     syncUserProfile();
-  }, [isLoaded, isSignedIn, clerkUser]);
+  }, [kindeLoading, isAuthenticated, kindeUser]);
 
-  const user = clerkUser ? {
-    id: clerkUser.id,
-    email: clerkUser.emailAddresses[0]?.emailAddress || '',
-    firstName: clerkUser.firstName || undefined,
-    lastName: clerkUser.lastName || undefined,
-    imageUrl: clerkUser.imageUrl,
+  const user = kindeUser ? {
+    id: kindeUser.id || '',
+    email: kindeUser.email || '',
+    firstName: kindeUser.givenName || undefined,
+    lastName: kindeUser.familyName || undefined,
+    imageUrl: kindeUser.picture || undefined,
   } : null;
 
   return (
     <AuthContext.Provider value={{
       user,
       profile,
-      loading: !isLoaded || loading,
+      loading: kindeLoading || loading,
       refreshProfile,
-      isSignedIn: isSignedIn || false,
+      isSignedIn: isAuthenticated || false,
       isAdmin,
+      logout: kindeLogout,
     }}>
       {children}
     </AuthContext.Provider>
