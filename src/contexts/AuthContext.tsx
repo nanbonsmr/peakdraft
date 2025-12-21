@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
+import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
 // Admin email - you can add more emails here
@@ -20,23 +20,27 @@ interface Profile {
 }
 
 interface AuthContextType {
-  user: { id: string; email: string; firstName?: string; lastName?: string; imageUrl?: string } | null;
+  user: User | null;
+  session: Session | null;
   profile: Profile | null;
   loading: boolean;
   refreshProfile: () => Promise<void>;
   isSignedIn: boolean;
   isAdmin: boolean;
-  logout: () => void;
+  logout: () => Promise<void>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, displayName?: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { user: kindeUser, isLoading: kindeLoading, isAuthenticated, logout: kindeLogout } = useKindeAuth();
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const userEmail = kindeUser?.email || '';
+  const userEmail = user?.email || '';
   const isAdmin = ADMIN_EMAILS.includes(userEmail.toLowerCase());
 
   const fetchProfile = async (userId: string) => {
@@ -44,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
     
     if (data && !error) {
       setProfile(data);
@@ -72,58 +76,95 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const refreshProfile = async () => {
-    if (kindeUser?.id) {
-      await fetchProfile(kindeUser.id);
+    if (user?.id) {
+      await fetchProfile(user.id);
     }
   };
 
   useEffect(() => {
-    const syncUserProfile = async () => {
-      if (!kindeLoading) {
-        if (isAuthenticated && kindeUser) {
-          // Try to fetch existing profile
-          const { data: existingProfile, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('user_id', kindeUser.id)
-            .single();
-
-          if (existingProfile && !error) {
-            setProfile(existingProfile);
-          } else if (error?.code === 'PGRST116') {
-            // Profile doesn't exist, create one
-            const displayName = kindeUser.givenName 
-              ? `${kindeUser.givenName} ${kindeUser.familyName || ''}`.trim()
-              : kindeUser.email || 'User';
-            await createProfile(kindeUser.id, displayName);
-          }
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        // Defer profile fetch to avoid deadlock
+        if (session?.user) {
+          setTimeout(() => {
+            fetchProfile(session.user.id);
+          }, 0);
         } else {
           setProfile(null);
         }
+        
         setLoading(false);
       }
-    };
+    );
 
-    syncUserProfile();
-  }, [kindeLoading, isAuthenticated, kindeUser]);
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      }
+      
+      setLoading(false);
+    });
 
-  const user = kindeUser ? {
-    id: kindeUser.id || '',
-    email: kindeUser.email || '',
-    firstName: kindeUser.givenName || undefined,
-    lastName: kindeUser.familyName || undefined,
-    imageUrl: kindeUser.picture || undefined,
-  } : null;
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    return { error };
+  };
+
+  const signUp = async (email: string, password: string, displayName?: string) => {
+    const redirectUrl = `${window.location.origin}/`;
+    
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: {
+          display_name: displayName || email,
+        },
+      },
+    });
+
+    // Create profile after successful signup
+    if (data.user && !error) {
+      await createProfile(data.user.id, displayName || email);
+    }
+
+    return { error };
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
+    setProfile(null);
+  };
 
   return (
     <AuthContext.Provider value={{
       user,
+      session,
       profile,
-      loading: kindeLoading || loading,
+      loading,
       refreshProfile,
-      isSignedIn: isAuthenticated || false,
+      isSignedIn: !!session,
       isAdmin,
-      logout: kindeLogout,
+      logout,
+      signIn,
+      signUp,
     }}>
       {children}
     </AuthContext.Provider>

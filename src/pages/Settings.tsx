@@ -142,7 +142,7 @@ export default function Settings() {
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4">
             <Avatar className="w-20 h-20">
-              {user?.imageUrl && <AvatarImage src={user.imageUrl} alt={profile?.display_name || 'User'} />}
+              {user?.user_metadata?.avatar_url && <AvatarImage src={user.user_metadata.avatar_url} alt={profile?.display_name || 'User'} />}
               <AvatarFallback className="bg-gradient-primary text-primary-foreground text-lg">
                 {initials}
               </AvatarFallback>
@@ -150,7 +150,7 @@ export default function Settings() {
             <div className="space-y-1">
               <p className="text-sm font-medium">Profile Picture</p>
               <p className="text-sm text-muted-foreground">
-                {user?.imageUrl ? 'Synced from your social account' : 'Avatar is generated from your display name'}
+                {user?.user_metadata?.avatar_url ? 'Synced from your social account' : 'Avatar is generated from your display name'}
               </p>
             </div>
           </div>
