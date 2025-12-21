@@ -5,7 +5,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Settings, LogOut, Bell, CreditCard } from "lucide-react";
+import { Settings, LogOut, Bell, CreditCard, Crown, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationPanel } from "./NotificationPanel";
@@ -107,14 +107,58 @@ export function Header() {
       <SidebarTrigger />
       <div className="flex-1" />
       <div className="flex items-center gap-2 sm:gap-4">
+        {/* Subscription Plan Badge */}
+        <Badge 
+          variant={profile?.subscription_plan === 'free' ? 'secondary' : 'default'}
+          className={`hidden sm:flex items-center gap-1.5 px-3 py-1 cursor-pointer transition-all hover:scale-105 ${
+            profile?.subscription_plan === 'enterprise' 
+              ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white border-amber-400 hover:from-amber-600 hover:to-amber-700' 
+              : profile?.subscription_plan === 'pro' 
+                ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white border-violet-400 hover:from-violet-600 hover:to-purple-700'
+                : profile?.subscription_plan === 'basic'
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-400 hover:from-blue-600 hover:to-blue-700'
+                  : ''
+          }`}
+          onClick={() => navigate('/app/pricing')}
+        >
+          {profile?.subscription_plan === 'enterprise' ? (
+            <Crown className="w-3.5 h-3.5" />
+          ) : profile?.subscription_plan === 'pro' || profile?.subscription_plan === 'basic' ? (
+            <Sparkles className="w-3.5 h-3.5" />
+          ) : null}
+          <span className="capitalize font-medium">{profile?.subscription_plan || 'Free'}</span>
+        </Badge>
+
+        {/* Mobile Plan Badge */}
+        <Badge 
+          variant={profile?.subscription_plan === 'free' ? 'secondary' : 'default'}
+          className={`flex sm:hidden items-center gap-1 px-2 py-0.5 cursor-pointer ${
+            profile?.subscription_plan === 'enterprise' 
+              ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white' 
+              : profile?.subscription_plan === 'pro' 
+                ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white'
+                : profile?.subscription_plan === 'basic'
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+                  : ''
+          }`}
+          onClick={() => navigate('/app/pricing')}
+        >
+          {profile?.subscription_plan === 'enterprise' ? (
+            <Crown className="w-3 h-3" />
+          ) : profile?.subscription_plan === 'pro' || profile?.subscription_plan === 'basic' ? (
+            <Sparkles className="w-3 h-3" />
+          ) : null}
+          <span className="capitalize text-xs">{profile?.subscription_plan || 'Free'}</span>
+        </Badge>
+
         {/* Usage Badge */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-gradient-primary/10 rounded-lg border">
           <div className="w-2 h-2 bg-primary rounded-full"></div>
-          <span className="text-sm font-medium">{wordsUsed.toLocaleString()} / {wordsLimit.toLocaleString()} words used</span>
+          <span className="text-sm font-medium">{wordsUsed.toLocaleString()} / {wordsLimit.toLocaleString()} words</span>
         </div>
 
         {/* Mobile Usage Badge */}
-        <div className="flex lg:hidden items-center gap-1 px-2 py-1 bg-gradient-primary/10 rounded border">
+        <div className="hidden md:flex lg:hidden items-center gap-1 px-2 py-1 bg-gradient-primary/10 rounded border">
           <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
           <span className="text-xs font-medium">{Math.round((wordsUsed / wordsLimit) * 100)}%</span>
         </div>
