@@ -68,9 +68,8 @@ serve(async (req) => {
       throw new Error(`Invalid plan ID: ${planId}`);
     }
 
-    // Determine if we're in test or live mode based on API key prefix
-    const isTestMode = dodoApiKey.startsWith('sk_test_');
-    const baseUrl = isTestMode ? 'https://test.dodopayments.com' : 'https://live.dodopayments.com';
+    // Use test mode URL (change to live.dodopayments.com when ready for production)
+    const baseUrl = 'https://test.dodopayments.com';
 
     // Create checkout session with Dodo Payments API
     const checkoutResponse = await fetch(`${baseUrl}/checkouts`, {
