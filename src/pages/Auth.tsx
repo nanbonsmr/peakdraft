@@ -8,6 +8,7 @@ import { Sparkles, ArrowLeft, Zap, Shield, Globe, LogIn, UserPlus, Mail, Lock, U
 import FloatingParticles from '@/components/FloatingParticles';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Auth() {
   const { isSignedIn, loading, signIn, signUp } = useAuth();
@@ -15,6 +16,7 @@ export default function Auth() {
   const { toast } = useToast();
   
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -25,6 +27,49 @@ export default function Auth() {
       navigate('/app', { replace: true });
     }
   }, [isSignedIn, loading, navigate]);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Check your email",
+          description: "We've sent you a password reset link.",
+        });
+        setIsForgotPassword(false);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -192,115 +237,174 @@ export default function Auth() {
               <div className="absolute inset-0 bg-gradient-to-b from-violet-500/10 to-transparent pointer-events-none" />
               <CardTitle className="flex items-center justify-center gap-2 text-white text-xl sm:text-2xl relative z-10">
                 <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-violet-400 drop-shadow-[0_0_8px_rgba(167,139,250,0.5)]" />
-                {isLogin ? 'Welcome Back' : 'Create Account'}
+                {isForgotPassword ? 'Reset Password' : isLogin ? 'Welcome Back' : 'Create Account'}
               </CardTitle>
               <CardDescription className="text-white/70 relative z-10 text-xs sm:text-sm">
-                {isLogin ? 'Sign in to your account' : 'Sign up to get started'}
+                {isForgotPassword ? 'Enter your email to receive a reset link' : isLogin ? 'Sign in to your account' : 'Sign up to get started'}
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-3 sm:pt-4 px-4 sm:px-6 pb-4 sm:pb-6 relative">
               <div className="absolute inset-0 bg-gradient-to-t from-fuchsia-500/5 to-transparent pointer-events-none" />
-              <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
-                {!isLogin && (
+              
+              {isForgotPassword ? (
+                <form onSubmit={handleForgotPassword} className="space-y-4 relative z-10">
                   <div className="space-y-2">
-                    <Label htmlFor="displayName" className="text-white/80">Name</Label>
+                    <Label htmlFor="email" className="text-white/80">Email</Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
                       <Input
-                        id="displayName"
-                        type="text"
-                        placeholder="Your name"
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
+                        id="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                        required
                       />
                     </div>
                   </div>
-                )}
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white/80">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40"
-                      required
-                    />
-                  </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white/80">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40"
-                      required
-                      minLength={6}
-                    />
-                  </div>
-                </div>
+                  <Button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-lg shadow-violet-500/30 transition-all duration-200"
+                    size="lg"
+                  >
+                    {isSubmitting ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                    ) : (
+                      <>
+                        <Mail className="w-4 h-4 mr-2" />
+                        Send Reset Link
+                      </>
+                    )}
+                  </Button>
 
-                <Button 
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-lg shadow-violet-500/30 transition-all duration-200"
-                  size="lg"
-                >
-                  {isSubmitting ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
-                  ) : isLogin ? (
-                    <>
-                      <LogIn className="w-4 h-4 mr-2" />
-                      Sign In
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Create Account
-                    </>
+                  <Button 
+                    type="button"
+                    onClick={() => setIsForgotPassword(false)}
+                    variant="outline"
+                    className="w-full border-white/20 hover:bg-white/10 text-white bg-white/5 transition-all duration-200"
+                    size="lg"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Sign In
+                  </Button>
+                </form>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
+                  {!isLogin && (
+                    <div className="space-y-2">
+                      <Label htmlFor="displayName" className="text-white/80">Name</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+                        <Input
+                          id="displayName"
+                          type="text"
+                          placeholder="Your name"
+                          value={displayName}
+                          onChange={(e) => setDisplayName(e.target.value)}
+                          className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                        />
+                      </div>
+                    </div>
                   )}
-                </Button>
-                
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-white/20" />
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-white/80">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                        required
+                      />
+                    </div>
                   </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-transparent px-2 text-white/50">or</span>
-                  </div>
-                </div>
 
-                <Button 
-                  type="button"
-                  onClick={() => setIsLogin(!isLogin)}
-                  variant="outline"
-                  className="w-full border-white/20 hover:bg-white/10 text-white bg-white/5 transition-all duration-200"
-                  size="lg"
-                >
-                  {isLogin ? (
-                    <>
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Create Account
-                    </>
-                  ) : (
-                    <>
-                      <LogIn className="w-4 h-4 mr-2" />
-                      Sign In Instead
-                    </>
-                  )}
-                </Button>
-              </form>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <Label htmlFor="password" className="text-white/80">Password</Label>
+                      {isLogin && (
+                        <button
+                          type="button"
+                          onClick={() => setIsForgotPassword(true)}
+                          className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                        >
+                          Forgot password?
+                        </button>
+                      )}
+                    </div>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                        required
+                        minLength={6}
+                      />
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-lg shadow-violet-500/30 transition-all duration-200"
+                    size="lg"
+                  >
+                    {isSubmitting ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                    ) : isLogin ? (
+                      <>
+                        <LogIn className="w-4 h-4 mr-2" />
+                        Sign In
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Create Account
+                      </>
+                    )}
+                  </Button>
+                  
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-white/20" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-transparent px-2 text-white/50">or</span>
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="button"
+                    onClick={() => setIsLogin(!isLogin)}
+                    variant="outline"
+                    className="w-full border-white/20 hover:bg-white/10 text-white bg-white/5 transition-all duration-200"
+                    size="lg"
+                  >
+                    {isLogin ? (
+                      <>
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Create Account
+                      </>
+                    ) : (
+                      <>
+                        <LogIn className="w-4 h-4 mr-2" />
+                        Sign In Instead
+                      </>
+                    )}
+                  </Button>
+                </form>
+              )}
             </CardContent>
           </Card>
 
