@@ -66,6 +66,23 @@ export default function Dashboard() {
       setRecentContent(data);
     }
   };
+  // Check for successful payment and refresh profile
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    
+    if (paymentStatus === 'success') {
+      // Refresh profile to get updated subscription status
+      refreshProfile();
+      toast({
+        title: "Payment successful!",
+        description: "Your subscription has been updated. Thank you for upgrading!",
+      });
+      // Remove the query parameter from URL
+      window.history.replaceState({}, '', '/app');
+    }
+  }, []);
+
   useEffect(() => {
     loadRecentContent();
   }, [profile]);
