@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { Navigate, useLocation } from 'react-router-dom';
-import { ReactNode } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { ReactNode, useEffect, useState } from 'react';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -9,21 +9,39 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { loading, isSignedIn } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [isProcessingCallback, setIsProcessingCallback] = useState(false);
 
   // Check if we're in the middle of an OAuth callback (has code param)
   const searchParams = new URLSearchParams(location.search);
   const hasAuthCallback = searchParams.has('code') || searchParams.has('state');
 
-  console.log('[ProtectedRoute] State:', { loading, isSignedIn, hasAuthCallback, path: location.pathname, search: location.search });
+  useEffect(() => {
+    // If we have OAuth callback params, wait for Kinde to process then clear the URL
+    if (hasAuthCallback) {
+      setIsProcessingCallback(true);
+      
+      // Give Kinde time to process the callback, then clear URL params
+      const timeout = setTimeout(() => {
+        // Clear the OAuth params from URL
+        navigate(location.pathname, { replace: true });
+        setIsProcessingCallback(false);
+      }, 2000);
 
-  // Show loading while auth is being processed OR if we have OAuth callback params
-  if (loading || hasAuthCallback) {
+      return () => clearTimeout(timeout);
+    }
+  }, [hasAuthCallback, location.pathname, navigate]);
+
+  console.log('[ProtectedRoute] State:', { loading, isSignedIn, hasAuthCallback, isProcessingCallback, path: location.pathname });
+
+  // Show loading while auth is being processed
+  if (loading || isProcessingCallback) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           <p className="text-muted-foreground text-sm">
-            {hasAuthCallback ? 'Completing sign in...' : 'Loading...'}
+            {isProcessingCallback ? 'Completing sign in...' : 'Loading...'}
           </p>
         </div>
       </div>
