@@ -70,7 +70,7 @@ serve(async (req) => {
 
     // Determine if we're in test or live mode based on API key prefix
     const isTestMode = dodoApiKey.startsWith('sk_test_');
-    const baseUrl = isTestMode ? 'https://test.dodopayments.com' : 'https://api.dodopayments.com';
+    const baseUrl = isTestMode ? 'https://test.dodopayments.com' : 'https://live.dodopayments.com';
 
     // Create checkout session with Dodo Payments API
     const checkoutResponse = await fetch(`${baseUrl}/checkouts`, {
