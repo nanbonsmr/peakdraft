@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useClerk } from "@clerk/clerk-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,8 +23,7 @@ import {
 } from "@/components/ui/popover";
 
 export function Header() {
-  const { user, profile } = useAuth();
-  const { signOut } = useClerk();
+  const { user, profile, logout } = useAuth();
   const navigate = useNavigate();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -83,7 +81,7 @@ export function Header() {
   }, [user, profile]);
   
   const handleSignOut = async () => {
-    await signOut();
+    await logout();
     navigate('/');
   };
 

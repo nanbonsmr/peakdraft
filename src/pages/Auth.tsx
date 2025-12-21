@@ -1,23 +1,22 @@
-import { SignIn, SignUp, useAuth } from '@clerk/clerk-react';
+import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PenTool, Sparkles, ArrowLeft, Zap, Shield, Globe } from 'lucide-react';
+import { Sparkles, ArrowLeft, Zap, Shield, Globe, LogIn, UserPlus } from 'lucide-react';
 import FloatingParticles from '@/components/FloatingParticles';
+
 export default function Auth() {
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isAuthenticated, isLoading, login, register } = useKindeAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('signin');
 
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
+    if (!isLoading && isAuthenticated) {
       navigate('/app', { replace: true });
     }
-  }, [isSignedIn, isLoaded, navigate]);
+  }, [isAuthenticated, isLoading, navigate]);
 
-  if (!isLoaded) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-10 w-10 border-2 border-primary border-t-transparent"></div>
@@ -119,92 +118,43 @@ export default function Auth() {
               <div className="absolute inset-0 bg-gradient-to-b from-violet-500/10 to-transparent pointer-events-none" />
               <CardTitle className="flex items-center justify-center gap-2 text-white text-xl sm:text-2xl relative z-10">
                 <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-violet-400 drop-shadow-[0_0_8px_rgba(167,139,250,0.5)]" />
-                {activeTab === 'signin' ? 'Welcome Back' : 'Get Started'}
+                Welcome to PeakDraft
               </CardTitle>
               <CardDescription className="text-white/70 relative z-10 text-xs sm:text-sm">
-                {activeTab === 'signin' 
-                  ? 'Sign in to continue creating amazing content' 
-                  : 'Create your account and start writing'}
+                Sign in or create an account to get started
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-3 sm:pt-4 px-4 sm:px-6 pb-4 sm:pb-6 relative">
               <div className="absolute inset-0 bg-gradient-to-t from-fuchsia-500/5 to-transparent pointer-events-none" />
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6 relative z-10">
-                <TabsList className="grid w-full grid-cols-2 bg-white/10 p-1">
-                  <TabsTrigger 
-                    value="signin" 
-                    className="text-xs sm:text-sm data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white text-white/70 transition-all duration-300"
-                  >
-                    Sign In
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="signup"
-                    className="text-xs sm:text-sm data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white text-white/70 transition-all duration-300"
-                  >
-                    Sign Up
-                  </TabsTrigger>
-                </TabsList>
+              <div className="space-y-4 relative z-10">
+                <Button 
+                  onClick={() => login()}
+                  className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-lg shadow-violet-500/30 transition-all duration-200"
+                  size="lg"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Sign In
+                </Button>
                 
-                <TabsContent value="signin" className="flex justify-center">
-                  <SignIn 
-                    routing="hash"
-                    signUpUrl="#"
-                    afterSignInUrl="/app"
-                    appearance={{
-                      elements: {
-                        rootBox: "w-full max-w-full",
-                        card: "shadow-none border-0 bg-transparent p-0",
-                        headerTitle: "hidden",
-                        headerSubtitle: "hidden",
-                        socialButtonsBlockButton: "border border-white/20 hover:bg-white/10 text-white bg-white/5 transition-all duration-200 text-sm",
-                        socialButtonsBlockButtonText: "text-white font-medium text-xs sm:text-sm",
-                        formButtonPrimary: "bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-lg shadow-violet-500/30 transition-all duration-200 text-sm",
-                        footerAction: "hidden",
-                        formFieldInput: "bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-400/20 text-sm",
-                        formFieldLabel: "text-white/80 text-xs sm:text-sm",
-                        identityPreviewText: "text-white text-sm",
-                        identityPreviewEditButton: "text-violet-400 hover:text-violet-300 text-xs sm:text-sm",
-                        dividerLine: "bg-white/20",
-                        dividerText: "text-white/50 text-xs",
-                        formFieldInputShowPasswordButton: "text-white/60 hover:text-white",
-                        alert: "bg-red-500/20 border-red-500/30 text-red-200 text-xs sm:text-sm",
-                        alertText: "text-red-200 text-xs sm:text-sm",
-                        form: "gap-3 sm:gap-4",
-                      }
-                    }}
-                  />
-                </TabsContent>
-                
-                <TabsContent value="signup" className="flex justify-center">
-                  <SignUp 
-                    routing="hash"
-                    signInUrl="#"
-                    afterSignUpUrl="/app"
-                    appearance={{
-                      elements: {
-                        rootBox: "w-full max-w-full",
-                        card: "shadow-none border-0 bg-transparent p-0",
-                        headerTitle: "hidden",
-                        headerSubtitle: "hidden",
-                        socialButtonsBlockButton: "border border-white/20 hover:bg-white/10 text-white bg-white/5 transition-all duration-200 text-sm",
-                        socialButtonsBlockButtonText: "text-white font-medium text-xs sm:text-sm",
-                        formButtonPrimary: "bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-lg shadow-violet-500/30 transition-all duration-200 text-sm",
-                        footerAction: "hidden",
-                        formFieldInput: "bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-400/20 text-sm",
-                        formFieldLabel: "text-white/80 text-xs sm:text-sm",
-                        identityPreviewText: "text-white text-sm",
-                        identityPreviewEditButton: "text-violet-400 hover:text-violet-300 text-xs sm:text-sm",
-                        dividerLine: "bg-white/20",
-                        dividerText: "text-white/50 text-xs",
-                        formFieldInputShowPasswordButton: "text-white/60 hover:text-white",
-                        alert: "bg-red-500/20 border-red-500/30 text-red-200 text-xs sm:text-sm",
-                        alertText: "text-red-200 text-xs sm:text-sm",
-                        form: "gap-3 sm:gap-4",
-                      }
-                    }}
-                  />
-                </TabsContent>
-              </Tabs>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-white/20" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-transparent px-2 text-white/50">or</span>
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={() => register()}
+                  variant="outline"
+                  className="w-full border-white/20 hover:bg-white/10 text-white bg-white/5 transition-all duration-200"
+                  size="lg"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Create Account
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
