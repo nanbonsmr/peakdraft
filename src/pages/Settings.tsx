@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useClerk } from '@clerk/clerk-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,8 +24,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 
 export default function Settings() {
-  const { user, profile, refreshProfile } = useAuth();
-  const { signOut } = useClerk();
+  const { user, profile, refreshProfile, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +101,7 @@ export default function Settings() {
 
   const handleDeleteAccount = async () => {
     try {
-      await signOut();
+      await logout();
       navigate('/');
       toast({
         title: "Account deletion initiated",
