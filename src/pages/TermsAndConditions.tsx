@@ -108,7 +108,7 @@ export default function TermsAndConditions() {
           
           <h3 className="text-lg font-medium mt-4">4.1 Merchant of Record</h3>
           <p className="text-muted-foreground leading-relaxed">
-            peakdraftapp uses Paddle.com as our Merchant of Record for all subscription transactions. When you purchase a subscription, you are purchasing from Paddle, who is the authorized reseller of our services.
+            peakdraftapp uses Dodo Payments as our Merchant of Record for all subscription transactions. When you purchase a subscription, you are purchasing from Dodo Payments, who is the authorized reseller of our services.
           </p>
 
           <h3 className="text-lg font-medium mt-4">4.2 Subscription Plans</h3>
@@ -121,7 +121,7 @@ export default function TermsAndConditions() {
             <li>Subscriptions are billed in advance on a recurring basis (monthly or annually)</li>
             <li>Payment is due at the time of subscription and at each renewal date</li>
             <li>All fees are quoted and payable in US dollars unless otherwise specified</li>
-            <li>You authorize Paddle to charge your designated payment method for all applicable fees</li>
+            <li>You authorize Dodo Payments to charge your designated payment method for all applicable fees</li>
             <li>If your payment method fails, we may suspend or terminate your access to the Service</li>
           </ul>
 
@@ -137,7 +137,7 @@ export default function TermsAndConditions() {
 
           <h3 className="text-lg font-medium mt-4">4.6 Refunds</h3>
           <p className="text-muted-foreground leading-relaxed">
-            Refunds are processed in accordance with our Refund Policy and Paddle's Consumer Terms. You have a 14-day right to cancel from the date of purchase. Please see our Refund Policy page for complete details.
+            Refunds are processed in accordance with our Refund Policy and Dodo Payments' Consumer Terms. You have a 14-day right to cancel from the date of purchase. Please see our Refund Policy page for complete details.
           </p>
 
           <h3 className="text-lg font-medium mt-4">4.7 Free Trials</h3>

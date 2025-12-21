@@ -45,10 +45,10 @@ verify_jwt = false
 [functions.send-contact-email]
 verify_jwt = false
 
-[functions.create-paddle-checkout]
+[functions.create-dodo-checkout]
 verify_jwt = true
 
-[functions.paddle-webhook]
+[functions.dodo-webhook]
 verify_jwt = false
 
 [functions.admin-operations]

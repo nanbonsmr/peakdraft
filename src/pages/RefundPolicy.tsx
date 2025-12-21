@@ -28,7 +28,7 @@ export default function RefundPolicy() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Introduction</h2>
           <p className="text-muted-foreground leading-relaxed">
-            peakdraftapp uses Paddle.com as our Merchant of Record for all subscription transactions. This means that when you purchase a subscription, you are purchasing from Paddle, who is the authorized reseller of our services. This Refund Policy follows Paddle's Consumer Terms and Conditions.
+            peakdraftapp uses Dodo Payments as our Merchant of Record for all subscription transactions. This means that when you purchase a subscription, you are purchasing from Dodo Payments, who is the authorized reseller of our services. This Refund Policy follows Dodo Payments' Consumer Terms and Conditions.
           </p>
         </section>
 
@@ -65,7 +65,7 @@ export default function RefundPolicy() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">3. Refunds</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Refunds are processed through Paddle, our Merchant of Record. If you wish to request a refund, please contact us and we will process your request in accordance with Paddle's refund policy.
+            Refunds are processed through Dodo Payments, our Merchant of Record. If you wish to request a refund, please contact us and we will process your request in accordance with Dodo Payments' refund policy.
           </p>
           <p className="text-muted-foreground leading-relaxed mt-2">
             This policy does not affect your statutory rights as a Consumer in relation to products which are not as described, faulty, or not fit for purpose.
@@ -119,14 +119,14 @@ export default function RefundPolicy() {
 
         <section className="space-y-4 pt-4 border-t">
           <p className="text-sm text-muted-foreground">
-            peakdraftapp uses Paddle.com as the Merchant of Record for all transactions. For Paddle's complete terms and conditions, please visit{' '}
+            peakdraftapp uses Dodo Payments as the Merchant of Record for all transactions. For Dodo Payments' complete terms and conditions, please visit{' '}
             <a 
-              href="https://www.paddle.com/legal/invoiced-consumer-terms" 
+              href="https://www.dodopayments.com/legal/terms" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
-              Paddle's Consumer Terms
+              Dodo Payments' Consumer Terms
             </a>.
           </p>
         </section>

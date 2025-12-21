@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,13 +6,6 @@ import { Check, Star, Zap, Loader2, ArrowUp, ArrowDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-
-// Declare Paddle global
-declare global {
-  interface Window {
-    Paddle?: any;
-  }
-}
 
 const plans = [
   {
@@ -73,85 +66,9 @@ interface PaymentPlansProps {
 }
 
 export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, profile } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paddleLoaded, setPaddleLoaded] = useState(false);
-
-  useEffect(() => {
-    const loadPaddle = async () => {
-      try {
-        // Load Paddle.js script
-        if (!document.getElementById('paddle-js')) {
-          const script = document.createElement('script');
-          script.id = 'paddle-js';
-          script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
-          script.async = true;
-          
-          script.onload = () => {
-            console.log('Paddle script loaded');
-            // Initialize Paddle after script loads
-            initializePaddle();
-          };
-
-          script.onerror = (error) => {
-            console.error('Failed to load Paddle script:', error);
-            toast.error('Failed to load payment system');
-          };
-
-          document.head.appendChild(script);
-        } else if (window.Paddle) {
-          initializePaddle();
-        }
-      } catch (error) {
-        console.error('Failed to load Paddle:', error);
-        toast.error('Failed to initialize payment system');
-      }
-    };
-
-    const initializePaddle = async () => {
-      try {
-        // Get client token from edge function
-        const { data, error } = await supabase.functions.invoke('create-paddle-checkout', {
-          body: { planId: 'basic', userId: user?.id || 'init' }
-        });
-
-        if (data?.clientToken && window.Paddle) {
-          // Determine environment based on client token prefix
-          const isLive = data.clientToken.startsWith('live_');
-          
-          // Set environment BEFORE initializing (required for Paddle v2)
-          window.Paddle.Environment.set(isLive ? 'production' : 'sandbox');
-          
-          window.Paddle.Initialize({
-            token: data.clientToken,
-            eventCallback: (event: any) => {
-              console.log('Paddle event:', event);
-              if (event.name === 'checkout.completed') {
-                handlePaymentSuccess(event.data);
-              } else if (event.name === 'checkout.closed') {
-                setIsProcessing(false);
-                setSelectedPlan(null);
-              } else if (event.name === 'checkout.error') {
-                console.error('Paddle checkout error:', event);
-                toast.error('Payment error. Please try again.');
-                setIsProcessing(false);
-                setSelectedPlan(null);
-              }
-            }
-          });
-          setPaddleLoaded(true);
-          console.log('Paddle initialized successfully, environment:', isLive ? 'production' : 'sandbox');
-        }
-      } catch (error) {
-        console.error('Failed to initialize Paddle:', error);
-      }
-    };
-
-    if (user) {
-      loadPaddle();
-    }
-  }, [user]);
 
   const calculateDiscountedPrice = (originalPrice: number) => {
     if (discount > 0) {
@@ -160,28 +77,9 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
     return originalPrice;
   };
 
-  const handlePaymentSuccess = async (data: any) => {
-    console.log('Payment successful:', data);
-    toast.success('Payment successful! Your subscription is now active.');
-    
-    await refreshProfile();
-    
-    if (onSuccess) {
-      onSuccess();
-    }
-    
-    setIsProcessing(false);
-    setSelectedPlan(null);
-  };
-
   const handleSelectPlan = async (plan: typeof plans[0]) => {
     if (!user) {
       toast.error('Please sign in to subscribe');
-      return;
-    }
-
-    if (!paddleLoaded || !window.Paddle) {
-      toast.error('Payment system is still loading. Please try again.');
       return;
     }
 
@@ -189,8 +87,8 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
     setIsProcessing(true);
 
     try {
-      // Get checkout data from edge function
-      const { data, error } = await supabase.functions.invoke('create-paddle-checkout', {
+      // Get checkout URL from edge function
+      const { data, error } = await supabase.functions.invoke('create-dodo-checkout', {
         body: {
           planId: plan.id,
           userId: user.id
@@ -199,33 +97,14 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
 
       if (error) throw error;
 
-      if (!data.success || !data.priceId) {
-        throw new Error('Failed to create checkout session');
+      if (!data.success || !data.checkoutUrl) {
+        throw new Error(data.error || 'Failed to create checkout session');
       }
 
-      console.log('Opening Paddle checkout with data:', JSON.stringify(data, null, 2));
+      console.log('Redirecting to Dodo Payments checkout:', data.checkoutUrl);
 
-      // Open Paddle checkout with proper error handling
-      try {
-        await window.Paddle.Checkout.open({
-          items: [{ priceId: data.priceId, quantity: 1 }],
-          customer: {
-            email: data.customerEmail
-          },
-          customData: data.customData,
-          settings: {
-            displayMode: 'overlay',
-            theme: 'light',
-            locale: 'en',
-            allowLogout: false
-          }
-        });
-      } catch (checkoutError: any) {
-        console.error('Paddle Checkout.open error:', checkoutError);
-        toast.error(checkoutError?.message || 'Failed to open checkout');
-        setIsProcessing(false);
-        setSelectedPlan(null);
-      }
+      // Redirect to Dodo Payments hosted checkout
+      window.location.href = data.checkoutUrl;
 
     } catch (error: any) {
       console.error('Error creating checkout:', error);
@@ -334,15 +213,13 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
                         : 'bg-gradient-primary hover:opacity-90'
                   }`}
                   onClick={() => handleSelectPlan(plan)}
-                  disabled={isProcessing || !paddleLoaded || isCurrentPlan}
+                  disabled={isProcessing || isCurrentPlan}
                 >
                   {isProcessing && selectedPlan === plan.id ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Processing...
                     </>
-                  ) : !paddleLoaded ? (
-                    'Loading...'
                   ) : isCurrentPlan ? (
                     'Current Plan'
                   ) : isUpgrade ? (
@@ -370,7 +247,7 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
           All plans include a 7-day free trial. Cancel anytime.
         </p>
         <p className="text-xs text-muted-foreground">
-          Payments are processed securely through Paddle
+          Payments are processed securely through Dodo Payments
         </p>
         <p className="text-xs text-muted-foreground mt-2">
           By subscribing, you agree to our{' '}
