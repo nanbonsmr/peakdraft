@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,12 +8,20 @@ import { KanbanBoard } from "@/components/tasks/KanbanBoard";
 import { TaskListView } from "@/components/tasks/TaskListView";
 import { TaskCalendarView } from "@/components/tasks/TaskCalendarView";
 import { TaskAnalytics } from "@/components/tasks/TaskAnalytics";
+import { useTaskNotifications } from "@/hooks/useTaskNotifications";
 
 export default function Tasks() {
   const { user } = useAuth();
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Real-time notifications for task changes
+  const handleRealtimeUpdate = useCallback(() => {
+    setRefreshTrigger(prev => prev + 1);
+  }, []);
+  
+  useTaskNotifications(handleRealtimeUpdate);
 
   const handleTaskCreated = () => {
     setRefreshTrigger(prev => prev + 1);
