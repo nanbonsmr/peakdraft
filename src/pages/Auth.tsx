@@ -145,8 +145,9 @@ export default function Auth() {
         } else {
           toast({
             title: "Account created!",
-            description: "Please check your email to confirm your account.",
+            description: "Welcome to PeakDraft!",
           });
+          navigate('/app', { replace: true });
         }
       }
     } catch (error: any) {
