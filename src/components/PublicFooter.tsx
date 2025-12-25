@@ -81,15 +81,15 @@ const PublicFooter = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Mail className="w-4 h-4 text-primary" />
-                support@contentai.com
+                nanbondev@gmail.com
               </li>
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Phone className="w-4 h-4 text-primary" />
-                +1 (555) 123-4567
+                +2576892311
               </li>
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <MapPin className="w-4 h-4 text-primary" />
-                San Francisco, CA
+                Addis Ababa, Ethiopia
               </li>
             </ul>
           </div>
