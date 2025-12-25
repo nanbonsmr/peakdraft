@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -72,6 +73,13 @@ export default function Admin() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Plan change confirmation dialog
+  const [planChangeDialog, setPlanChangeDialog] = useState<{
+    open: boolean;
+    user: UserProfile | null;
+    newPlan: string;
+  }>({ open: false, user: null, newPlan: "" });
   const [refreshing, setRefreshing] = useState(false);
 
   // Form states
@@ -293,8 +301,13 @@ export default function Admin() {
     }
   };
 
-  const updateUserPlan = async (targetUserId: string, newPlan: string) => {
-    if (!user?.id || !user?.email) return;
+  const handlePlanChangeRequest = (userProfile: UserProfile, newPlan: string) => {
+    if (newPlan === userProfile.subscription_plan) return;
+    setPlanChangeDialog({ open: true, user: userProfile, newPlan });
+  };
+
+  const confirmPlanChange = async () => {
+    if (!user?.id || !user?.email || !planChangeDialog.user) return;
 
     try {
       const { error } = await supabase.functions.invoke('admin-operations', {
@@ -302,7 +315,7 @@ export default function Admin() {
           action: 'update-user-plan',
           userId: user.id,
           userEmail: user.email,
-          data: { targetUserId, newPlan }
+          data: { targetUserId: planChangeDialog.user.user_id, newPlan: planChangeDialog.newPlan }
         }
       });
 
@@ -310,7 +323,7 @@ export default function Admin() {
 
       toast({
         title: "Success",
-        description: `User plan updated to ${newPlan}`,
+        description: `User plan updated to ${planChangeDialog.newPlan}`,
       });
       await Promise.all([loadUsers(), loadUserStats()]);
     } catch (error) {
@@ -320,6 +333,8 @@ export default function Admin() {
         description: "Failed to update user plan",
         variant: "destructive",
       });
+    } finally {
+      setPlanChangeDialog({ open: false, user: null, newPlan: "" });
     }
   };
 
@@ -412,7 +427,29 @@ export default function Admin() {
   }
 
   return (
-    <div className="space-y-6">
+    <>
+      {/* Plan Change Confirmation Dialog */}
+      <AlertDialog open={planChangeDialog.open} onOpenChange={(open) => !open && setPlanChangeDialog({ open: false, user: null, newPlan: "" })}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Plan Change</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to change <span className="font-medium text-foreground">{planChangeDialog.user?.display_name || 'this user'}</span>'s plan from{' '}
+              <Badge variant="secondary" className="mx-1">{planChangeDialog.user?.subscription_plan}</Badge> to{' '}
+              <Badge variant="default" className="mx-1">{planChangeDialog.newPlan}</Badge>?
+              {planChangeDialog.newPlan !== 'free' && (
+                <span className="block mt-2 text-sm">This will set a 30-day subscription period.</span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmPlanChange}>Confirm Change</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -608,7 +645,7 @@ export default function Admin() {
                       <TableCell>
                         <Select
                           value={userProfile.subscription_plan}
-                          onValueChange={(value) => updateUserPlan(userProfile.user_id, value)}
+                          onValueChange={(value) => handlePlanChangeRequest(userProfile, value)}
                         >
                           <SelectTrigger className="w-[110px] h-8">
                             <SelectValue />
@@ -802,6 +839,7 @@ export default function Admin() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </>
   );
 }
