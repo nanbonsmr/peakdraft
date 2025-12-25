@@ -76,6 +76,22 @@ export default function Dashboard() {
       
       console.log('Dashboard loaded with payment status:', paymentStatus, 'plan:', planFromUrl, 'uid:', uidFromUrl);
       
+      // Handle failed/cancelled payments first
+      if (paymentStatus === 'failed' || paymentStatus === 'cancelled' || paymentStatus === 'canceled') {
+        // Payment failed or was cancelled - clear any pending plan data
+        localStorage.removeItem('pending_plan');
+        sessionStorage.removeItem('pending_plan');
+        
+        toast({
+          title: "Payment not completed",
+          description: "Your payment was not successful. No changes have been made to your subscription.",
+          variant: "destructive",
+        });
+        // Remove the query parameter from URL
+        window.history.replaceState({}, '', '/app');
+        return; // Exit early - don't process as success
+      }
+      
       if (paymentStatus === 'success') {
         // Try to get plan info from URL params first (most reliable), then from storage
         let planId = planFromUrl;
@@ -99,6 +115,8 @@ export default function Dashboard() {
         
         console.log('Final plan info:', { planId, userId });
         
+        let verificationSuccessful = false;
+        
         if (planId && userId) {
           try {
             console.log('Calling verify-payment with:', { userId, planId });
@@ -114,6 +132,7 @@ export default function Dashboard() {
               console.error('Error verifying payment:', error);
             } else if (data?.success) {
               console.log('Subscription updated successfully:', data);
+              verificationSuccessful = true;
             }
           } catch (error) {
             console.error('Error processing payment verification:', error);
@@ -129,22 +148,19 @@ export default function Dashboard() {
         // Refresh profile to get updated subscription status
         await refreshProfile();
         
-        toast({
-          title: "Payment successful!",
-          description: "Your subscription has been updated. Thank you for upgrading!",
-        });
-        // Remove the query parameter from URL
-        window.history.replaceState({}, '', '/app');
-      } else if (paymentStatus === 'failed' || paymentStatus === 'cancelled' || paymentStatus === 'canceled') {
-        // Payment failed or was cancelled - clear any pending plan data
-        localStorage.removeItem('pending_plan');
-        sessionStorage.removeItem('pending_plan');
+        // Only show success toast if verification was successful
+        if (verificationSuccessful) {
+          toast({
+            title: "Payment successful!",
+            description: "Your subscription has been updated. Thank you for upgrading!",
+          });
+        } else {
+          toast({
+            title: "Payment processing",
+            description: "Your payment is being processed. Your subscription will be updated shortly.",
+          });
+        }
         
-        toast({
-          title: "Payment not completed",
-          description: "Your payment was not successful. No changes have been made to your subscription.",
-          variant: "destructive",
-        });
         // Remove the query parameter from URL
         window.history.replaceState({}, '', '/app');
       }
