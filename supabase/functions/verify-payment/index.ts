@@ -97,7 +97,23 @@ serve(async (req) => {
       );
     }
 
-    console.log('Valid payment found:', validPayment.id);
+    console.log('Valid payment found:', validPayment.payment_id);
+
+    // Verify the payment amount is greater than 0 (not a test/free payment)
+    if (validPayment.total_amount <= 0) {
+      console.log('Payment amount is 0 or negative, rejecting:', validPayment.total_amount);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Invalid payment amount. Please complete a valid payment.',
+          verified: false
+        }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
 
     // Map plan IDs to subscription details
     const planConfig: Record<string, { words_limit: number; plan_name: string }> = {
@@ -111,20 +127,36 @@ serve(async (req) => {
       throw new Error(`Unknown plan ID: ${planId}`);
     }
 
-    // Check current user profile
+    // Check current user profile (use maybeSingle to handle non-existent profiles)
     const { data: currentProfile, error: fetchError } = await supabaseClient
       .from('profiles')
       .select('subscription_plan, subscription_start_date')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
     if (fetchError) {
       console.error('Error fetching profile:', fetchError);
       throw fetchError;
     }
 
+    // If no profile exists, we can't update subscription
+    if (!currentProfile) {
+      console.error('No profile found for user:', userId);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'User profile not found. Please contact support.',
+          verified: false
+        }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
     // Check if already on this plan (avoid duplicate updates)
-    if (currentProfile?.subscription_plan === config.plan_name) {
+    if (currentProfile.subscription_plan === config.plan_name) {
       const startDate = currentProfile.subscription_start_date ? new Date(currentProfile.subscription_start_date) : null;
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
       
@@ -173,11 +205,10 @@ serve(async (req) => {
         message: 'Subscription updated successfully',
         plan: config.plan_name,
         words_limit: config.words_limit,
-        verified: true,
-        paymentId: validPayment.id
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+      paymentId: validPayment.payment_id
+    }),
+    { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+  );
 
   } catch (error) {
     console.error('Payment verification error:', error);
