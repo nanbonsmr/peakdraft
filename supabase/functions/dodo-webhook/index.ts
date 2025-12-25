@@ -102,8 +102,20 @@ serve(async (req) => {
       const metadata = data.metadata || {};
       const userId = metadata.user_id;
       const planId = metadata.plan_id;
+      const paymentAmount = data.total_amount || data.amount || 0;
 
-      console.log('Payment succeeded for user:', userId, 'plan:', planId);
+      console.log('Payment succeeded for user:', userId, 'plan:', planId, 'amount:', paymentAmount);
+
+      // CRITICAL: Reject $0 payments - these are test/trial payments that shouldn't activate subscriptions
+      if (paymentAmount <= 0) {
+        console.warn('Rejecting $0 payment - subscription not activated. Amount:', paymentAmount);
+        return new Response(
+          JSON.stringify({ received: true, skipped: true, reason: 'Zero amount payment' }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
 
       if (!userId || !planId) {
         console.error('Missing user_id or plan_id in webhook metadata');
@@ -151,7 +163,7 @@ serve(async (req) => {
         throw updateError;
       }
 
-      console.log(`Successfully updated subscription for user ${userId} to ${config.plan_name}`);
+      console.log(`Successfully updated subscription for user ${userId} to ${config.plan_name} (paid: ${paymentAmount})`);
     }
 
     // Handle subscription created/activated events
@@ -160,6 +172,21 @@ serve(async (req) => {
       const metadata = data.metadata || {};
       const userId = metadata.user_id;
       const planId = metadata.plan_id;
+      // Check for payment amount in subscription data
+      const subscriptionAmount = data.recurring_pre_tax_amount || data.amount || 0;
+
+      console.log('Subscription event for user:', userId, 'plan:', planId, 'amount:', subscriptionAmount);
+
+      // CRITICAL: Reject $0 subscriptions
+      if (subscriptionAmount <= 0) {
+        console.warn('Rejecting $0 subscription - not activated. Amount:', subscriptionAmount);
+        return new Response(
+          JSON.stringify({ received: true, skipped: true, reason: 'Zero amount subscription' }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
 
       if (userId && planId) {
         const planConfig: Record<string, { words_limit: number; plan_name: string }> = {
@@ -189,7 +216,7 @@ serve(async (req) => {
           if (updateError) {
             console.error('Error updating profile:', updateError);
           } else {
-            console.log(`Subscription activated for user ${userId} to ${config.plan_name}`);
+            console.log(`Subscription activated for user ${userId} to ${config.plan_name} (amount: ${subscriptionAmount})`);
           }
         }
       }
