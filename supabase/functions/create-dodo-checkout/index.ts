@@ -102,8 +102,8 @@ serve(async (req) => {
     const productData = await productResponse.json();
     console.log('Product data:', JSON.stringify(productData, null, 2));
 
-    // Validate product has a valid price
-    const productPrice = productData.price?.amount || productData.price || 0;
+    // Validate product has a valid price (Dodo nests price in price.price for recurring products)
+    const productPrice = productData.price?.price || productData.price?.amount || 0;
     console.log('Product price:', productPrice, 'Minimum required:', config.minPrice);
 
     if (productPrice < config.minPrice) {
@@ -147,12 +147,8 @@ serve(async (req) => {
     const checkoutData = await checkoutResponse.json();
     console.log('Checkout session created:', checkoutData);
 
-    // Validate checkout amount is greater than 0
-    const checkoutAmount = checkoutData.total_amount || checkoutData.amount || 0;
-    if (checkoutAmount <= 0) {
-      console.error('Checkout created with zero amount:', checkoutAmount);
-      throw new Error('Payment configuration error: Invalid checkout amount. Please contact support.');
-    }
+    // Note: Dodo checkout response only contains session_id and checkout_url
+    // Price validation was already done above via product API
 
     return new Response(
       JSON.stringify({ 
