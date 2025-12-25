@@ -82,9 +82,50 @@ export default function Dashboard() {
         localStorage.removeItem('pending_plan');
         sessionStorage.removeItem('pending_plan');
         
+        // Get error details from URL if available
+        const errorCode = urlParams.get('error_code');
+        const errorReason = urlParams.get('reason');
+        
+        // Map error codes to user-friendly messages
+        const errorMessages: Record<string, { title: string; description: string }> = {
+          'INSUFFICIENT_FUNDS': {
+            title: "Insufficient Funds",
+            description: "Your card has insufficient funds. Please try a different payment method or add funds to your account."
+          },
+          'CARD_DECLINED': {
+            title: "Card Declined",
+            description: "Your card was declined by your bank. Please try a different card or contact your bank."
+          },
+          'EXPIRED_CARD': {
+            title: "Card Expired",
+            description: "Your card has expired. Please use a valid card to complete your purchase."
+          },
+          'INVALID_CARD': {
+            title: "Invalid Card Details",
+            description: "The card details provided are invalid. Please check and try again."
+          },
+          'PROCESSING_ERROR': {
+            title: "Processing Error",
+            description: "There was an error processing your payment. Please try again in a few minutes."
+          },
+          'AUTHENTICATION_REQUIRED': {
+            title: "Authentication Required",
+            description: "Your bank requires additional verification. Please try again and complete the verification process."
+          },
+          'cancelled': {
+            title: "Payment Cancelled",
+            description: "You cancelled the payment. No charges have been made to your account."
+          }
+        };
+        
+        const errorInfo = errorMessages[errorCode || ''] || errorMessages[errorReason || ''] || {
+          title: "Payment Not Completed",
+          description: "Your payment was not successful. No changes have been made to your subscription."
+        };
+        
         toast({
-          title: "Payment not completed",
-          description: "Your payment was not successful. No changes have been made to your subscription.",
+          title: errorInfo.title,
+          description: errorInfo.description,
           variant: "destructive",
         });
         // Remove the query parameter from URL
