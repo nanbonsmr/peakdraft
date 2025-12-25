@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { playNotificationSound, initializeAudioContext } from "@/lib/notificationSound";
 
 interface Task {
   id: string;
@@ -15,8 +16,15 @@ export function useTaskReminders() {
   const scheduledReminders = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const notificationPermission = useRef<NotificationPermission>("default");
 
-  // Request notification permission
+  // Request notification permission and initialize audio
   useEffect(() => {
+    // Initialize audio context on first user interaction
+    const handleInteraction = () => {
+      initializeAudioContext();
+      document.removeEventListener('click', handleInteraction);
+    };
+    document.addEventListener('click', handleInteraction);
+
     if ("Notification" in window) {
       Notification.requestPermission().then((permission) => {
         notificationPermission.current = permission;
@@ -25,6 +33,10 @@ export function useTaskReminders() {
         }
       });
     }
+
+    return () => {
+      document.removeEventListener('click', handleInteraction);
+    };
   }, []);
 
   // Fetch tasks with reminders and schedule notifications
@@ -117,6 +129,9 @@ export function useTaskReminders() {
   };
 
   const sendNotification = (task: Task) => {
+    // Play notification sound
+    playNotificationSound();
+
     // Show toast notification
     toast({
       title: "⏰ Task Reminder",
