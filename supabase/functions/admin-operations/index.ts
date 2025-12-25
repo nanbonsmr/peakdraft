@@ -6,9 +6,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Admin emails - server-side verification
-const ADMIN_EMAILS = ['nanbondev@gmail.com'];
-
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -18,39 +15,72 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     
-    // Create admin client with service role
+    // Create admin client with service role for database operations
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
     
-    // Get request body
-    const { action, userId, userEmail, data } = await req.json();
+    // Get the JWT token from the Authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.log('No authorization header provided');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: No authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Create a client with the user's JWT to verify their identity
+    const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: { Authorization: authHeader }
+      }
+    });
+
+    // Get the authenticated user from the JWT
+    const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
     
-    console.log(`Admin operation requested: ${action} by user: ${userId}`);
-    
-    // Server-side admin verification
-    if (!userEmail || !ADMIN_EMAILS.includes(userEmail.toLowerCase())) {
-      console.log(`Access denied for email: ${userEmail}`);
+    if (userError || !user) {
+      console.log('Invalid or expired token:', userError?.message);
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const userId = user.id;
+    const userEmail = user.email;
+
+    console.log(`Admin operation requested by verified user: ${userId} (${userEmail})`);
+
+    // Server-side admin verification using the database role
+    const { data: adminRole, error: roleError } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    if (roleError) {
+      console.error('Error checking admin role:', roleError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to verify admin status' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!adminRole) {
+      console.log(`Access denied - user ${userId} is not an admin`);
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Admin access required' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Ensure admin role exists in database
-    const { data: existingRole } = await supabaseAdmin
-      .from('user_roles')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('role', 'admin')
-      .maybeSingle();
+    // Get request body for the action
+    const { action, data } = await req.json();
     
-    if (!existingRole) {
-      // Auto-create admin role for verified admin email
-      await supabaseAdmin
-        .from('user_roles')
-        .insert({ user_id: userId, role: 'admin' });
-      console.log(`Admin role created for user: ${userId}`);
-    }
+    console.log(`Admin operation: ${action} by admin: ${userId}`);
 
     // Handle different admin operations
     switch (action) {
