@@ -71,36 +71,60 @@ export default function Dashboard() {
     const verifyPaymentAndUpdateSubscription = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const paymentStatus = urlParams.get('payment');
+      const planFromUrl = urlParams.get('plan');
+      const uidFromUrl = urlParams.get('uid');
+      
+      console.log('Dashboard loaded with payment status:', paymentStatus, 'plan:', planFromUrl, 'uid:', uidFromUrl);
       
       if (paymentStatus === 'success') {
-        // Get pending plan info from localStorage
-        const pendingPlanData = localStorage.getItem('pending_plan');
+        // Try to get plan info from URL params first (most reliable), then from storage
+        let planId = planFromUrl;
+        let userId = uidFromUrl;
         
-        if (pendingPlanData) {
-          try {
-            const { planId, userId, timestamp } = JSON.parse(pendingPlanData);
-            
-            // Check if pending plan is not too old (within 1 hour)
-            if (Date.now() - timestamp < 3600000) {
-              // Call verify-payment edge function to update subscription
-              const { data, error } = await supabase.functions.invoke('verify-payment', {
-                body: { userId, planId }
-              });
-              
-              if (error) {
-                console.error('Error verifying payment:', error);
-              } else if (data?.success) {
-                console.log('Subscription updated successfully:', data);
-              }
+        // Fallback to localStorage/sessionStorage if not in URL
+        if (!planId || !userId) {
+          const pendingPlanData = localStorage.getItem('pending_plan') || sessionStorage.getItem('pending_plan');
+          console.log('Pending plan data from storage:', pendingPlanData);
+          
+          if (pendingPlanData) {
+            try {
+              const parsed = JSON.parse(pendingPlanData);
+              planId = planId || parsed.planId;
+              userId = userId || parsed.userId;
+            } catch (e) {
+              console.error('Error parsing pending plan data:', e);
             }
-            
-            // Clear pending plan data
-            localStorage.removeItem('pending_plan');
-          } catch (error) {
-            console.error('Error processing payment verification:', error);
-            localStorage.removeItem('pending_plan');
           }
         }
+        
+        console.log('Final plan info:', { planId, userId });
+        
+        if (planId && userId) {
+          try {
+            console.log('Calling verify-payment with:', { userId, planId });
+            
+            // Call verify-payment edge function to update subscription
+            const { data, error } = await supabase.functions.invoke('verify-payment', {
+              body: { userId, planId }
+            });
+            
+            console.log('Verify payment response:', { data, error });
+            
+            if (error) {
+              console.error('Error verifying payment:', error);
+            } else if (data?.success) {
+              console.log('Subscription updated successfully:', data);
+            }
+          } catch (error) {
+            console.error('Error processing payment verification:', error);
+          }
+        } else {
+          console.log('Missing planId or userId for verification');
+        }
+        
+        // Clear pending plan data from both storages
+        localStorage.removeItem('pending_plan');
+        sessionStorage.removeItem('pending_plan');
         
         // Refresh profile to get updated subscription status
         await refreshProfile();
@@ -114,6 +138,7 @@ export default function Dashboard() {
       } else if (paymentStatus === 'failed' || paymentStatus === 'cancelled' || paymentStatus === 'canceled') {
         // Payment failed or was cancelled - clear any pending plan data
         localStorage.removeItem('pending_plan');
+        sessionStorage.removeItem('pending_plan');
         
         toast({
           title: "Payment not completed",
