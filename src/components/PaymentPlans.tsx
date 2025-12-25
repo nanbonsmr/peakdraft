@@ -104,6 +104,13 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
 
       console.log('Redirecting to Dodo Payments checkout:', data.checkoutUrl);
 
+      // Store pending plan info for verification after payment
+      localStorage.setItem('pending_plan', JSON.stringify({
+        planId: plan.id,
+        userId: user.id,
+        timestamp: Date.now()
+      }));
+
       // Redirect to Dodo Payments hosted checkout
       window.location.href = data.checkoutUrl;
 
