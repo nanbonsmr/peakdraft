@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Sparkles, DollarSign, Headphones } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PublicNavbar } from '@/components/PublicNavbar';
+import PublicFooter from '@/components/PublicFooter';
 export default function FAQ() {
   const navigate = useNavigate();
 
@@ -244,6 +245,8 @@ export default function FAQ() {
         </Button>
       </Card>
       </div>
+
+      <PublicFooter />
     </div>
   );
 }

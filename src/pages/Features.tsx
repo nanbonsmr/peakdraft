@@ -9,6 +9,7 @@ import {
   Target, Layers, Repeat, Bell, Search, Download, Globe
 } from 'lucide-react';
 import { PublicNavbar } from '@/components/PublicNavbar';
+import PublicFooter from '@/components/PublicFooter';
 
 const aiTemplates = [
   {
@@ -311,25 +312,7 @@ export default function Features() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/40 py-8 px-4 sm:px-6 lg:px-8 bg-muted/30">
-        <div className="container mx-auto">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <img src="/favicon.png" alt="PeakDraft Logo" className="w-9 h-9 rounded-lg" />
-              <span className="font-bold">PeakDraft</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              © 2024 PeakDraft. All rights reserved.
-            </p>
-            <div className="flex gap-4 text-sm text-muted-foreground">
-              <button onClick={() => navigate('/privacy')} className="hover:text-primary transition-colors">Privacy</button>
-              <button onClick={() => navigate('/terms')} className="hover:text-primary transition-colors">Terms</button>
-              <button onClick={() => navigate('/contact')} className="hover:text-primary transition-colors">Contact</button>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

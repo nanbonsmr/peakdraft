@@ -6,6 +6,7 @@ import { Check, X, Star, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { PublicNavbar } from '@/components/PublicNavbar';
+import PublicFooter from '@/components/PublicFooter';
 const plans = [
   {
     id: 'basic',
@@ -275,6 +276,8 @@ export default function PublicPricing() {
           </Button>
         </Card>
       </div>
+
+      <PublicFooter />
     </div>
   );
 }
