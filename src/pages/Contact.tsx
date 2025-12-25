@@ -4,13 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Mail, Phone, MapPin, Send, Loader2, Home } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Loader2, ArrowRight, Menu, X, Sparkles } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import logo from '@/assets/logo.png';
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, { message: "Name is required" }).max(100, { message: "Name must be less than 100 characters" }),
@@ -24,6 +26,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 export default function Contact() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const {
     register,
@@ -59,156 +62,294 @@ export default function Contact() {
     }
   };
 
+  const navLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/#features', label: 'Features' },
+    { href: '/#templates', label: 'Templates' },
+    { href: '/public-pricing', label: 'Pricing' },
+  ];
+
   return (
-    <div className="max-w-6xl mx-auto space-y-8 p-6">
-      <div className="flex items-center justify-between">
-        <div className="text-center flex-1 space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">Contact Us</h1>
-          <p className="text-muted-foreground text-lg">
-            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-          </p>
-        </div>
-        <Button variant="outline" onClick={() => navigate('/')} className="ml-4">
-          <Home className="mr-2 h-4 w-4" />
-          Home
-        </Button>
-      </div>
+    <div className="min-h-screen bg-background">
+      {/* Navbar */}
+      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2 group">
+              <img src={logo} alt="PeakDraft" className="h-8 w-auto" />
+              <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                PeakDraft
+              </span>
+            </Link>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        {/* Contact Information Cards */}
-        <Card className="p-6 text-center hover:shadow-elegant transition-all">
-          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
-            <Mail className="h-6 w-6 text-primary" />
-          </div>
-          <h3 className="font-bold mb-2">Email Us</h3>
-          <p className="text-sm text-muted-foreground">nanbonkayu@gmail.com</p>
-        </Card>
-
-        <Card className="p-6 text-center hover:shadow-elegant transition-all">
-          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
-            <Phone className="h-6 w-6 text-primary" />
-          </div>
-          <h3 className="font-bold mb-2">Call Us</h3>
-          <p className="text-sm text-muted-foreground">+251976892311</p>
-        </Card>
-
-        <Card className="p-6 text-center hover:shadow-elegant transition-all">
-          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
-            <MapPin className="h-6 w-6 text-primary" />
-          </div>
-          <h3 className="font-bold mb-2">Visit Us</h3>
-          <p className="text-sm text-muted-foreground">Addis Ababa</p>
-        </Card>
-      </div>
-
-      {/* Contact Form */}
-      <Card className="p-8">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name *</Label>
-              <Input
-                id="name"
-                placeholder="Your name"
-                {...register('name')}
-                className={errors.name ? 'border-destructive' : ''}
-              />
-              {errors.name && (
-                <p className="text-sm text-destructive">{errors.name.message}</p>
-              )}
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="your.email@example.com"
-                {...register('email')}
-                className={errors.email ? 'border-destructive' : ''}
-              />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
-              )}
+            {/* Desktop Actions */}
+            <div className="hidden md:flex items-center gap-4">
+              <ThemeToggle />
+              <Button variant="ghost" onClick={() => navigate('/auth')}>
+                Sign In
+              </Button>
+              <Button onClick={() => navigate('/auth')} className="group">
+                Get Started
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="flex md:hidden items-center gap-2">
+              <ThemeToggle />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="subject">Subject *</Label>
-            <Input
-              id="subject"
-              placeholder="How can we help you?"
-              {...register('subject')}
-              className={errors.subject ? 'border-destructive' : ''}
-            />
-            {errors.subject && (
-              <p className="text-sm text-destructive">{errors.subject.message}</p>
-            )}
+          {/* Mobile Navigation */}
+          {mobileMenuOpen && (
+            <div className="md:hidden py-4 border-t border-border/40 animate-fade-in">
+              <div className="flex flex-col gap-4">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.label}
+                    to={link.href}
+                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="flex flex-col gap-2 pt-4 border-t border-border/40">
+                  <Button variant="ghost" onClick={() => navigate('/auth')} className="justify-start">
+                    Sign In
+                  </Button>
+                  <Button onClick={() => navigate('/auth')}>
+                    Get Started
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </nav>
+      </header>
+
+      {/* Hero Section */}
+      <section className="relative py-16 sm:py-24 px-4 overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
+        </div>
+        
+        <div className="container mx-auto text-center max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium text-primary">We're here to help</span>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="message">Message *</Label>
-            <Textarea
-              id="message"
-              placeholder="Tell us more about your inquiry..."
-              rows={6}
-              {...register('message')}
-              className={errors.message ? 'border-destructive' : ''}
-            />
-            {errors.message && (
-              <p className="text-sm text-destructive">{errors.message.message}</p>
-            )}
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full md:w-auto"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Sending...
-              </>
-            ) : (
-              <>
-                <Send className="mr-2 h-4 w-4" />
-                Send Message
-              </>
-            )}
-          </Button>
-
-          <p className="text-xs text-muted-foreground">
-            * Required fields. By submitting this form, you agree to our{' '}
-            <a href="/privacy" className="underline hover:text-primary">Privacy Policy</a>.
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+            Get in <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Touch</span>
+          </h1>
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+            Have questions about PeakDraft? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
-        </form>
-      </Card>
+        </div>
+      </section>
 
-      {/* FAQ Section */}
-      <Card className="p-8">
-        <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-semibold mb-2">How quickly will I receive a response?</h3>
-            <p className="text-sm text-muted-foreground">
-              We typically respond to all inquiries within 24 hours during business days.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-2">Do you offer phone support?</h3>
-            <p className="text-sm text-muted-foreground">
-              Yes, phone support is available for Pro and Enterprise plan subscribers.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-2">Can I schedule a demo?</h3>
-            <p className="text-sm text-muted-foreground">
-              Absolutely! Mention "demo request" in your message and we'll arrange a time that works for you.
-            </p>
+      {/* Contact Cards */}
+      <section className="py-8 px-4">
+        <div className="container mx-auto max-w-5xl">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <Card 
+              className="group p-6 text-center hover:shadow-elegant transition-all duration-300 cursor-pointer border-2 hover:border-primary/50 bg-gradient-to-br from-background to-muted/30"
+              onClick={() => window.location.href = 'mailto:nanbondev@gmail.com'}
+            >
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Mail className="h-7 w-7 text-primary" />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Email Us</h3>
+              <p className="text-sm text-muted-foreground">nanbondev@gmail.com</p>
+            </Card>
+
+            <Card 
+              className="group p-6 text-center hover:shadow-elegant transition-all duration-300 cursor-pointer border-2 hover:border-primary/50 bg-gradient-to-br from-background to-muted/30"
+              onClick={() => window.location.href = 'tel:+2576892311'}
+            >
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Phone className="h-7 w-7 text-primary" />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Call Us</h3>
+              <p className="text-sm text-muted-foreground">+2576892311</p>
+            </Card>
+
+            <Card className="group p-6 text-center hover:shadow-elegant transition-all duration-300 border-2 hover:border-primary/50 bg-gradient-to-br from-background to-muted/30">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <MapPin className="h-7 w-7 text-primary" />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Visit Us</h3>
+              <p className="text-sm text-muted-foreground">Addis Ababa, Ethiopia</p>
+            </Card>
           </div>
         </div>
-      </Card>
+      </section>
+
+      {/* Contact Form Section */}
+      <section className="py-12 sm:py-16 px-4">
+        <div className="container mx-auto max-w-5xl">
+          <div className="grid lg:grid-cols-5 gap-8 lg:gap-12">
+            {/* Form */}
+            <Card className="lg:col-span-3 p-6 sm:p-8 border-2 shadow-elegant">
+              <h2 className="text-2xl font-bold mb-2">Send Us a Message</h2>
+              <p className="text-muted-foreground mb-6">Fill out the form below and we'll get back to you shortly.</p>
+              
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name *</Label>
+                    <Input
+                      id="name"
+                      placeholder="Your name"
+                      {...register('name')}
+                      className={`h-12 ${errors.name ? 'border-destructive' : ''}`}
+                    />
+                    {errors.name && (
+                      <p className="text-sm text-destructive">{errors.name.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="your.email@example.com"
+                      {...register('email')}
+                      className={`h-12 ${errors.email ? 'border-destructive' : ''}`}
+                    />
+                    {errors.email && (
+                      <p className="text-sm text-destructive">{errors.email.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="subject">Subject *</Label>
+                  <Input
+                    id="subject"
+                    placeholder="How can we help you?"
+                    {...register('subject')}
+                    className={`h-12 ${errors.subject ? 'border-destructive' : ''}`}
+                  />
+                  {errors.subject && (
+                    <p className="text-sm text-destructive">{errors.subject.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message *</Label>
+                  <Textarea
+                    id="message"
+                    placeholder="Tell us more about your inquiry..."
+                    rows={5}
+                    {...register('message')}
+                    className={errors.message ? 'border-destructive' : ''}
+                  />
+                  {errors.message && (
+                    <p className="text-sm text-destructive">{errors.message.message}</p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full sm:w-auto"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Send Message
+                    </>
+                  )}
+                </Button>
+
+                <p className="text-xs text-muted-foreground">
+                  * Required fields. By submitting this form, you agree to our{' '}
+                  <Link to="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</Link>.
+                </p>
+              </form>
+            </Card>
+
+            {/* FAQ Sidebar */}
+            <div className="lg:col-span-2 space-y-6">
+              <Card className="p-6 border-2 bg-gradient-to-br from-primary/5 to-background">
+                <h3 className="text-xl font-bold mb-4">Quick Answers</h3>
+                <div className="space-y-5">
+                  <div>
+                    <h4 className="font-semibold text-sm mb-1">How quickly will I receive a response?</h4>
+                    <p className="text-sm text-muted-foreground">
+                      We typically respond within 24 hours during business days.
+                    </p>
+                  </div>
+                  <div className="border-t border-border/50 pt-4">
+                    <h4 className="font-semibold text-sm mb-1">Do you offer phone support?</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Yes, phone support is available for Pro and Enterprise subscribers.
+                    </p>
+                  </div>
+                  <div className="border-t border-border/50 pt-4">
+                    <h4 className="font-semibold text-sm mb-1">Can I schedule a demo?</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Absolutely! Mention "demo request" in your message and we'll arrange a time.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-6 border-2 bg-gradient-to-br from-accent/10 to-background">
+                <h3 className="text-lg font-bold mb-3">Need immediate help?</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Check out our comprehensive FAQ section for instant answers to common questions.
+                </p>
+                <Button variant="outline" onClick={() => navigate('/faq')} className="w-full">
+                  View FAQ
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border/40 py-8 px-4 bg-muted/30">
+        <div className="container mx-auto text-center">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} PeakDraft. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
