@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Settings, LogOut, Bell, CreditCard, Crown, Sparkles } from "lucide-reac
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationPanel } from "./NotificationPanel";
+import { playNotificationSound, initializeAudioContext } from "@/lib/notificationSound";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,9 +28,21 @@ export function Header() {
   const navigate = useNavigate();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const previousCountRef = useRef(0);
+  const isInitialLoadRef = useRef(true);
   
+  // Initialize audio context on first user interaction
   useEffect(() => {
-    const fetchUnreadCount = async () => {
+    const handleInteraction = () => {
+      initializeAudioContext();
+      window.removeEventListener('click', handleInteraction);
+    };
+    window.addEventListener('click', handleInteraction);
+    return () => window.removeEventListener('click', handleInteraction);
+  }, []);
+
+  useEffect(() => {
+    const fetchUnreadCount = async (playSound = false) => {
       if (!user || !profile) return;
       
       // Fetch dismissed notifications
@@ -58,7 +71,17 @@ export function Header() {
           if (usage >= 90 && !dismissedIds.has('usage-critical')) dynamicCount++;
           else if (usage >= 75 && !dismissedIds.has('usage-warning')) dynamicCount++;
         }
-        setUnreadCount(activeNotifications.length + dynamicCount);
+        
+        const newCount = activeNotifications.length + dynamicCount;
+        
+        // Play sound if new notifications arrived (not on initial load)
+        if (playSound && !isInitialLoadRef.current && newCount > previousCountRef.current) {
+          playNotificationSound();
+        }
+        
+        previousCountRef.current = newCount;
+        isInitialLoadRef.current = false;
+        setUnreadCount(newCount);
       }
     };
 
@@ -67,11 +90,17 @@ export function Header() {
     // Subscribe to real-time notification changes
     const notifChannel = supabase
       .channel('notifications-header')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
-        fetchUnreadCount();
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, () => {
+        fetchUnreadCount(true); // Play sound for new notifications
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'notifications' }, () => {
+        fetchUnreadCount(true);
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'notifications' }, () => {
+        fetchUnreadCount(false);
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'dismissed_notifications' }, () => {
-        fetchUnreadCount();
+        fetchUnreadCount(false);
       })
       .subscribe();
 
