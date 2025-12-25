@@ -68,14 +68,6 @@ const comparisonFeatures = [
     { name: 'Team collaboration', basic: false, pro: true, enterprise: true },
     { name: 'User seats', basic: '1', pro: '5', enterprise: 'Unlimited' },
   ]},
-  { category: 'Advanced Features', features: [
-    { name: 'API access', basic: false, pro: true, enterprise: true },
-    { name: 'Advanced analytics', basic: false, pro: true, enterprise: true },
-    { name: 'White-label options', basic: false, pro: false, enterprise: true },
-    { name: 'Custom integrations', basic: false, pro: false, enterprise: true },
-    { name: 'Priority processing', basic: false, pro: true, enterprise: true },
-    { name: 'Dedicated account manager', basic: false, pro: false, enterprise: true },
-  ]},
   { category: 'Security & Compliance', features: [
     { name: 'Data encryption', basic: true, pro: true, enterprise: true },
     { name: 'SSO/SAML', basic: false, pro: false, enterprise: true },
