@@ -56,20 +56,60 @@ serve(async (req) => {
       throw new Error('User email is required for checkout');
     }
 
-    // Map plan IDs to Dodo product IDs
-    const productMap: Record<string, string> = {
-      'basic': Deno.env.get('DODO_BASIC_PRODUCT_ID') || '',
-      'pro': Deno.env.get('DODO_PRO_PRODUCT_ID') || '',
-      'enterprise': Deno.env.get('DODO_ENTERPRISE_PRODUCT_ID') || ''
+    // Map plan IDs to Dodo product IDs and expected prices (in cents)
+    const planConfig: Record<string, { productId: string; minPrice: number; planName: string }> = {
+      'basic': { 
+        productId: Deno.env.get('DODO_BASIC_PRODUCT_ID') || '', 
+        minPrice: 100, // $1 minimum 
+        planName: 'Basic'
+      },
+      'pro': { 
+        productId: Deno.env.get('DODO_PRO_PRODUCT_ID') || '', 
+        minPrice: 100, // $1 minimum
+        planName: 'Pro'
+      },
+      'enterprise': { 
+        productId: Deno.env.get('DODO_ENTERPRISE_PRODUCT_ID') || '', 
+        minPrice: 100, // $1 minimum
+        planName: 'Enterprise'
+      }
     };
 
-    const productId = productMap[planId];
-    if (!productId) {
-      throw new Error(`Invalid plan ID: ${planId}`);
+    const config = planConfig[planId];
+    if (!config || !config.productId) {
+      throw new Error(`Invalid plan ID or missing product configuration: ${planId}`);
     }
 
     // Use live/production mode
     const baseUrl = 'https://live.dodopayments.com';
+
+    // Verify the product exists and has a valid price before creating checkout
+    console.log('Verifying product configuration for:', config.productId);
+    const productResponse = await fetch(`${baseUrl}/products/${config.productId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${dodoApiKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!productResponse.ok) {
+      const productError = await productResponse.text();
+      console.error('Failed to verify product:', productError);
+      throw new Error(`Product configuration error: Unable to verify ${config.planName} plan. Please contact support.`);
+    }
+
+    const productData = await productResponse.json();
+    console.log('Product data:', JSON.stringify(productData, null, 2));
+
+    // Validate product has a valid price
+    const productPrice = productData.price?.amount || productData.price || 0;
+    console.log('Product price:', productPrice, 'Minimum required:', config.minPrice);
+
+    if (productPrice < config.minPrice) {
+      console.error('Product price too low or not configured:', productPrice);
+      throw new Error(`Price configuration error: ${config.planName} plan price is not properly configured. Please contact support.`);
+    }
 
     const origin = req.headers.get('origin') || 'https://peakdraftapp.netlify.app';
     
@@ -83,7 +123,7 @@ serve(async (req) => {
         'Authorization': `Bearer ${dodoApiKey}`,
       },
       body: JSON.stringify({
-        product_cart: [{ product_id: productId, quantity: 1 }],
+        product_cart: [{ product_id: config.productId, quantity: 1 }],
         customer: { 
           email: email,
           name: displayName
@@ -106,6 +146,13 @@ serve(async (req) => {
 
     const checkoutData = await checkoutResponse.json();
     console.log('Checkout session created:', checkoutData);
+
+    // Validate checkout amount is greater than 0
+    const checkoutAmount = checkoutData.total_amount || checkoutData.amount || 0;
+    if (checkoutAmount <= 0) {
+      console.error('Checkout created with zero amount:', checkoutAmount);
+      throw new Error('Payment configuration error: Invalid checkout amount. Please contact support.');
+    }
 
     return new Response(
       JSON.stringify({ 
