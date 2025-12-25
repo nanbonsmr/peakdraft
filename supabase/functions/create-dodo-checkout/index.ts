@@ -71,7 +71,11 @@ serve(async (req) => {
     // Use live/production mode
     const baseUrl = 'https://live.dodopayments.com';
 
+    const origin = req.headers.get('origin') || 'https://peakdraftapp.netlify.app';
+    
     // Create checkout session with Dodo Payments API
+    // return_url is ONLY used after successful payment
+    // For cancelled/failed payments, user stays on Dodo or goes to cancel_url
     const checkoutResponse = await fetch(`${baseUrl}/checkouts`, {
       method: 'POST',
       headers: {
@@ -84,8 +88,9 @@ serve(async (req) => {
           email: email,
           name: displayName
         },
-        return_url: `${req.headers.get('origin') || 'https://peakdraftapp.netlify.app'}/app?payment=success&plan=${planId}&uid=${userId}`,
-        cancel_url: `${req.headers.get('origin') || 'https://peakdraftapp.netlify.app'}/app?payment=cancelled`,
+        payment_link: false,
+        success_url: `${origin}/app?payment=success&plan=${planId}&uid=${userId}`,
+        return_url: `${origin}/app?payment=success&plan=${planId}&uid=${userId}`,
         metadata: {
           user_id: userId,
           plan_id: planId
