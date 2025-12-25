@@ -243,6 +243,48 @@ serve(async (req) => {
         } else {
           console.log(`Subscription canceled for user ${userId}`);
         }
+    }
+    }
+
+    // Handle payment failure events
+    if (eventType === 'payment.failed') {
+      const data = event.data;
+      const metadata = data.metadata || {};
+      const userId = metadata.user_id;
+      const planId = metadata.plan_id;
+      const errorCode = data.error_code || 'UNKNOWN_ERROR';
+      const errorMessage = data.error_message || 'Payment failed';
+
+      console.log('Payment failed for user:', userId, 'plan:', planId, 'error:', errorCode, errorMessage);
+
+      // Map Dodo error codes to user-friendly messages
+      const errorMessages: Record<string, string> = {
+        'INSUFFICIENT_FUNDS': 'Your card has insufficient funds. Please use a different payment method.',
+        'CARD_DECLINED': 'Your card was declined. Please try a different card.',
+        'EXPIRED_CARD': 'Your card has expired. Please use a valid card.',
+        'INVALID_CARD': 'Invalid card details. Please check and try again.',
+        'PROCESSING_ERROR': 'Payment processing error. Please try again later.',
+        'AUTHENTICATION_REQUIRED': 'Additional authentication required. Please complete verification.',
+        'FRAUD_DETECTED': 'Transaction flagged for security. Please contact your bank.',
+      };
+
+      const friendlyMessage = errorMessages[errorCode] || errorMessage;
+      
+      // Log the failure with details for debugging
+      console.log(`Payment failure details: user=${userId}, plan=${planId}, error=${errorCode}, message=${friendlyMessage}`);
+    }
+
+    // Handle subscription failure events
+    if (eventType === 'subscription.failed' || eventType === 'subscription.updated') {
+      const data = event.data;
+      const metadata = data.metadata || {};
+      const userId = metadata.user_id;
+      const planId = metadata.plan_id;
+      const status = data.status;
+
+      // Only log failures, not successful updates
+      if (status === 'failed') {
+        console.log('Subscription failed for user:', userId, 'plan:', planId, 'status:', status);
       }
     }
 
