@@ -66,7 +66,7 @@ export default function Dashboard() {
       setRecentContent(data);
     }
   };
-  // Check for successful payment and refresh profile
+  // Check for payment status and refresh profile
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('payment');
@@ -77,6 +77,15 @@ export default function Dashboard() {
       toast({
         title: "Payment successful!",
         description: "Your subscription has been updated. Thank you for upgrading!",
+      });
+      // Remove the query parameter from URL
+      window.history.replaceState({}, '', '/app');
+    } else if (paymentStatus === 'failed' || paymentStatus === 'cancelled' || paymentStatus === 'canceled') {
+      // Payment failed or was cancelled - no changes made to subscription
+      toast({
+        title: "Payment not completed",
+        description: "Your payment was not successful. No changes have been made to your subscription.",
+        variant: "destructive",
       });
       // Remove the query parameter from URL
       window.history.replaceState({}, '', '/app');

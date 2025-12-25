@@ -85,6 +85,7 @@ serve(async (req) => {
           name: displayName
         },
         return_url: `${req.headers.get('origin') || 'https://peakdraftapp.netlify.app'}/app?payment=success`,
+        cancel_url: `${req.headers.get('origin') || 'https://peakdraftapp.netlify.app'}/app?payment=cancelled`,
         metadata: {
           user_id: userId,
           plan_id: planId
