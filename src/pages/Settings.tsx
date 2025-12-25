@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { User, Mail, Save, Trash2, CreditCard, ArrowUpRight, XCircle } from 'lucide-react';
+import { User, Mail, Save, Trash2, CreditCard, ArrowUpRight, XCircle, Bell, Volume2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +22,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
+import { playNotificationSound } from '@/lib/notificationSound';
 
 export default function Settings() {
   const { user, profile, refreshProfile, logout } = useAuth();
@@ -264,6 +265,45 @@ export default function Settings() {
               </AlertDialog>
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Notification Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Bell className="w-5 h-5" />
+            Notification Settings
+          </CardTitle>
+          <CardDescription>
+            Configure how you receive task reminders and notifications.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/30">
+            <div className="space-y-1">
+              <p className="font-medium">Reminder Sound</p>
+              <p className="text-sm text-muted-foreground">
+                A pleasant chime plays when task reminders trigger
+              </p>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                playNotificationSound();
+                toast({
+                  title: "Sound Preview",
+                  description: "This is how your reminder will sound",
+                });
+              }}
+            >
+              <Volume2 className="w-4 h-4 mr-2" />
+              Test Sound
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Note: Make sure your browser allows notifications for the best reminder experience.
+          </p>
         </CardContent>
       </Card>
 
