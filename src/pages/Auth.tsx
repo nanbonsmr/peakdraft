@@ -144,10 +144,10 @@ export default function Auth() {
           });
         } else {
           toast({
-            title: "Account created!",
-            description: "Welcome to PeakDraft!",
+            title: "Check your email!",
+            description: "We've sent you a confirmation link. Please verify your email to continue.",
           });
-          navigate('/app', { replace: true });
+          // Don't navigate - user needs to confirm email first
         }
       }
     } catch (error: any) {
