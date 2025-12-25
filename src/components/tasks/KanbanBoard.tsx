@@ -184,14 +184,57 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
       autoScroll={{ enabled: false }}
     >
       <div className="w-full relative">
-        {/* Mobile/Tablet: Grid layout */}
-        <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Mobile: Vertical stack */}
+        <div className="sm:hidden space-y-4">
           {STATUS_COLUMNS.map(column => {
             const columnTasks = tasks.filter(task => task.status === column.id);
             
             return (
               <DroppableColumn key={column.id} id={column.id} isOver={false}>
-                <div className={`border-t-4 ${column.color} bg-card rounded-lg p-3 h-[420px] flex flex-col`}>
+                <div className={`border-t-4 ${column.color} bg-card rounded-lg p-3`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-sm">{column.label}</h3>
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                      {columnTasks.length}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {columnTasks.length === 0 ? (
+                      <p className="text-xs text-muted-foreground text-center py-4">
+                        No tasks
+                      </p>
+                    ) : (
+                      columnTasks.slice(0, 3).map(task => (
+                        <TaskCard
+                          key={task.id}
+                          task={task}
+                          onStatusChange={handleStatusChange}
+                          onEdit={() => onEditTask(task.id)}
+                          onDelete={handleDeleteTask}
+                        />
+                      ))
+                    )}
+                    {columnTasks.length > 3 && (
+                      <p className="text-xs text-muted-foreground text-center py-2">
+                        +{columnTasks.length - 3} more tasks
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </DroppableColumn>
+            );
+          })}
+        </div>
+
+        {/* Tablet: 2-column grid */}
+        <div className="hidden sm:grid sm:grid-cols-2 lg:hidden gap-4">
+          {STATUS_COLUMNS.map(column => {
+            const columnTasks = tasks.filter(task => task.status === column.id);
+            
+            return (
+              <DroppableColumn key={column.id} id={column.id} isOver={false}>
+                <div className={`border-t-4 ${column.color} bg-card rounded-lg p-3 min-h-[350px] flex flex-col`}>
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="font-semibold text-sm">{column.label}</h3>
                     <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
@@ -200,7 +243,7 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
                   </div>
                   
                   <ScrollArea className="flex-1 -mr-3 pr-3">
-                    <div className="space-y-2.5 min-h-[300px]">
+                    <div className="space-y-2.5 min-h-[250px]">
                       {columnTasks.length === 0 ? (
                         <p className="text-xs text-muted-foreground text-center py-8">
                           Drop here

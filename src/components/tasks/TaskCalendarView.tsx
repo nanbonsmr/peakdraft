@@ -82,15 +82,15 @@ export function TaskCalendarView({ refreshTrigger, onEditTask }: TaskCalendarVie
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg sm:text-xl">Calendar</CardTitle>
+        <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+          <CardTitle className="text-base sm:text-lg md:text-xl">Calendar</CardTitle>
         </CardHeader>
-        <CardContent className="flex justify-center">
+        <CardContent className="p-2 sm:p-6 pt-0 flex justify-center">
           <Calendar
             mode="single"
             selected={selectedDate}
             onSelect={setSelectedDate}
-            className="rounded-md border w-full"
+            className="rounded-md border w-full max-w-sm pointer-events-auto"
             modifiers={{
               hasTask: getDatesWithTasks(),
             }}
@@ -105,14 +105,14 @@ export function TaskCalendarView({ refreshTrigger, onEditTask }: TaskCalendarVie
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg sm:text-xl">
-            {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'Select a date'}
+        <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+          <CardTitle className="text-base sm:text-lg md:text-xl">
+            {selectedDate ? format(selectedDate, 'MMM d, yyyy') : 'Select a date'}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6 pt-0">
           {selectedDateTasks.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8 text-sm">
+            <p className="text-muted-foreground text-center py-6 sm:py-8 text-xs sm:text-sm">
               No tasks scheduled for this date
             </p>
           ) : (
