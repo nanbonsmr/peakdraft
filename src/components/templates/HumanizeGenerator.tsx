@@ -27,7 +27,10 @@ import {
   Briefcase,
   GraduationCap,
   Heart,
-  Newspaper
+  Newspaper,
+  ArrowLeftRight,
+  Columns2,
+  FileOutput
 } from 'lucide-react';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
@@ -73,6 +76,8 @@ export default function HumanizeGenerator() {
   const [addPersonality, setAddPersonality] = useState(true);
   const [removeAiPatterns, setRemoveAiPatterns] = useState(true);
   const [useContractions, setUseContractions] = useState(true);
+  const [viewMode, setViewMode] = useState<'result' | 'comparison'>('result');
+  const [originalText, setOriginalText] = useState('');
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('humanize');
 
@@ -199,7 +204,9 @@ ${prompt}`;
 
       if (updateError) throw updateError;
 
+      setOriginalText(prompt);
       setGeneratedContent(generatedContentText);
+      setViewMode('comparison');
       await refreshProfile();
       await loadRecentContent();
       
@@ -292,38 +299,124 @@ ${prompt}`;
 
           {/* Output Section */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5" />
-                Humanized Result
+                Result
               </CardTitle>
               {generatedContent && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={copyToClipboard}
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy
-                </Button>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center border rounded-lg p-1">
+                    <Button
+                      variant={viewMode === 'result' ? 'default' : 'ghost'}
+                      size="sm"
+                      className="h-7 px-2"
+                      onClick={() => setViewMode('result')}
+                    >
+                      <FileOutput className="w-3 h-3 mr-1" />
+                      Result
+                    </Button>
+                    <Button
+                      variant={viewMode === 'comparison' ? 'default' : 'ghost'}
+                      size="sm"
+                      className="h-7 px-2"
+                      onClick={() => setViewMode('comparison')}
+                    >
+                      <Columns2 className="w-3 h-3 mr-1" />
+                      Compare
+                    </Button>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={copyToClipboard}
+                  >
+                    <Copy className="w-4 h-4 mr-1" />
+                    Copy
+                  </Button>
+                </div>
               )}
             </CardHeader>
             <CardContent>
               {generatedContent ? (
-                <div className="space-y-4">
-                  <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto border">
-                    <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                      {generatedContent}
-                    </pre>
+                viewMode === 'comparison' ? (
+                  /* Comparison View */
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Original Text */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-sm font-medium flex items-center gap-2">
+                            <FileText className="w-4 h-4 text-muted-foreground" />
+                            Original (AI Text)
+                          </Label>
+                          <Badge variant="destructive" className="text-xs">Before</Badge>
+                        </div>
+                        <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4 max-h-80 overflow-y-auto">
+                          <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-muted-foreground">
+                            {originalText}
+                          </pre>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {originalText.split(/\s+/).filter(Boolean).length} words
+                        </div>
+                      </div>
+
+                      {/* Humanized Text */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-sm font-medium flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-primary" />
+                            Humanized
+                          </Label>
+                          <Badge className="text-xs bg-green-500 hover:bg-green-600">After</Badge>
+                        </div>
+                        <div className="bg-green-500/5 border border-green-500/20 rounded-lg p-4 max-h-80 overflow-y-auto">
+                          <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                            {generatedContent}
+                          </pre>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {generatedContent.split(/\s+/).filter(Boolean).length} words
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Stats Bar */}
+                    <div className="flex flex-wrap items-center justify-between gap-4 p-3 bg-muted/50 rounded-lg border">
+                      <div className="flex items-center gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <ArrowLeftRight className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">Word change:</span>
+                          <Badge variant="outline">
+                            {generatedContent.split(/\s+/).filter(Boolean).length - originalText.split(/\s+/).filter(Boolean).length > 0 ? '+' : ''}
+                            {generatedContent.split(/\s+/).filter(Boolean).length - originalText.split(/\s+/).filter(Boolean).length} words
+                          </Badge>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="gap-1">
+                        <Shield className="w-3 h-3" />
+                        AI Detection Optimized
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>{generatedContent.split(/\s+/).filter(Boolean).length} words</span>
-                    <Badge variant="outline" className="gap-1">
-                      <Shield className="w-3 h-3" />
-                      AI Detection Optimized
-                    </Badge>
+                ) : (
+                  /* Result Only View */
+                  <div className="space-y-4">
+                    <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto border">
+                      <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                        {generatedContent}
+                      </pre>
+                    </div>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <span>{generatedContent.split(/\s+/).filter(Boolean).length} words</span>
+                      <Badge variant="outline" className="gap-1">
+                        <Shield className="w-3 h-3" />
+                        AI Detection Optimized
+                      </Badge>
+                    </div>
                   </div>
-                </div>
+                )
               ) : (
                 <div className="text-center py-12 border border-dashed rounded-lg">
                   <Bot className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
