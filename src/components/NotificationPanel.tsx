@@ -270,7 +270,7 @@ export function NotificationPanel() {
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full border-0 shadow-none">
       <CardHeader className="pb-3 px-3 sm:px-6">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="flex items-center gap-1 sm:gap-2 text-base sm:text-lg">
