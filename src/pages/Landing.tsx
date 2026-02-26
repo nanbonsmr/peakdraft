@@ -16,7 +16,7 @@ import { useParallax } from '@/hooks/useParallax';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import { PromotionPopup } from '@/components/PromotionPopup';
-import { HeroAnimatedElements } from '@/components/landing/HeroAnimatedElements';
+
 import { HeroPreview } from '@/components/landing/HeroPreview';
 
 const siteUrl = 'https://peakdraft.app';
@@ -211,28 +211,9 @@ export default function Landing() {
 
       {/* Hero Section with Animations */}
       <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Animated Background Elements */}
-        <HeroAnimatedElements />
-        
-        {/* Animated Gradient Overlays with Parallax */}
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-glow/10 to-accent/20"
-          style={{ transform: `translateY(${parallaxOffset * 0.5}px)` }}
-          animate={{ 
-            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-tr from-transparent via-primary/10 to-transparent"
-          style={{ transform: `translateY(${parallaxOffset * 0.3}px)` }}
-          animate={{ opacity: [0.5, 0.8, 0.5] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <div 
-          className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.15),transparent_60%)] animate-gradient-pulse"
-          style={{ transform: `translateY(${parallaxOffset * 0.2}px)` }}
-        />
+        {/* Static Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-glow/10 to-accent/20" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.15),transparent_60%)]" />
         
         <div className="container mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
