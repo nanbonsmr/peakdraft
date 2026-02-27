@@ -18,7 +18,11 @@ import {
   FileText,
   Lightbulb,
   Loader2,
+  Copy,
+  Check,
+  Download,
 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 const QUICK_PROMPTS = [
@@ -247,8 +251,27 @@ export default function Chat() {
 
 function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(message.content);
+    setCopied(true);
+    toast({ title: "Copied to clipboard" });
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleExportTxt = () => {
+    const blob = new Blob([message.content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "peakdraft-response.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className={cn("flex items-start gap-3", isUser && "flex-row-reverse")}>
+    <div className={cn("group flex items-start gap-3", isUser && "flex-row-reverse")}>
       <div
         className={cn(
           "h-8 w-8 rounded-lg flex items-center justify-center shrink-0",
@@ -263,19 +286,33 @@ function MessageBubble({ message }: { message: ChatMessage }) {
           <Bot className="h-4 w-4 text-primary-foreground" />
         )}
       </div>
-      <div
-        className={cn(
-          "rounded-xl px-4 py-3 max-w-[85%] text-sm",
-          isUser
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted/50 border border-border/50"
-        )}
-      >
-        {isUser ? (
-          <p className="whitespace-pre-wrap">{message.content}</p>
-        ) : (
-          <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:my-2">
-            <ReactMarkdown>{message.content}</ReactMarkdown>
+      <div className="max-w-[85%]">
+        <div
+          className={cn(
+            "rounded-xl px-4 py-3 text-sm",
+            isUser
+              ? "bg-primary text-primary-foreground"
+              : "bg-muted/50 border border-border/50"
+          )}
+        >
+          {isUser ? (
+            <p className="whitespace-pre-wrap">{message.content}</p>
+          ) : (
+            <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:my-2">
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+            </div>
+          )}
+        </div>
+        {!isUser && message.content && (
+          <div className="flex items-center gap-1 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 text-muted-foreground" onClick={handleCopy}>
+              {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {copied ? "Copied" : "Copy"}
+            </Button>
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 text-muted-foreground" onClick={handleExportTxt}>
+              <Download className="h-3 w-3" />
+              Export .txt
+            </Button>
           </div>
         )}
       </div>
