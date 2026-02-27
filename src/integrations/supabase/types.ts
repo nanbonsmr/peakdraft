@@ -206,6 +206,36 @@ export type Database = {
           },
         ]
       }
+      image_generations: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          prompt: string
+          style_preset: string
+          template_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url: string
+          prompt: string
+          style_preset?: string
+          template_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          prompt?: string
+          style_preset?: string
+          template_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
