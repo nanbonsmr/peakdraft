@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import {
   Loader2, Download, ImageIcon, Sparkles, Instagram, Film, Megaphone,
-  LayoutTemplate, Palette, Type, ShoppingBag, BarChart3, RefreshCw, Trash2, Clock
+  LayoutTemplate, Palette, Type, ShoppingBag, BarChart3, RefreshCw, Trash2, Clock, Crown, Lock
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -66,6 +66,8 @@ export default function ImageGeneration() {
   const navigate = useNavigate();
 
   const activeTemplate = imageTemplates.find(t => t.id === selectedTemplate);
+  const plan = profile?.subscription_plan?.toLowerCase() || 'free';
+  const hasAccess = plan === 'pro' || plan === 'enterprise';
 
   const loadGallery = useCallback(async () => {
     if (!profile) return;
@@ -192,6 +194,40 @@ export default function ImageGeneration() {
 
   const templateLabel = (type: string) => imageTemplates.find(t => t.id === type)?.name || type;
 
+  if (!hasAccess) {
+    return (
+      <div className="max-w-2xl mx-auto py-16 text-center space-y-6">
+        <div className="mx-auto w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
+          <Lock className="h-10 w-10 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold">AI Image Generation</h1>
+          <p className="text-muted-foreground mt-2 text-lg">
+            This feature is available on <span className="font-semibold text-primary">Pro</span> and <span className="font-semibold text-primary">Enterprise</span> plans.
+          </p>
+        </div>
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="p-6 space-y-4">
+            <div className="flex items-center justify-center gap-2 text-primary">
+              <Crown className="h-5 w-5" />
+              <span className="font-semibold">Unlock AI Image Generation</span>
+            </div>
+            <ul className="text-sm text-muted-foreground space-y-2 text-left max-w-md mx-auto">
+              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> 8 professional image templates</li>
+              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> 6 style presets (Professional, Vibrant, Artistic...)</li>
+              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> Unlimited image gallery with cloud storage</li>
+              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> Download in high resolution</li>
+            </ul>
+            <Button size="lg" onClick={() => navigate('/app/pricing')} className="w-full max-w-xs mx-auto">
+              <Crown className="mr-2 h-4 w-4" />
+              Upgrade to Pro
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header */}
@@ -201,6 +237,7 @@ export default function ImageGeneration() {
             <ImageIcon className="h-7 w-7 text-primary" />
           </div>
           AI Image Generation
+          <Badge variant="secondary" className="bg-violet-500/20 text-violet-400 border-violet-500/30 text-xs">Pro</Badge>
         </h1>
         <p className="text-muted-foreground mt-1">Create stunning visuals with AI — choose a template and describe your vision</p>
       </div>
