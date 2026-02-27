@@ -316,6 +316,54 @@ export type Database = {
         }
         Relationships: []
       }
+      infobase: {
+        Row: {
+          additional_context: string | null
+          brand_name: string
+          created_at: string
+          description: string | null
+          id: string
+          industry: string | null
+          products_services: string | null
+          target_audience: string | null
+          tone_of_voice: string | null
+          unique_selling_points: string | null
+          updated_at: string
+          user_id: string
+          website_url: string | null
+        }
+        Insert: {
+          additional_context?: string | null
+          brand_name: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          industry?: string | null
+          products_services?: string | null
+          target_audience?: string | null
+          tone_of_voice?: string | null
+          unique_selling_points?: string | null
+          updated_at?: string
+          user_id: string
+          website_url?: string | null
+        }
+        Update: {
+          additional_context?: string | null
+          brand_name?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          industry?: string | null
+          products_services?: string | null
+          target_audience?: string | null
+          tone_of_voice?: string | null
+          unique_selling_points?: string | null
+          updated_at?: string
+          user_id?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string

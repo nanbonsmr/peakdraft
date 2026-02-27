@@ -14,6 +14,7 @@ import { MessageSquare, Sparkles, Copy, CreditCard, Lightbulb, Hash, RefreshCw, 
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const socialExamples = [
   "Promote a new product launch with excitement and call-to-action",
@@ -50,6 +51,7 @@ export default function SocialMediaGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('social');
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -104,7 +106,8 @@ export default function SocialMediaGenerator() {
           template_type: 'social',
           prompt: enhancedPrompt,
           language: 'en',
-          keywords: hashtags.split(',').map(k => k.trim()).filter(k => k)
+          keywords: hashtags.split(',').map(k => k.trim()).filter(k => k),
+          brand_context: getBrandContextString() || undefined,
         }
       });
 
@@ -255,6 +258,8 @@ export default function SocialMediaGenerator() {
                 onChange={(e) => setHashtags(e.target.value)}
               />
             </div>
+
+            <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
             <Button 
               onClick={handleGenerate} 

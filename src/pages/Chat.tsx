@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { InfobaseToggle, useInfobaseContext } from "@/components/InfobaseToggle";
 
 const QUICK_PROMPTS = [
   { icon: PenLine, label: "Write a blog post", desc: "Create engaging long-form content", prompt: "Write a compelling blog post about " },
@@ -62,6 +63,7 @@ export default function Chat() {
   const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   useEffect(() => {
     if (isPaid) loadConversations();
@@ -75,7 +77,7 @@ export default function Chat() {
     const trimmed = input.trim();
     if (!trimmed || isStreaming) return;
     setInput("");
-    sendMessage(trimmed);
+    sendMessage(trimmed, getBrandContextString() || undefined);
     if (textareaRef.current) textareaRef.current.style.height = "auto";
   };
 
@@ -365,9 +367,15 @@ export default function Chat() {
                 </Button>
               )}
             </div>
-            <div className="flex items-center justify-center gap-2 mt-2.5">
-              <span className="text-[10px] text-muted-foreground/60">
-                Press Enter to send • Shift+Enter for new line
+            <div className="flex items-center justify-between gap-3 mt-2.5">
+              <InfobaseToggle
+                enabled={infobaseEnabled}
+                onToggle={setInfobaseEnabled}
+                selectedEntry={selectedEntry}
+                onSelectEntry={setSelectedEntry}
+              />
+              <span className="text-[10px] text-muted-foreground/60 shrink-0">
+                Enter to send • Shift+Enter for new line
               </span>
             </div>
           </div>

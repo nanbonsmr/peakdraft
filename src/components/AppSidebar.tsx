@@ -12,6 +12,7 @@ import {
   Wand2,
   ImageIcon,
   MessageCircle,
+  Building2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -61,6 +62,7 @@ export function AppSidebar() {
     { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2, badge: "Free", badgeVariant: "free" as const },
     { title: "Image Generation", url: "/app/image-generation", icon: ImageIcon, badge: "Pro", badgeVariant: "pro" as const },
     { title: "Tools", url: "/app/tools", icon: Wrench, badge: "New", badgeVariant: "new" as const },
+    { title: "Infobase", url: "/app/infobase", icon: Building2, badge: "New", badgeVariant: "new" as const },
     { title: "Tasks", url: "/app/tasks", icon: CheckSquare },
     { title: "Usage", url: "/app/usage", icon: BarChart3 },
     { title: "Pricing", url: "/app/pricing", icon: CreditCard, badge: "Pro", badgeVariant: "pro" as const },

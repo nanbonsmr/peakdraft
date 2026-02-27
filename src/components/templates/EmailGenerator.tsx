@@ -13,6 +13,7 @@ import { Mail, Sparkles, Copy, CreditCard, Lightbulb, Send, RefreshCw, Pencil } 
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const emailExamples = [
   "Welcome new subscribers to our newsletter with a special offer",
@@ -51,6 +52,7 @@ export default function EmailGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('email');
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -104,7 +106,8 @@ export default function EmailGenerator() {
           template_type: 'email',
           prompt: enhancedPrompt,
           language: 'en',
-          keywords: []
+          keywords: [],
+          brand_context: getBrandContextString() || undefined,
         }
       });
 
@@ -258,6 +261,8 @@ export default function EmailGenerator() {
                 onChange={(e) => setCallToAction(e.target.value)}
               />
             </div>
+
+            <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
             <Button 
               onClick={handleGenerate} 
