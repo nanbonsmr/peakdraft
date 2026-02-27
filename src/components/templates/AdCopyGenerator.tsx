@@ -13,6 +13,7 @@ import { Megaphone, Sparkles, Copy, CreditCard, Lightbulb, Target, RefreshCw, Pe
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const adExamples = [
   "Create compelling ad copy for a new fitness app targeting busy professionals",
@@ -51,6 +52,7 @@ export default function AdCopyGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('ads');
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -107,7 +109,8 @@ export default function AdCopyGenerator() {
           template_type: 'ads',
           prompt: enhancedPrompt,
           language: 'en',
-          keywords: []
+          keywords: [],
+          brand_context: getBrandContextString() || undefined,
         }
       });
 
@@ -268,6 +271,8 @@ export default function AdCopyGenerator() {
                 onChange={(e) => setOffer(e.target.value)}
               />
             </div>
+
+            <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
             <Button 
               onClick={handleGenerate} 

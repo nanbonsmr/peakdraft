@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const { messages, brand_context } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
@@ -29,6 +29,11 @@ serve(async (req) => {
 
 Be concise, helpful, and creative. Format responses with markdown when appropriate. Always focus on delivering high-quality written content.`;
 
+    let finalSystemPrompt = systemPrompt;
+    if (brand_context) {
+      finalSystemPrompt += `\n\n--- USER'S BRAND CONTEXT (use this to personalize responses when relevant) ---\n${brand_context}\n--- END BRAND CONTEXT ---`;
+    }
+
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
@@ -40,7 +45,7 @@ Be concise, helpful, and creative. Format responses with markdown when appropria
         body: JSON.stringify({
           model: "google/gemini-3-flash-preview",
           messages: [
-            { role: "system", content: systemPrompt },
+            { role: "system", content: finalSystemPrompt },
             ...messages,
           ],
           stream: true,

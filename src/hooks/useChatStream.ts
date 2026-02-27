@@ -69,7 +69,7 @@ export function useChatStream() {
     }
   }, [activeConversationId]);
 
-  const sendMessage = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string, brandContext?: string) => {
     if (!user || isStreaming) return;
 
     let convId = activeConversationId;
@@ -122,7 +122,7 @@ export function useChatStream() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({ messages: allMessages, brand_context: brandContext || undefined }),
         signal: controller.signal,
       });
 

@@ -11,6 +11,7 @@ interface GenerateContentRequest {
   prompt: string;
   language: string;
   keywords?: string[];
+  brand_context?: string;
 }
 
 function buildSystemPrompt(templateType: string, language: string, keywords: string[] = []): string {
@@ -236,7 +237,7 @@ serve(async (req) => {
     const requestBody = await req.json();
     console.log('Received request body:', JSON.stringify(requestBody));
     
-    const { template_type, prompt, language, keywords }: GenerateContentRequest = requestBody;
+    const { template_type, prompt, language, keywords, brand_context }: GenerateContentRequest = requestBody;
 
     if (!template_type || !prompt) {
       console.error('Missing required fields - template_type:', template_type, 'prompt:', prompt);
@@ -246,9 +247,13 @@ serve(async (req) => {
       });
     }
 
-    const systemPrompt = buildSystemPrompt(template_type, language, keywords);
+    let systemPrompt = buildSystemPrompt(template_type, language, keywords);
 
-    console.log('Calling Lovable AI Gateway with template:', template_type);
+    if (brand_context) {
+      systemPrompt += `\n\n--- BRAND CONTEXT (use this to personalize the content) ---\n${brand_context}\n--- END BRAND CONTEXT ---\nAlign your output with this brand's voice, audience, and values when relevant.`;
+    }
+
+    console.log('Calling Lovable AI Gateway with template:', template_type, 'brand_context:', !!brand_context);
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',

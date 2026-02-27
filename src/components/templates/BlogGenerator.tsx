@@ -14,6 +14,7 @@ import { PenTool, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw, Pencil } fro
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const blogExamples = [
   "Write a comprehensive guide about sustainable living practices for beginners",
@@ -42,6 +43,7 @@ export default function BlogGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('blog');
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -85,6 +87,7 @@ export default function BlogGenerator() {
     setIsGenerating(true);
 
     try {
+      const brandContext = getBrandContextString();
       const enhancedPrompt = `Write a ${length} ${tone} blog post about: ${prompt}. 
         ${keywords ? `Include these keywords naturally: ${keywords}.` : ''}
         Make it engaging, well-structured with clear headings, and provide valuable insights.`;
@@ -94,7 +97,8 @@ export default function BlogGenerator() {
           template_type: 'blog',
           prompt: enhancedPrompt,
           language: 'en',
-          keywords: keywords.split(',').map(k => k.trim()).filter(k => k)
+          keywords: keywords.split(',').map(k => k.trim()).filter(k => k),
+          brand_context: brandContext || undefined,
         }
       });
 
@@ -233,6 +237,14 @@ export default function BlogGenerator() {
                 onChange={(e) => setKeywords(e.target.value)}
               />
             </div>
+
+            {/* Infobase Toggle */}
+            <InfobaseToggle
+              enabled={infobaseEnabled}
+              onToggle={setInfobaseEnabled}
+              selectedEntry={selectedEntry}
+              onSelectEntry={setSelectedEntry}
+            />
 
             <Button 
               onClick={handleGenerate} 
