@@ -174,8 +174,8 @@ export default function Landing() {
   return (
     <>
       <Helmet>
-        <title>PeakDraft - AI Content Generator, Image Creator & Task Manager</title>
-        <meta name="description" content="Create professional content with 25+ AI templates, generate & edit images with AI, and access 15 free AI tools daily. Built-in task management with Kanban boards & analytics." />
+        <title>PeakDraft - Your All-in-One AI Content Platform</title>
+        <meta name="description" content="Chat with AI, generate images, create content with 25+ templates, and manage tasks — all in one platform. 15 free AI tools included." />
         <meta name="keywords" content="AI content generator, AI image generator, AI image editor, free AI tools, content creation, blog writer, social media content, email marketing, task management, Kanban board, AI writing assistant, content templates, AI art generator" />
         <link rel="canonical" href={siteUrl} />
         
@@ -235,7 +235,7 @@ export default function Landing() {
                 >
                   <Sparkles className="h-4 w-4 text-primary" />
                 </motion.div>
-                <span className="text-sm font-medium">AI-Powered Content Generation</span>
+                <span className="text-sm font-medium">All-in-One AI Content Platform</span>
               </motion.div>
               
               <motion.h1 
@@ -248,9 +248,9 @@ export default function Landing() {
                   backgroundPosition: { duration: 5, repeat: Infinity, ease: 'linear' }
                 }}
               >
-                AI Content Generator
+                Your All-in-One
                 <br />
-                & Task Manager
+                AI Content Platform
               </motion.h1>
               
               <motion.p 
@@ -259,8 +259,8 @@ export default function Landing() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                Create professional content with 25+ AI templates, generate & edit images, and access 15 free AI tools daily. 
-                Organize everything with built-in task management, Kanban boards & analytics.
+                Chat with AI to brainstorm ideas, generate stunning images, create content with 25+ templates, 
+                and stay organized with built-in task management — all in one powerful platform.
               </motion.p>
               
               <motion.div 
