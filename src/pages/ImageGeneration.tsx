@@ -268,23 +268,23 @@ export default function ImageGeneration() {
 
   if (!hasAccess) {
     return (
-      <div className="max-w-2xl mx-auto py-16 text-center space-y-6">
-        <div className="mx-auto w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
-          <Lock className="h-10 w-10 text-primary" />
+      <div className="max-w-2xl mx-auto py-8 sm:py-16 px-4 text-center space-y-4 sm:space-y-6">
+        <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
+          <Lock className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold">AI Image Generation</h1>
-          <p className="text-muted-foreground mt-2 text-lg">
+          <h1 className="text-2xl sm:text-3xl font-bold">AI Image Generation</h1>
+          <p className="text-muted-foreground mt-2 text-sm sm:text-lg">
             This feature is available on <span className="font-semibold text-primary">Pro</span> and <span className="font-semibold text-primary">Enterprise</span> plans.
           </p>
         </div>
         <Card className="border-primary/20 bg-primary/5">
-          <CardContent className="p-6 space-y-4">
+          <CardContent className="p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-center gap-2 text-primary">
               <Crown className="h-5 w-5" />
-              <span className="font-semibold">Unlock AI Image Generation</span>
+              <span className="font-semibold text-sm sm:text-base">Unlock AI Image Generation</span>
             </div>
-            <ul className="text-sm text-muted-foreground space-y-2 text-left max-w-md mx-auto">
+            <ul className="text-xs sm:text-sm text-muted-foreground space-y-2 text-left max-w-md mx-auto">
               <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> 8 professional image templates</li>
               <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> 6 style presets (Professional, Vibrant, Artistic...)</li>
               <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> Unlimited image gallery with cloud storage</li>
@@ -302,23 +302,23 @@ export default function ImageGeneration() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold flex items-center gap-3">
-          <div className="p-2.5 bg-primary/10 rounded-xl">
-            <ImageIcon className="h-7 w-7 text-primary" />
+        <h1 className="text-xl sm:text-3xl font-bold flex items-center gap-2 sm:gap-3 flex-wrap">
+          <div className="p-2 sm:p-2.5 bg-primary/10 rounded-xl">
+            <ImageIcon className="h-5 w-5 sm:h-7 sm:w-7 text-primary" />
           </div>
           AI Image Generation
           <Badge variant="secondary" className="bg-violet-500/20 text-violet-400 border-violet-500/30 text-xs">Pro</Badge>
         </h1>
-        <p className="text-muted-foreground mt-1">Create stunning visuals with AI — choose a template and describe your vision</p>
+        <p className="text-muted-foreground mt-1 text-xs sm:text-base">Create stunning visuals with AI — choose a template and describe your vision</p>
       </div>
 
       {/* Template Grid */}
       <div>
-        <h2 className="text-lg font-semibold mb-3">Choose a Template</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <h2 className="text-base sm:text-lg font-semibold mb-3">Choose a Template</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
           {imageTemplates.map((tpl) => {
             const Icon = tpl.icon;
             const isSelected = selectedTemplate === tpl.id;
@@ -330,12 +330,12 @@ export default function ImageGeneration() {
                 }`}
                 onClick={() => { setSelectedTemplate(tpl.id); setGeneratedImage(null); }}
               >
-                <CardContent className="p-4 text-center">
-                  <div className={`mx-auto w-12 h-12 rounded-xl ${tpl.bgColor} flex items-center justify-center mb-3`}>
-                    <Icon className={`h-6 w-6 ${tpl.color}`} />
+                <CardContent className="p-3 sm:p-4 text-center">
+                  <div className={`mx-auto w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${tpl.bgColor} flex items-center justify-center mb-2 sm:mb-3`}>
+                    <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${tpl.color}`} />
                   </div>
-                  <h3 className="font-medium text-sm">{tpl.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{tpl.description}</p>
+                  <h3 className="font-medium text-xs sm:text-sm">{tpl.name}</h3>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-1 line-clamp-2 hidden xs:block">{tpl.description}</p>
                 </CardContent>
               </Card>
             );
@@ -345,7 +345,7 @@ export default function ImageGeneration() {
 
       {/* Generation Form */}
       {selectedTemplate && (
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -462,7 +462,7 @@ export default function ImageGeneration() {
               <p className="text-sm mt-1">Generate your first image above to see it here</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
               {gallery.map((img, index) => (
                 <div
                   key={img.id}
@@ -511,7 +511,7 @@ export default function ImageGeneration() {
         <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] p-0 overflow-hidden">
           <div className="flex flex-col lg:flex-row h-full max-h-[90vh]">
             {/* Image Preview */}
-            <div className="relative flex-1 bg-muted flex items-center justify-center min-h-[300px]">
+            <div className="relative flex-1 bg-muted flex items-center justify-center min-h-[200px] sm:min-h-[300px]">
               {previewImage && (
                 <img
                   src={previewImage.image_url}
