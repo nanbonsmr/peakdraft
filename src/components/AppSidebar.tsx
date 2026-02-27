@@ -133,7 +133,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible="icon">
-      <SidebarContent className="bg-sidebar border-r border-sidebar-border/50">
+      <SidebarContent className="bg-sidebar border-r border-sidebar-border/50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {/* Logo */}
         <div className="p-4 pb-2">
           <div className="flex items-center gap-2.5">
