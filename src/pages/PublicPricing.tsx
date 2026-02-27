@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 
-const siteUrl = 'https://peakdraft.app';
+const siteUrl = 'https://peakdraft.netlify.app';
 
 const jsonLdPricing = {
   "@context": "https://schema.org",

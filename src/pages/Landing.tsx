@@ -19,7 +19,7 @@ import { PromotionPopup } from '@/components/PromotionPopup';
 
 import { HeroPreview } from '@/components/landing/HeroPreview';
 
-const siteUrl = 'https://peakdraft.app';
+const siteUrl = 'https://peakdraft.netlify.app';
 
 const jsonLdOrganization = {
   "@context": "https://schema.org",

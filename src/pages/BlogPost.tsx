@@ -478,7 +478,7 @@ export default function BlogPost() {
     relatedPosts.push(...otherPosts);
   }
   
-  const shareUrl = `https://peakdraft.app/blog/${post.id}`;
+  const shareUrl = `https://peakdraft.netlify.app/blog/${post.id}`;
   const shareText = post.title;
   
   const handleShare = (platform: string) => {
@@ -518,7 +518,7 @@ export default function BlogPost() {
       "name": "PeakDraft",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://peakdraft.app/favicon.png"
+        "url": "https://peakdraft.netlify.app/favicon.png"
       }
     },
     "mainEntityOfPage": {
@@ -536,13 +536,13 @@ export default function BlogPost() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://peakdraft.app"
+        "item": "https://peakdraft.netlify.app"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Blog",
-        "item": "https://peakdraft.app/blog"
+        "item": "https://peakdraft.netlify.app/blog"
       },
       {
         "@type": "ListItem",
@@ -683,7 +683,7 @@ export default function BlogPost() {
         <meta property="og:description" content={post.excerpt} />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={shareUrl} />
-        <meta property="og:image" content={`https://peakdraft.app${post.image}`} />
+        <meta property="og:image" content={`https://peakdraft.netlify.app${post.image}`} />
         <meta property="og:site_name" content="PeakDraft" />
         <meta property="article:published_time" content={post.date} />
         <meta property="article:author" content={post.author} />
@@ -693,7 +693,7 @@ export default function BlogPost() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={post.title} />
         <meta name="twitter:description" content={post.excerpt} />
-        <meta name="twitter:image" content={`https://peakdraft.app${post.image}`} />
+        <meta name="twitter:image" content={`https://peakdraft.netlify.app${post.image}`} />
         
         {/* Structured Data */}
         <script type="application/ld+json">

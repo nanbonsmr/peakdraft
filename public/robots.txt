@@ -1,8 +1,10 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /app/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /app/
 
 User-agent: Twitterbot
 Allow: /
@@ -13,5 +15,7 @@ Allow: /
 User-agent: *
 Allow: /
 Disallow: /app/
+Disallow: /auth
+Disallow: /reset-password
 
 Sitemap: https://peakdraft.netlify.app/sitemap.xml

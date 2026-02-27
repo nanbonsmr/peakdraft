@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { Card } from '@/components/ui/card';
 import {
   Accordion,
@@ -10,14 +11,69 @@ import { Sparkles, DollarSign, Headphones } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
+
+const faqItems = [
+  { q: 'What types of content can PeakDraft generate?', a: 'PeakDraft can generate a wide variety of content including blog posts, social media posts, ad copy, email campaigns, product descriptions, video scripts, letters, and much more. We offer over 25+ specialized templates plus 15 free AI tools and AI image generation.' },
+  { q: 'How accurate is the AI-generated content?', a: 'Our AI uses advanced language models to produce high-quality, contextually relevant content. While the content is generally accurate and well-written, we always recommend reviewing and editing the output to ensure it meets your specific needs and brand voice.' },
+  { q: 'Can I edit the generated content?', a: 'Absolutely! All generated content is fully editable. You can make changes, add your personal touch, and refine the output to perfectly match your requirements.' },
+  { q: 'What languages does PeakDraft support?', a: 'PeakDraft supports multiple languages including English, Spanish, French, German, Italian, Portuguese, and many more.' },
+  { q: 'Can I use the generated content for commercial purposes?', a: 'Yes! All content generated with PeakDraft is yours to use however you like, including for commercial purposes. You have full ownership and rights to the content you create.' },
+  { q: 'Is there a limit to how much I can generate?', a: 'Your generation limit depends on your subscription plan. The Basic plan includes 50,000 words per month, Pro includes 100,000 words, and Enterprise includes 200,000 words.' },
+  { q: 'Do you offer a free trial?', a: 'Yes! All paid plans come with a 7-day free trial. You can explore all features and generate content without entering payment information.' },
+  { q: 'Can I change my plan later?', a: 'Absolutely! You can upgrade or downgrade your plan at any time from your account settings.' },
+  { q: 'What payment methods do you accept?', a: 'We accept all major credit cards (Visa, Mastercard, American Express, Discover) and PayPal.' },
+  { q: 'Can I cancel my subscription anytime?', a: 'Yes, you can cancel your subscription at any time with no cancellation fees. We also offer a 30-day money-back guarantee.' },
+  { q: 'What is your refund policy?', a: 'We offer a 30-day money-back guarantee on all plans. If you are not satisfied with PeakDraft within the first 30 days, contact our support team for a full refund.' },
+  { q: 'How can I contact support?', a: 'You can reach our support team via email or our contact form. Pro and Enterprise customers have access to priority support channels.' },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.a
+    }
+  }))
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://peakdraft.netlify.app" },
+    { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://peakdraft.netlify.app/faq" }
+  ]
+};
+
 export default function FAQ() {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>FAQ - Frequently Asked Questions | PeakDraft AI Content Generator</title>
+        <meta name="description" content="Find answers to common questions about PeakDraft's AI content generator, image creation, pricing plans, free tools, and technical support. Get help fast." />
+        <meta name="keywords" content="PeakDraft FAQ, AI content generator questions, pricing plans, free trial, refund policy, AI writing tool help" />
+        <link rel="canonical" href="https://peakdraft.netlify.app/faq" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="FAQ - PeakDraft AI Content Generator" />
+        <meta property="og:description" content="Find answers to common questions about PeakDraft's AI content generator, pricing, and support." />
+        <meta property="og:url" content="https://peakdraft.netlify.app/faq" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="FAQ - PeakDraft AI Content Generator" />
+        <meta name="twitter:description" content="Answers to common questions about PeakDraft's AI tools, pricing, and features." />
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+      </Helmet>
+
       <PublicNavbar />
       
-      <div className="max-w-4xl mx-auto space-y-6 p-6 pt-24">
+      <main className="max-w-4xl mx-auto space-y-6 p-6 pt-24">
         <div className="text-center space-y-2 mb-8">
           <h1 className="text-4xl font-bold tracking-tight">Frequently Asked Questions</h1>
           <p className="text-muted-foreground">Find answers to common questions about PeakDraft</p>
@@ -244,7 +300,7 @@ export default function FAQ() {
           Contact Support
         </Button>
       </Card>
-      </div>
+      </main>
 
       <PublicFooter />
     </div>
