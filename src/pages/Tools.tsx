@@ -28,7 +28,19 @@ import {
   Merge,
   ImageIcon,
   Shield,
-  Unlock
+  Unlock,
+  Braces,
+  Binary,
+  Code2,
+  Link,
+  FileType,
+  GitCompare,
+  Clock,
+  Ruler,
+  KeyRound,
+  Fingerprint,
+  Key,
+  ShieldCheck
 } from 'lucide-react';
 
 const tools = [
@@ -53,6 +65,22 @@ const tools = [
   { id: 'email-signature', name: 'Email Signature Generator', description: 'Create professional HTML email signatures', icon: Mail, color: 'text-rose-500' },
   { id: 'headline-analyzer', name: 'Headline Analyzer', description: 'Analyze and score your headlines for engagement', icon: Target, color: 'text-amber-500' },
   { id: 'social-sizes', name: 'Social Media Size Guide', description: 'Image dimensions for all social media platforms', icon: Image, color: 'text-violet-500' },
+  // Developer Tools
+  { id: 'json-formatter', name: 'JSON Formatter', description: 'Format, validate, and minify JSON data', icon: Braces, color: 'text-sky-500' },
+  { id: 'base64', name: 'Base64 Encoder/Decoder', description: 'Encode or decode Base64 strings', icon: Binary, color: 'text-lime-500' },
+  { id: 'css-minifier', name: 'CSS Minifier', description: 'Minify CSS code to reduce file size', icon: Code2, color: 'text-fuchsia-500' },
+  { id: 'slug-generator', name: 'Slug Generator', description: 'Generate URL-friendly slugs from text', icon: Link, color: 'text-teal-500' },
+  // Text/Writing Tools
+  { id: 'markdown-preview', name: 'Markdown Previewer', description: 'Write and preview Markdown in real time', icon: FileType, color: 'text-orange-400' },
+  { id: 'text-diff', name: 'Text Diff Checker', description: 'Compare two texts and highlight differences', icon: GitCompare, color: 'text-red-400' },
+  // Math/Data Tools
+  { id: 'timestamp', name: 'Timestamp Converter', description: 'Convert between Unix timestamps and dates', icon: Clock, color: 'text-blue-400' },
+  { id: 'unit-converter', name: 'Unit Converter', description: 'Convert length, weight, temperature, and data units', icon: Ruler, color: 'text-green-400' },
+  // Security Tools
+  { id: 'password-gen', name: 'Password Generator', description: 'Generate secure random passwords', icon: KeyRound, color: 'text-rose-400' },
+  { id: 'hash-gen', name: 'Hash Generator', description: 'Generate SHA-1, SHA-256, SHA-384, SHA-512 hashes', icon: Fingerprint, color: 'text-purple-400' },
+  { id: 'uuid-gen', name: 'UUID Generator', description: 'Generate random UUIDs (v4)', icon: Key, color: 'text-cyan-400' },
+  { id: 'jwt-decoder', name: 'JWT Decoder', description: 'Decode and inspect JSON Web Tokens', icon: ShieldCheck, color: 'text-amber-400' },
 ];
 
 export default function Tools() {
