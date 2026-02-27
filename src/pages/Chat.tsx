@@ -234,18 +234,22 @@ export default function Chat() {
             >
               {showSidebar ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
             </Button>
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-                <Bot className="h-4 w-4 text-white" />
+            <div className="flex items-center gap-2.5">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-violet-500/30 to-indigo-500/30 blur-md scale-125" />
+                <div className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center shadow-xl shadow-violet-500/25 ring-1 ring-white/10">
+                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                </div>
+                <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-400 border-2 border-background" />
               </div>
               <div>
-                <h2 className="font-semibold text-xs sm:text-sm flex items-center gap-1.5">
+                <h2 className="font-bold text-sm sm:text-base flex items-center gap-2">
                   PeakDraft AI
-                  <span className="hidden xs:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-gradient-to-r from-violet-500/15 to-indigo-500/15 text-violet-400 border border-violet-500/20">
+                  <span className="hidden xs:inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-gradient-to-r from-violet-500/15 to-indigo-500/15 text-violet-500 dark:text-violet-400 border border-violet-500/20">
                     <Zap className="h-2.5 w-2.5" /> Pro
                   </span>
                 </h2>
-                <p className="text-[9px] sm:text-[10px] text-muted-foreground hidden sm:block">Powered by AI • Writing Assistant</p>
+                <p className="text-[10px] text-muted-foreground/60 hidden sm:block font-medium">Your AI writing companion • Always ready</p>
               </div>
             </div>
           </div>
@@ -339,18 +343,19 @@ export default function Chat() {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-start gap-2 sm:gap-3 py-5"
+                    className="flex items-start gap-3 sm:gap-4 py-5"
                   >
-                    <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/20">
-                      <Bot className="h-4 w-4 text-white" />
+                    <div className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-xl shadow-violet-500/30 ring-2 ring-violet-400/20">
+                      <Sparkles className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-white animate-pulse" />
+                      <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-amber-400 border-2 border-background animate-pulse" />
                     </div>
-                    <div className="flex items-center gap-3 py-2.5 px-4 rounded-2xl bg-muted/40 border border-border/30">
-                      <div className="flex gap-1">
-                        <span className="h-2 w-2 rounded-full bg-violet-400 animate-bounce [animation-delay:0ms]" />
-                        <span className="h-2 w-2 rounded-full bg-violet-400 animate-bounce [animation-delay:150ms]" />
-                        <span className="h-2 w-2 rounded-full bg-violet-400 animate-bounce [animation-delay:300ms]" />
+                    <div className="flex items-center gap-3 py-3 px-4 rounded-2xl bg-muted/30 border border-border/40 backdrop-blur-sm">
+                      <div className="flex gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-violet-500 animate-bounce [animation-delay:0ms]" />
+                        <span className="h-2 w-2 rounded-full bg-purple-500 animate-bounce [animation-delay:150ms]" />
+                        <span className="h-2 w-2 rounded-full bg-indigo-500 animate-bounce [animation-delay:300ms]" />
                       </div>
-                      <span className="text-xs sm:text-sm text-muted-foreground">Thinking...</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground font-medium">Thinking...</span>
                     </div>
                   </motion.div>
                 )}
@@ -361,23 +366,23 @@ export default function Chat() {
         </ScrollArea>
 
         {/* Input Area */}
-        <div className="border-t border-border/30 bg-background/80 backdrop-blur-md p-2.5 sm:p-4">
+        <div className="border-t border-border/30 bg-gradient-to-t from-background via-background to-background/80 backdrop-blur-md p-3 sm:p-4">
           <div className="max-w-3xl mx-auto">
-            <div className="flex items-end gap-2 bg-muted/20 rounded-2xl border border-border/40 focus-within:border-primary/50 focus-within:shadow-lg focus-within:shadow-primary/5 transition-all duration-300 p-2 sm:p-2.5">
+            <div className="flex items-end gap-2 bg-muted/15 dark:bg-muted/10 rounded-2xl border border-border/40 focus-within:border-violet-500/40 focus-within:shadow-xl focus-within:shadow-violet-500/5 focus-within:ring-1 focus-within:ring-violet-500/20 transition-all duration-300 p-2.5 sm:p-3">
               <Textarea
                 ref={textareaRef}
                 value={input}
                 onChange={handleTextareaInput}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask me to write anything..."
-                className="min-h-[40px] sm:min-h-[44px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-1.5 sm:p-2 text-sm placeholder:text-muted-foreground/60"
+                placeholder="Write something amazing..."
+                className="min-h-[44px] sm:min-h-[48px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-2 text-sm placeholder:text-muted-foreground/50"
                 rows={1}
               />
               {isStreaming ? (
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-xl text-destructive hover:bg-destructive/10"
+                  className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 rounded-xl text-destructive hover:bg-destructive/10 transition-all duration-200"
                   onClick={stopStreaming}
                 >
                   <StopCircle className="h-5 w-5" />
@@ -385,23 +390,23 @@ export default function Chat() {
               ) : (
                 <Button
                   size="icon"
-                  className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 shadow-lg shadow-violet-500/20 transition-all duration-300 disabled:opacity-30 disabled:shadow-none"
+                  className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 rounded-xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 hover:from-violet-600 hover:via-purple-600 hover:to-indigo-700 shadow-lg shadow-violet-500/25 transition-all duration-300 disabled:opacity-20 disabled:shadow-none hover:shadow-xl hover:shadow-violet-500/30 hover:scale-105 active:scale-95"
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
                 >
-                  <Send className="h-4 w-4 text-white" />
+                  <Send className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-white" />
                 </Button>
               )}
             </div>
-            <div className="flex items-center justify-between gap-2 mt-2">
+            <div className="flex items-center justify-between gap-2 mt-2.5">
               <InfobaseToggle
                 enabled={infobaseEnabled}
                 onToggle={setInfobaseEnabled}
                 selectedEntry={selectedEntry}
                 onSelectEntry={setSelectedEntry}
               />
-              <span className="text-[9px] sm:text-[10px] text-muted-foreground/60 shrink-0 hidden sm:inline">
-                Enter to send • Shift+Enter for new line
+              <span className="text-[10px] text-muted-foreground/50 shrink-0 hidden sm:inline font-medium">
+                ↵ Send • ⇧↵ New line
               </span>
             </div>
           </div>
@@ -433,57 +438,63 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   };
 
   return (
-    <div className={cn("group flex items-start gap-2 sm:gap-3 py-3 sm:py-4", isUser && "flex-row-reverse")}>
+    <div className={cn("group flex items-start gap-3 sm:gap-4 py-4 sm:py-5", isUser && "flex-row-reverse")}>
       {/* Avatar */}
-      <div
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
         className={cn(
-          "h-7 w-7 sm:h-9 sm:w-9 rounded-xl flex items-center justify-center shrink-0 shadow-md",
+          "relative h-8 w-8 sm:h-10 sm:w-10 rounded-2xl flex items-center justify-center shrink-0",
           isUser
-            ? "bg-gradient-to-br from-secondary to-secondary/80 shadow-secondary/10"
-            : "bg-gradient-to-br from-violet-500 to-indigo-600 shadow-violet-500/20"
+            ? "bg-gradient-to-br from-slate-600 to-slate-800 dark:from-slate-500 dark:to-slate-700 shadow-lg shadow-slate-500/15 ring-2 ring-slate-400/10"
+            : "bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 shadow-xl shadow-violet-500/30 ring-2 ring-violet-400/20"
         )}
       >
         {isUser ? (
-          <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-secondary-foreground" />
+          <User className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-white" />
         ) : (
-          <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+          <Sparkles className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-white" />
         )}
-      </div>
+        {!isUser && (
+          <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-400 border-2 border-background shadow-sm" />
+        )}
+      </motion.div>
 
       {/* Content */}
-      <div className={cn("max-w-[90%] sm:max-w-[85%]", isUser && "flex flex-col items-end")}>
+      <div className={cn("max-w-[88%] sm:max-w-[82%] space-y-1", isUser && "flex flex-col items-end")}>
         <span className={cn(
-          "text-[9px] sm:text-[10px] font-medium mb-1 sm:mb-1.5 block",
-          isUser ? "text-muted-foreground/70 text-right" : "text-violet-400"
+          "text-[10px] sm:text-[11px] font-semibold mb-0.5 block tracking-wide",
+          isUser ? "text-muted-foreground/60 text-right" : "text-violet-500 dark:text-violet-400"
         )}>
           {isUser ? "You" : "PeakDraft AI"}
         </span>
         <div
           className={cn(
-            "rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm leading-relaxed",
+            "rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 text-[13px] sm:text-sm leading-relaxed",
             isUser
-              ? "bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-tr-md shadow-lg shadow-violet-500/15"
-              : "bg-muted/30 border border-border/40 rounded-tl-md"
+              ? "bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 text-white rounded-tr-sm shadow-lg shadow-violet-500/20 ring-1 ring-white/10"
+              : "bg-muted/40 dark:bg-muted/20 border border-border/50 rounded-tl-sm backdrop-blur-sm"
           )}
         >
           {isUser ? (
             <p className="whitespace-pre-wrap">{message.content}</p>
           ) : (
-            <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1.5 prose-headings:my-2.5 prose-headings:font-semibold prose-ul:my-1.5 prose-ol:my-1.5 prose-li:my-0.5 prose-pre:my-2 prose-pre:rounded-xl prose-pre:bg-background/60 prose-code:text-violet-400 prose-code:bg-violet-500/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-xs prose-a:text-violet-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground">
+            <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1.5 prose-headings:my-3 prose-headings:font-bold prose-ul:my-1.5 prose-ol:my-1.5 prose-li:my-0.5 prose-pre:my-2.5 prose-pre:rounded-xl prose-pre:bg-background/80 prose-pre:border prose-pre:border-border/30 prose-code:text-violet-500 prose-code:dark:text-violet-400 prose-code:bg-violet-500/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-xs prose-code:font-medium prose-a:text-violet-500 prose-a:dark:text-violet-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-blockquote:border-l-violet-400 prose-blockquote:bg-violet-500/5 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4">
               <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
           )}
         </div>
 
-        {/* Action Buttons - always visible on mobile */}
+        {/* Action Buttons */}
         {!isUser && message.content && (
-          <div className="flex items-center gap-0.5 mt-1.5 sm:mt-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <div className="flex items-center gap-1 mt-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all duration-300">
             <Button
               variant="ghost"
               size="sm"
               className={cn(
-                "h-7 px-2 sm:px-2.5 text-[10px] sm:text-[11px] gap-1 sm:gap-1.5 rounded-lg transition-all duration-200",
-                copied ? "text-emerald-400 bg-emerald-500/10" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                "h-7 px-2.5 text-[10px] sm:text-[11px] gap-1.5 rounded-lg font-medium transition-all duration-200",
+                copied ? "text-emerald-500 bg-emerald-500/10" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
               )}
               onClick={handleCopy}
             >
@@ -493,7 +504,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 px-2 sm:px-2.5 text-[10px] sm:text-[11px] gap-1 sm:gap-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200"
+              className="h-7 px-2.5 text-[10px] sm:text-[11px] gap-1.5 rounded-lg font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200"
               onClick={handleExportTxt}
             >
               <Download className="h-3 w-3" />
