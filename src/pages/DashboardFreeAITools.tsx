@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,10 +6,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag, Search, MousePointerClick, Type, Megaphone, Star, Film, User, HelpCircle } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag, Search, MousePointerClick, Type, Megaphone, Star, Film, User, HelpCircle, Zap } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useFreeToolUsage } from '@/hooks/useFreeToolUsage';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Context to share usage cap across all generators
+const FreeToolCapContext = createContext<{
+  checkAndRecord: (toolId: string) => Promise<boolean>;
+  hasReachedLimit: boolean;
+}>({ checkAndRecord: async () => true, hasReachedLimit: false });
 
 const tools = [
   { id: 'chatgpt', title: 'ChatGPT Prompt Generator', description: 'Create effective prompts for ChatGPT and AI assistants', icon: Bot, color: 'text-primary', bgColor: 'bg-primary/10' },
@@ -32,6 +40,7 @@ const tools = [
 export default function DashboardFreeAITools() {
   const [searchParams] = useSearchParams();
   const [activeTool, setActiveTool] = useState<string | null>(null);
+  const { usageCount, remaining, hasReachedLimit, dailyLimit, recordUsage } = useFreeToolUsage();
 
   useEffect(() => {
     const toolParam = searchParams.get('tool');
@@ -40,92 +49,130 @@ export default function DashboardFreeAITools() {
     }
   }, [searchParams]);
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl sm:text-3xl font-bold">Free AI Tools</h1>
-          <Badge variant="secondary">Free</Badge>
-        </div>
-        <p className="text-muted-foreground">
-          15 AI-powered content generators included with your account
-        </p>
-      </div>
+  const checkAndRecord = useCallback(async (toolId: string): Promise<boolean> => {
+    return await recordUsage(toolId);
+  }, [recordUsage]);
 
-      {/* Tools Grid */}
-      <div className="grid gap-4">
-        {tools.map((tool, index) => {
-          const Icon = tool.icon;
-          const isActive = activeTool === tool.id;
-          
-          return (
-            <motion.div
-              key={tool.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-            >
-              <Card className={`transition-all duration-300 overflow-hidden ${isActive ? 'ring-2 ring-primary shadow-lg' : 'hover:shadow-md'}`}>
-                <CardHeader 
-                  className="cursor-pointer select-none"
-                  onClick={() => setActiveTool(isActive ? null : tool.id)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className={`p-2.5 sm:p-3 rounded-xl ${tool.bgColor}`}>
-                        <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${tool.color}`} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className="text-base sm:text-xl">{tool.title}</CardTitle>
-                        <CardDescription className="mt-0.5 sm:mt-1 text-xs sm:text-sm">{tool.description}</CardDescription>
-                      </div>
-                    </div>
-                    <motion.div animate={{ rotate: isActive ? 180 : 0 }} transition={{ duration: 0.3 }}>
-                      <Button variant="ghost" size="icon" className="pointer-events-none">
-                        <ChevronDown className="w-5 h-5" />
-                      </Button>
-                    </motion.div>
-                  </div>
-                </CardHeader>
-                
-                <AnimatePresence initial={false}>
-                  {isActive && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <CardContent className="pt-0 border-t">
-                        <div className="pt-6">
-                          {tool.id === 'chatgpt' && <ChatGPTPromptGenerator />}
-                          {tool.id === 'hashtag' && <HashtagGenerator />}
-                          {tool.id === 'blogintro' && <BlogIntroGenerator />}
-                          {tool.id === 'caption' && <CaptionGenerator />}
-                          {tool.id === 'email' && <EmailSubjectGenerator />}
-                          {tool.id === 'product' && <ProductDescriptionGenerator />}
-                          {tool.id === 'seo' && <SeoMetaGenerator />}
-                          {tool.id === 'cta' && <CTAGenerator />}
-                          {tool.id === 'headline' && <HeadlineGenerator />}
-                          {tool.id === 'slogan' && <SloganGenerator />}
-                          {tool.id === 'testimonial' && <TestimonialGenerator />}
-                          {tool.id === 'postideas' && <PostIdeasGenerator />}
-                          {tool.id === 'videoprompt' && <VideoPromptGenerator />}
-                          {tool.id === 'bio' && <BioGenerator />}
-                          {tool.id === 'faq' && <FAQGenerator />}
+  const usagePercent = Math.min(100, (usageCount / dailyLimit) * 100);
+
+  return (
+    <FreeToolCapContext.Provider value={{ checkAndRecord, hasReachedLimit }}>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold">Free AI Tools</h1>
+            <Badge variant="secondary">Free</Badge>
+          </div>
+          <p className="text-muted-foreground">
+            15 AI-powered content generators included with your account
+          </p>
+        </div>
+
+        {/* Daily Usage Banner */}
+        <Card className={hasReachedLimit ? 'border-destructive/50 bg-destructive/5' : ''}>
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Zap className="h-4 w-4 text-amber-500" />
+                Daily Free Generations
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {usageCount} / {dailyLimit} used
+              </span>
+            </div>
+            <Progress value={usagePercent} className="h-2" />
+            {hasReachedLimit ? (
+              <p className="text-xs text-destructive mt-2">
+                You've reached your daily limit. Come back tomorrow or upgrade for unlimited access!
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground mt-2">
+                {remaining} generation{remaining !== 1 ? 's' : ''} remaining today
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Tools Grid */}
+        <div className="grid gap-4">
+          {tools.map((tool, index) => {
+            const Icon = tool.icon;
+            const isActive = activeTool === tool.id;
+            
+            return (
+              <motion.div
+                key={tool.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+              >
+                <Card className={`transition-all duration-300 overflow-hidden ${isActive ? 'ring-2 ring-primary shadow-lg' : 'hover:shadow-md'}`}>
+                  <CardHeader 
+                    className="cursor-pointer select-none"
+                    onClick={() => setActiveTool(isActive ? null : tool.id)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className={`p-2.5 sm:p-3 rounded-xl ${tool.bgColor}`}>
+                          <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${tool.color}`} />
                         </div>
-                      </CardContent>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </Card>
-            </motion.div>
-          );
-        })}
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-base sm:text-xl">{tool.title}</CardTitle>
+                          <CardDescription className="mt-0.5 sm:mt-1 text-xs sm:text-sm">{tool.description}</CardDescription>
+                        </div>
+                      </div>
+                      <motion.div animate={{ rotate: isActive ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                        <Button variant="ghost" size="icon" className="pointer-events-none">
+                          <ChevronDown className="w-5 h-5" />
+                        </Button>
+                      </motion.div>
+                    </div>
+                  </CardHeader>
+                  
+                  <AnimatePresence initial={false}>
+                    {isActive && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <CardContent className="pt-0 border-t">
+                          <div className="pt-6">
+                            {tool.id === 'chatgpt' && <ChatGPTPromptGenerator />}
+                            {tool.id === 'hashtag' && <HashtagGenerator />}
+                            {tool.id === 'blogintro' && <BlogIntroGenerator />}
+                            {tool.id === 'caption' && <CaptionGenerator />}
+                            {tool.id === 'email' && <EmailSubjectGenerator />}
+                            {tool.id === 'product' && <ProductDescriptionGenerator />}
+                            {tool.id === 'seo' && <SeoMetaGenerator />}
+                            {tool.id === 'cta' && <CTAGenerator />}
+                            {tool.id === 'headline' && <HeadlineGenerator />}
+                            {tool.id === 'slogan' && <SloganGenerator />}
+                            {tool.id === 'testimonial' && <TestimonialGenerator />}
+                            {tool.id === 'postideas' && <PostIdeasGenerator />}
+                            {tool.id === 'videoprompt' && <VideoPromptGenerator />}
+                            {tool.id === 'bio' && <BioGenerator />}
+                            {tool.id === 'faq' && <FAQGenerator />}
+                          </div>
+                        </CardContent>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </FreeToolCapContext.Provider>
   );
+}
+
+// Helper hook for generators to use the cap
+function useCapCheck() {
+  return useContext(FreeToolCapContext);
 }
 
 // Generator Components
@@ -136,12 +183,15 @@ function ChatGPTPromptGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({ title: "Error", description: "Please describe what kind of ChatGPT prompt you need", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('chatgpt');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const enhancedPrompt = `Generate an effective and detailed ChatGPT prompt for: ${prompt}. Purpose: ${purpose || 'general use'}. Context: ${context || 'none'}. Include clear instructions, role definition, constraints, and desired output format.`;
@@ -178,7 +228,7 @@ function ChatGPTPromptGenerator() {
           <Label>What kind of prompt do you need? *</Label>
           <Textarea placeholder="Describe the AI assistant you want to create..." value={prompt} onChange={(e) => setPrompt(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Sparkles className="mr-2 h-4 w-4" /> Generate Prompt</>}
         </Button>
       </div>
@@ -200,12 +250,15 @@ function HashtagGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!topic.trim()) {
       toast({ title: "Error", description: "Please enter a topic", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('hashtag');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -233,7 +286,7 @@ function HashtagGenerator() {
           <Label>Topic or Post Description *</Label>
           <Textarea placeholder="Describe your post or enter keywords..." value={topic} onChange={(e) => setTopic(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Hash className="mr-2 h-4 w-4" /> Generate Hashtags</>}
         </Button>
       </div>
@@ -255,12 +308,15 @@ function BlogIntroGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!topic.trim()) {
       toast({ title: "Error", description: "Please enter a blog topic", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('blogintro');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -288,7 +344,7 @@ function BlogIntroGenerator() {
           <Label>Blog Topic *</Label>
           <Textarea placeholder="Enter your blog post topic or title..." value={topic} onChange={(e) => setTopic(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><FileText className="mr-2 h-4 w-4" /> Generate Intro</>}
         </Button>
       </div>
@@ -310,12 +366,15 @@ function CaptionGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!topic.trim()) {
       toast({ title: "Error", description: "Please describe your post", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('caption');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -343,7 +402,7 @@ function CaptionGenerator() {
           <Label>Post Description *</Label>
           <Textarea placeholder="Describe your post content..." value={topic} onChange={(e) => setTopic(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><MessageSquare className="mr-2 h-4 w-4" /> Generate Captions</>}
         </Button>
       </div>
@@ -365,12 +424,15 @@ function EmailSubjectGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!topic.trim()) {
       toast({ title: "Error", description: "Please describe your email", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('email');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -398,7 +460,7 @@ function EmailSubjectGenerator() {
           <Label>Email Description *</Label>
           <Textarea placeholder="Describe the email purpose and content..." value={topic} onChange={(e) => setTopic(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Mail className="mr-2 h-4 w-4" /> Generate Subject Lines</>}
         </Button>
       </div>
@@ -420,12 +482,15 @@ function ProductDescriptionGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!product.trim()) {
       toast({ title: "Error", description: "Please describe your product", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('product');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -453,7 +518,7 @@ function ProductDescriptionGenerator() {
           <Label>Product Details *</Label>
           <Textarea placeholder="Describe your product, features, target audience..." value={product} onChange={(e) => setProduct(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><ShoppingBag className="mr-2 h-4 w-4" /> Generate Description</>}
         </Button>
       </div>
@@ -475,12 +540,15 @@ function SeoMetaGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!page.trim()) {
       toast({ title: "Error", description: "Please describe your page", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('seo');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -508,7 +576,7 @@ function SeoMetaGenerator() {
           <Label>Page Content *</Label>
           <Textarea placeholder="Describe your page content and target keywords..." value={page} onChange={(e) => setPage(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Search className="mr-2 h-4 w-4" /> Generate Meta Description</>}
         </Button>
       </div>
@@ -530,12 +598,15 @@ function CTAGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!goal.trim()) {
       toast({ title: "Error", description: "Please describe your goal", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('cta');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -563,7 +634,7 @@ function CTAGenerator() {
           <Label>Goal/Action *</Label>
           <Textarea placeholder="What action do you want users to take?" value={goal} onChange={(e) => setGoal(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><MousePointerClick className="mr-2 h-4 w-4" /> Generate CTAs</>}
         </Button>
       </div>
@@ -585,12 +656,15 @@ function HeadlineGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!topic.trim()) {
       toast({ title: "Error", description: "Please enter a topic", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('headline');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -618,7 +692,7 @@ function HeadlineGenerator() {
           <Label>Topic *</Label>
           <Textarea placeholder="Enter your topic or content theme..." value={topic} onChange={(e) => setTopic(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Type className="mr-2 h-4 w-4" /> Generate Headlines</>}
         </Button>
       </div>
@@ -640,12 +714,15 @@ function SloganGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!brand.trim()) {
       toast({ title: "Error", description: "Please describe your brand", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('slogan');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -673,7 +750,7 @@ function SloganGenerator() {
           <Label>Brand/Business Description *</Label>
           <Textarea placeholder="Describe your brand, values, and target audience..." value={brand} onChange={(e) => setBrand(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Megaphone className="mr-2 h-4 w-4" /> Generate Slogans</>}
         </Button>
       </div>
@@ -695,12 +772,15 @@ function TestimonialGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!product.trim()) {
       toast({ title: "Error", description: "Please describe your product/service", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('testimonial');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -728,7 +808,7 @@ function TestimonialGenerator() {
           <Label>Product/Service Description *</Label>
           <Textarea placeholder="Describe your product or service..." value={product} onChange={(e) => setProduct(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Star className="mr-2 h-4 w-4" /> Generate Testimonials</>}
         </Button>
       </div>
@@ -750,12 +830,15 @@ function PostIdeasGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!niche.trim()) {
       toast({ title: "Error", description: "Please enter your niche", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('postideas');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -783,7 +866,7 @@ function PostIdeasGenerator() {
           <Label>Niche/Industry *</Label>
           <Textarea placeholder="Describe your niche, target audience, and content goals..." value={niche} onChange={(e) => setNiche(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Lightbulb className="mr-2 h-4 w-4" /> Generate Ideas</>}
         </Button>
       </div>
@@ -805,12 +888,15 @@ function VideoPromptGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!concept.trim()) {
       toast({ title: "Error", description: "Please describe your video concept", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('videoprompt');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -838,7 +924,7 @@ function VideoPromptGenerator() {
           <Label>Video Concept *</Label>
           <Textarea placeholder="Describe the video you want to create..." value={concept} onChange={(e) => setConcept(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Film className="mr-2 h-4 w-4" /> Generate Video Prompt</>}
         </Button>
       </div>
@@ -860,12 +946,15 @@ function BioGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!details.trim()) {
       toast({ title: "Error", description: "Please provide your details", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('bio');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -893,7 +982,7 @@ function BioGenerator() {
           <Label>Your Details *</Label>
           <Textarea placeholder="Your name, profession, achievements, interests..." value={details} onChange={(e) => setDetails(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><User className="mr-2 h-4 w-4" /> Generate Bios</>}
         </Button>
       </div>
@@ -915,12 +1004,15 @@ function FAQGenerator() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+  const { checkAndRecord, hasReachedLimit } = useCapCheck();
 
   const handleGenerate = async () => {
     if (!business.trim()) {
       toast({ title: "Error", description: "Please describe your business", variant: "destructive" });
       return;
     }
+    const allowed = await checkAndRecord('faq');
+    if (!allowed) return;
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
@@ -948,7 +1040,7 @@ function FAQGenerator() {
           <Label>Business/Product Description *</Label>
           <Textarea placeholder="Describe your business, products, or services..." value={business} onChange={(e) => setBusiness(e.target.value)} rows={4} />
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
+        <Button onClick={handleGenerate} disabled={isGenerating || hasReachedLimit} className="w-full">
           {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><HelpCircle className="mr-2 h-4 w-4" /> Generate FAQs</>}
         </Button>
       </div>
