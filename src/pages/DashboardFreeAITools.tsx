@@ -83,9 +83,15 @@ export default function DashboardFreeAITools() {
             </div>
             <Progress value={usagePercent} className="h-2" />
             {hasReachedLimit ? (
-              <p className="text-xs text-destructive mt-2">
-                You've reached your daily limit. Come back tomorrow or upgrade for unlimited access!
-              </p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-xs text-destructive">
+                  You've reached your daily limit. Upgrade for unlimited access!
+                </p>
+                <Button size="sm" variant="default" className="ml-4 shrink-0" onClick={() => window.location.href = '/app/pricing'}>
+                  <Zap className="h-3.5 w-3.5 mr-1" />
+                  Upgrade Now
+                </Button>
+              </div>
             ) : (
               <p className="text-xs text-muted-foreground mt-2">
                 {remaining} generation{remaining !== 1 ? 's' : ''} remaining today
