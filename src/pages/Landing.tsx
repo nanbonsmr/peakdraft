@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, X, Mail, Phone, MapPin, LayoutGrid, Calendar, BarChart3, FileText, Hash, Video, Image, MessageSquare, Briefcase, RefreshCw, Columns2, Sliders } from 'lucide-react';
+import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, X, Mail, Phone, MapPin, LayoutGrid, Calendar, BarChart3, FileText, Hash, Video, Image, MessageSquare, Briefcase, RefreshCw, Columns2, Sliders, ImagePlus, Wand2, Eye, Edit3, Gift } from 'lucide-react';
 import featuresShowcase from '@/assets/features-showcase-new.jpg';
 import workflowIllustration from '@/assets/workflow-illustration-new.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
@@ -33,9 +33,9 @@ const jsonLdOrganization = {
 const jsonLdWebsite = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "PeakDraft - AI Content Generator & Task Manager",
+  "name": "PeakDraft - AI Content Generator, Image Creator & Task Manager",
   "url": siteUrl,
-  "description": "Create professional blog posts, social media content, emails & ad copy with 14+ AI templates. Organize your workflow with built-in task management.",
+  "description": "Create professional content with 25+ AI templates, generate & edit images with AI, and 15 free AI tools. Built-in task management with Kanban boards & analytics.",
   "potentialAction": {
     "@type": "SearchAction",
     "target": `${siteUrl}/search?q={search_term_string}`,
@@ -136,6 +136,8 @@ export default function Landing() {
   const { ref: ctaRef, isInView: ctaInView } = useInView();
   const { ref: newFeaturesRef, isInView: newFeaturesInView } = useInView();
   const { ref: templatesRef, isInView: templatesInView } = useInView();
+  const { ref: imageGenRef, isInView: imageGenInView } = useInView();
+  const { ref: freeToolsRef, isInView: freeToolsInView } = useInView();
   const { user, loading, isSignedIn } = useAuth();
 
   // Handle OAuth callback and redirect authenticated users to dashboard
@@ -170,23 +172,23 @@ export default function Landing() {
   return (
     <>
       <Helmet>
-        <title>PeakDraft - AI Content Generator & Task Manager | Create Content Faster</title>
-        <meta name="description" content="Create professional blog posts, social media content, emails & ad copy with 14+ AI templates. Organize your workflow with built-in task management, Kanban boards & analytics." />
-        <meta name="keywords" content="AI content generator, content creation, blog writer, social media content, email marketing, task management, Kanban board, AI writing assistant, content templates" />
+        <title>PeakDraft - AI Content Generator, Image Creator & Task Manager</title>
+        <meta name="description" content="Create professional content with 25+ AI templates, generate & edit images with AI, and access 15 free AI tools daily. Built-in task management with Kanban boards & analytics." />
+        <meta name="keywords" content="AI content generator, AI image generator, AI image editor, free AI tools, content creation, blog writer, social media content, email marketing, task management, Kanban board, AI writing assistant, content templates, AI art generator" />
         <link rel="canonical" href={siteUrl} />
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content={siteUrl} />
-        <meta property="og:title" content="PeakDraft - AI Content Generator & Task Manager" />
-        <meta property="og:description" content="Create professional content with 14+ AI templates. Blog posts, social media, emails & more. Built-in task management included." />
+        <meta property="og:title" content="PeakDraft - AI Content Generator, Image Creator & Task Manager" />
+        <meta property="og:description" content="Create professional content with 25+ AI templates, generate & edit images with AI, plus 15 free daily tools. Built-in task management included." />
         <meta property="og:image" content={`${siteUrl}/og-image.png`} />
         <meta property="og:site_name" content="PeakDraft" />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="PeakDraft - AI Content Generator & Task Manager" />
-        <meta name="twitter:description" content="Create professional content with 14+ AI templates. Blog posts, social media, emails & more." />
+        <meta name="twitter:title" content="PeakDraft - AI Content Generator, Image Creator & Task Manager" />
+        <meta name="twitter:description" content="25+ AI templates, image generation & editing, 15 free daily tools. Built-in task management." />
         <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
         
         {/* Additional SEO */}
@@ -255,8 +257,8 @@ export default function Landing() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                Create professional blog posts, social media content, emails & ad copy with 14+ AI templates. 
-                Organize your workflow with built-in task management, Kanban boards & analytics.
+                Create professional content with 25+ AI templates, generate & edit images, and access 15 free AI tools daily. 
+                Organize everything with built-in task management, Kanban boards & analytics.
               </motion.p>
               
               <motion.div 
@@ -297,8 +299,8 @@ export default function Landing() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {[
               { value: '50K+', label: 'Active Content Creators' },
-              { value: '14+', label: 'AI Writing Templates' },
-              { value: '10M+', label: 'Words Generated' },
+              { value: '25+', label: 'AI Content Templates' },
+              { value: '15', label: 'Free AI Tools' },
               { value: '4.9/5', label: 'User Satisfaction' },
             ].map((stat, idx) => (
               <div 
@@ -374,7 +376,7 @@ export default function Landing() {
       <section ref={templatesRef} id="templates" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="AI Content Templates">
         <div className="container mx-auto">
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${templatesInView ? 'animate-fade-up' : ''}`}>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">14+ AI Content Templates</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">25+ AI Content Templates</h2>
             <p className="text-base sm:text-lg text-muted-foreground">
               Professional templates for every content need. From blog posts to video scripts, generate high-quality content for any platform.
             </p>
@@ -469,6 +471,100 @@ export default function Landing() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* AI Image Generation & Editing Section */}
+      <section ref={imageGenRef} id="image-generation" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="AI Image Generation">
+        <div className="container mx-auto">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${imageGenInView ? 'animate-fade-up' : ''}`}>
+            <Badge className="mb-4 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20">New Feature</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">AI Image Generation & Editing</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Create stunning visuals with our intelligent 2-step AI pipeline. Generate, preview, and edit images with natural language instructions.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
+            {[
+              { icon: ImagePlus, title: 'Smart Generation', desc: 'AI refines your prompt into a professional creative brief before generating', color: 'from-cyan-500 to-blue-600' },
+              { icon: Edit3, title: 'Natural Language Editing', desc: 'Edit images by describing changes — "make the sky sunset orange"', color: 'from-violet-500 to-purple-600' },
+              { icon: Eye, title: 'Lightbox Preview', desc: 'Full-size preview with gallery navigation and image metadata', color: 'from-emerald-500 to-green-600' },
+              { icon: Wand2, title: '8 Style Presets', desc: 'From minimal to vibrant — choose a style that matches your brand', color: 'from-amber-500 to-orange-600' },
+            ].map((feature, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  imageGenInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
+                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mx-auto mb-4`}>
+                  <feature.icon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground">{feature.desc}</p>
+              </Card>
+            ))}
+          </div>
+
+          <div className={`text-center scroll-animate ${imageGenInView ? 'animate-fade-up' : ''}`}>
+            <Button size="lg" onClick={() => navigate('/auth')} className="group">
+              Try Image Generation
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Free AI Tools Section */}
+      <section ref={freeToolsRef} id="free-tools" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="Free AI Tools">
+        <div className="container mx-auto">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${freeToolsInView ? 'animate-fade-up' : ''}`}>
+            <Badge className="mb-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">Free Forever</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">15 Free AI Tools — No Credit Card Required</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Access powerful content generators completely free. Get 20 generations per day with a free account, or unlimited with any paid plan.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 sm:gap-4 max-w-4xl mx-auto mb-8">
+            {[
+              'ChatGPT Prompts', 'Hashtags', 'Blog Intros', 'Captions', 'Email Subjects',
+              'Product Desc', 'SEO Meta', 'CTAs', 'Headlines', 'Slogans',
+              'Testimonials', 'Post Ideas', 'Video Prompts', 'Bios', 'FAQs'
+            ].map((tool, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-3 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  freeToolsInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 30}`}
+              >
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center mx-auto mb-2">
+                  <Gift className="h-4 w-4 text-white" />
+                </div>
+                <h3 className="text-xs font-semibold">{tool}</h3>
+              </Card>
+            ))}
+          </div>
+
+          <div className={`max-w-2xl mx-auto scroll-animate ${freeToolsInView ? 'animate-fade-up' : ''}`}>
+            <Card className="p-6 bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border-emerald-500/20">
+              <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center flex-shrink-0">
+                  <Zap className="h-7 w-7 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold mb-1">20 Free Generations Per Day</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Every account gets 20 free AI generations daily across all tools. Premium users enjoy unlimited access with no daily cap.
+                  </p>
+                </div>
+                <Button onClick={() => navigate('/auth')} className="shrink-0">
+                  Get Started Free
+                </Button>
               </div>
             </Card>
           </div>
