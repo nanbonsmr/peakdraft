@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useChatStream, type ChatMessage } from "@/hooks/useChatStream";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +24,7 @@ import {
   Copy,
   Check,
   Download,
+  Lock,
   PanelLeftClose,
   PanelLeft,
   Zap,
@@ -37,6 +40,10 @@ const QUICK_PROMPTS = [
 ];
 
 export default function Chat() {
+  const { profile } = useAuth();
+  const navigate = useNavigate();
+  const isPaid = profile?.subscription_plan && profile.subscription_plan !== "free";
+
   const {
     conversations,
     activeConversationId,
@@ -57,8 +64,8 @@ export default function Chat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    loadConversations();
-  }, [loadConversations]);
+    if (isPaid) loadConversations();
+  }, [loadConversations, isPaid]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -85,6 +92,38 @@ export default function Chat() {
     el.style.height = "auto";
     el.style.height = Math.min(el.scrollHeight, 200) + "px";
   };
+
+  if (!isPaid) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center max-w-md space-y-6"
+        >
+          <div className="relative mx-auto w-fit">
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-violet-500/20 to-indigo-500/20 blur-2xl scale-150" />
+            <div className="relative h-20 w-20 rounded-3xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-violet-500/30 mx-auto">
+              <Lock className="h-10 w-10 text-white" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold">AI Chat is a Pro Feature</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Upgrade to a paid plan to unlock unlimited AI chat conversations, writing assistance, and more. Words generated count towards your plan's word limit.
+            </p>
+          </div>
+          <Button
+            onClick={() => navigate("/app/pricing")}
+            className="bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 shadow-lg shadow-violet-500/20 px-8"
+          >
+            <Sparkles className="h-4 w-4 mr-2" />
+            Upgrade Now
+          </Button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-[calc(100vh-8rem)] gap-0 -m-4 sm:-m-6 rounded-xl overflow-hidden border border-border/30 bg-background/50 backdrop-blur-sm">

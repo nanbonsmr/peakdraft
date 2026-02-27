@@ -172,17 +172,26 @@ export function useChatStream() {
         }
       }
 
-      // Save assistant message to DB
+      // Save assistant message to DB and count words
       if (assistantContent) {
-        await supabase.from("chat_messages").insert({
-          conversation_id: convId,
-          role: "assistant",
-          content: assistantContent,
-        });
-        await supabase
-          .from("chat_conversations")
-          .update({ updated_at: new Date().toISOString() })
-          .eq("id", convId);
+        const wordCount = assistantContent.trim().split(/\s+/).filter(Boolean).length;
+        
+        await Promise.all([
+          supabase.from("chat_messages").insert({
+            conversation_id: convId,
+            role: "assistant",
+            content: assistantContent,
+          }),
+          supabase
+            .from("chat_conversations")
+            .update({ updated_at: new Date().toISOString() })
+            .eq("id", convId),
+          // Update word usage
+          supabase.rpc("update_word_usage", {
+            user_uuid: user.id,
+            words_to_add: wordCount,
+          }),
+        ]);
       }
     } catch (e: any) {
       if (e.name !== "AbortError") {
