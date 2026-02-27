@@ -39,6 +39,7 @@ import NotFound from "./pages/NotFound";
 import Editor from "./pages/Editor";
 import DashboardTools from "./pages/DashboardTools";
 import ImageGeneration from "./pages/ImageGeneration";
+import Chat from "./pages/Chat";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminTemplates from "./pages/admin/AdminTemplates";
@@ -80,6 +81,7 @@ function AnimatedRoutes() {
                     <AnimatePresence mode="wait">
                       <Routes location={location} key={location.pathname}>
                         <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
+                        <Route path="chat" element={<PageTransition><Chat /></PageTransition>} />
                         <Route path="settings" element={<PageTransition><Settings /></PageTransition>} />
                         <Route path="usage" element={<PageTransition><Usage /></PageTransition>} />
                         <Route path="templates" element={<PageTransition><Templates /></PageTransition>} />
