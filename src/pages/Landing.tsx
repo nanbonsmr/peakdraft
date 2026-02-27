@@ -318,121 +318,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* AI Chat Assistant Section */}
-      <section ref={aiChatRef} id="ai-chat" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="AI Chat Assistant">
-        <div className="container mx-auto">
-          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${aiChatInView ? 'animate-fade-up' : ''}`}>
-            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">New Feature</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">AI Chat Assistant</h2>
-            <p className="text-base sm:text-lg text-muted-foreground">
-              Have natural conversations with our AI to brainstorm, draft, and refine any type of content. Powered by advanced language models with real-time streaming responses.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
-            {[
-              { icon: BrainCircuit, title: 'Smart Conversations', desc: 'Context-aware AI that understands your needs and delivers tailored content suggestions', color: 'from-violet-500 to-indigo-600' },
-              { icon: History, title: 'Persistent History', desc: 'All your conversations are saved so you can revisit and continue any chat anytime', color: 'from-blue-500 to-cyan-600' },
-              { icon: Sparkles, title: 'Quick Templates', desc: 'Start instantly with pre-built prompts for blogs, emails, marketing copy and more', color: 'from-amber-500 to-orange-600' },
-              { icon: MessageSquare, title: 'Streaming Responses', desc: 'Watch AI craft your content in real-time with beautiful markdown formatting', color: 'from-emerald-500 to-green-600' },
-              { icon: Download, title: 'Export Anywhere', desc: 'Copy responses or export conversations as text files with a single click', color: 'from-pink-500 to-rose-600' },
-              { icon: Shield, title: 'Usage Tracking', desc: 'Automatic word counting tied to your subscription for transparent credit usage', color: 'from-teal-500 to-cyan-600' },
-            ].map((feature, idx) => (
-              <Card 
-                key={idx} 
-                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
-                  aiChatInView ? 'animate-fade-in-scale' : ''
-                } animation-delay-${(idx + 1) * 100}`}
-              >
-                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mx-auto mb-4`}>
-                  <feature.icon className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.desc}</p>
-              </Card>
-            ))}
-          </div>
-
-          {/* Chat Preview Card */}
-          <div className={`max-w-3xl mx-auto scroll-animate ${aiChatInView ? 'animate-fade-up' : ''}`}>
-            <Card className="p-6 sm:p-8 bg-gradient-to-br from-primary/10 via-primary-glow/5 to-primary/10 border-primary/20">
-              <div className="flex flex-col sm:flex-row items-center gap-6">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30">
-                  <Bot className="h-8 w-8 text-white" />
-                </div>
-                <div className="flex-1 text-center sm:text-left">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Your Creative AI Partner</h3>
-                  <p className="text-muted-foreground mb-4">
-                    From brainstorming blog ideas to crafting professional emails — chat naturally and let AI handle the heavy lifting.
-                  </p>
-                  <Button size="lg" onClick={() => navigate('/auth')} className="group">
-                    Try AI Chat
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* NEW: Task Management Feature Section */}
-      <section ref={newFeaturesRef} id="task-management" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="Task Management Features">
-        <div className="container mx-auto">
-          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${newFeaturesInView ? 'animate-fade-up' : ''}`}>
-            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">New Feature</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Built-in Task Management</h2>
-            <p className="text-base sm:text-lg text-muted-foreground">
-              Organize your content workflow with powerful task management tools. Kanban boards, calendar views, subtasks, and detailed analytics to boost your productivity.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
-            {[
-              { icon: LayoutGrid, title: 'Kanban Board', desc: 'Drag-and-drop task organization with customizable columns. Click any task to view details instantly.' },
-              { icon: Calendar, title: 'Calendar View', desc: 'Schedule content and deadlines with an intuitive calendar interface' },
-              { icon: BarChart3, title: 'Task Analytics', desc: 'Track productivity metrics and completion rates with detailed charts' },
-            ].map((feature, idx) => (
-              <Card 
-                key={idx} 
-                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
-                  newFeaturesInView ? 'animate-fade-in-scale' : ''
-                } animation-delay-${(idx + 1) * 100}`}
-              >
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-4">
-                  <feature.icon className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.desc}</p>
-              </Card>
-            ))}
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
-            {[
-              { icon: CheckCircle, title: 'Subtasks', desc: 'Break down complex tasks into manageable subtasks with progress tracking' },
-              { icon: Columns2, title: 'Quick Task View', desc: 'Click any task to instantly view details, subtasks, and toggle completion' },
-              { icon: Sliders, title: 'Priorities & Labels', desc: 'Set priority levels and custom labels for better task organization' },
-            ].map((feature, idx) => (
-              <Card 
-                key={idx} 
-                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
-                  newFeaturesInView ? 'animate-fade-in-scale' : ''
-                } animation-delay-${(idx + 4) * 100}`}
-              >
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
-                  <feature.icon className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.desc}</p>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* NEW: Templates Showcase Section */}
-      <section ref={templatesRef} id="templates" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="AI Content Templates">
+      {/* Templates Showcase Section */}
+      <section ref={templatesRef} id="templates" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="AI Content Templates">
         <div className="container mx-auto">
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${templatesInView ? 'animate-fade-up' : ''}`}>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">25+ AI Content Templates</h2>
@@ -494,7 +381,7 @@ export default function Landing() {
             ))}
           </div>
 
-          {/* NEW: Advanced AI Humanizer Feature Highlight */}
+          {/* Advanced AI Humanizer Feature Highlight */}
           <div className={`mt-12 max-w-4xl mx-auto scroll-animate ${templatesInView ? 'animate-fade-up' : ''}`}>
             <Card className="p-6 sm:p-8 bg-gradient-to-br from-fuchsia-500/10 via-pink-500/5 to-purple-500/10 border-fuchsia-500/20">
               <div className="flex flex-col lg:flex-row items-center gap-6">
@@ -529,6 +416,64 @@ export default function Landing() {
                       <span className="text-sm font-medium">Quick Regenerate</span>
                     </div>
                   </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* AI Chat Assistant Section */}
+      <section ref={aiChatRef} id="ai-chat" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="AI Chat Assistant">
+        <div className="container mx-auto">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${aiChatInView ? 'animate-fade-up' : ''}`}>
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">New Feature</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">AI Chat Assistant</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Have natural conversations with our AI to brainstorm, draft, and refine any type of content. Powered by advanced language models with real-time streaming responses.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
+            {[
+              { icon: BrainCircuit, title: 'Smart Conversations', desc: 'Context-aware AI that understands your needs and delivers tailored content suggestions', color: 'from-violet-500 to-indigo-600' },
+              { icon: History, title: 'Persistent History', desc: 'All your conversations are saved so you can revisit and continue any chat anytime', color: 'from-blue-500 to-cyan-600' },
+              { icon: Sparkles, title: 'Quick Templates', desc: 'Start instantly with pre-built prompts for blogs, emails, marketing copy and more', color: 'from-amber-500 to-orange-600' },
+              { icon: MessageSquare, title: 'Streaming Responses', desc: 'Watch AI craft your content in real-time with beautiful markdown formatting', color: 'from-emerald-500 to-green-600' },
+              { icon: Download, title: 'Export Anywhere', desc: 'Copy responses or export conversations as text files with a single click', color: 'from-pink-500 to-rose-600' },
+              { icon: Shield, title: 'Usage Tracking', desc: 'Automatic word counting tied to your subscription for transparent credit usage', color: 'from-teal-500 to-cyan-600' },
+            ].map((feature, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  aiChatInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
+                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mx-auto mb-4`}>
+                  <feature.icon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground">{feature.desc}</p>
+              </Card>
+            ))}
+          </div>
+
+          {/* Chat Preview Card */}
+          <div className={`max-w-3xl mx-auto scroll-animate ${aiChatInView ? 'animate-fade-up' : ''}`}>
+            <Card className="p-6 sm:p-8 bg-gradient-to-br from-primary/10 via-primary-glow/5 to-primary/10 border-primary/20">
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30">
+                  <Bot className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Your Creative AI Partner</h3>
+                  <p className="text-muted-foreground mb-4">
+                    From brainstorming blog ideas to crafting professional emails — chat naturally and let AI handle the heavy lifting.
+                  </p>
+                  <Button size="lg" onClick={() => navigate('/auth')} className="group">
+                    Try AI Chat
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
                 </div>
               </div>
             </Card>
@@ -630,8 +575,56 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section ref={workflowRef} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${workflowInView ? 'animate-fade-up' : ''}`}>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">How It Works</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Get started in three simple steps
+            </p>
+          </div>
+
+          {/* Workflow Illustration with Parallax */}
+          <div 
+            className={`max-w-4xl mx-auto mb-12 scroll-animate ${workflowInView ? 'animate-fade-in-scale' : ''}`}
+            style={{ transform: `translateY(${parallaxOffset * -0.15}px)` }}
+          >
+            <img 
+              src={workflowIllustration} 
+              alt="PeakDraft workflow process" 
+              className="w-full h-auto rounded-2xl shadow-xl"
+            />
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
+            {[
+              { step: '01', title: 'Choose Template', desc: 'Select from our library of content templates' },
+              { step: '02', title: 'Enter Details', desc: 'Provide your topic and key information' },
+              { step: '03', title: 'Generate & Edit', desc: 'Get AI-generated content and refine as needed' },
+            ].map((item, idx) => (
+              <div 
+                key={idx} 
+                className={`relative scroll-animate ${
+                  workflowInView ? 'animate-fade-up' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
+                <div className="text-center">
+                  <div className="text-5xl sm:text-6xl font-bold text-primary/20 mb-4">{item.step}</div>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2">{item.title}</h3>
+                  <p className="text-sm sm:text-base text-muted-foreground">{item.desc}</p>
+                </div>
+                {idx < 2 && (
+                  <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* About Section */}
-      <section ref={aboutRef} id="about" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="About PeakDraft">
+      <section ref={aboutRef} id="about" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="About PeakDraft">
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-16">
             {/* Left Column - Image with Parallax */}
@@ -687,7 +680,7 @@ export default function Landing() {
       <section 
         ref={featuresRef}
         id="features" 
-        className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30 relative overflow-hidden"
+        className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
         aria-label="AI Content Generation Features"
       >
         {/* Animated Gradient Overlays */}
@@ -735,56 +728,105 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section ref={workflowRef} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      {/* Task Management Feature Section */}
+      <section ref={newFeaturesRef} id="task-management" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="Task Management Features">
         <div className="container mx-auto">
-          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${workflowInView ? 'animate-fade-up' : ''}`}>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">How It Works</h2>
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${newFeaturesInView ? 'animate-fade-up' : ''}`}>
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">New Feature</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Built-in Task Management</h2>
             <p className="text-base sm:text-lg text-muted-foreground">
-              Get started in three simple steps
+              Organize your content workflow with powerful task management tools. Kanban boards, calendar views, subtasks, and detailed analytics to boost your productivity.
             </p>
           </div>
 
-          {/* Workflow Illustration with Parallax */}
-          <div 
-            className={`max-w-4xl mx-auto mb-12 scroll-animate ${workflowInView ? 'animate-fade-in-scale' : ''}`}
-            style={{ transform: `translateY(${parallaxOffset * -0.15}px)` }}
-          >
-            <img 
-              src={workflowIllustration} 
-              alt="PeakDraft workflow process" 
-              className="w-full h-auto rounded-2xl shadow-xl"
-            />
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
             {[
-              { step: '01', title: 'Choose Template', desc: 'Select from our library of content templates' },
-              { step: '02', title: 'Enter Details', desc: 'Provide your topic and key information' },
-              { step: '03', title: 'Generate & Edit', desc: 'Get AI-generated content and refine as needed' },
-            ].map((item, idx) => (
-              <div 
+              { icon: LayoutGrid, title: 'Kanban Board', desc: 'Drag-and-drop task organization with customizable columns. Click any task to view details instantly.' },
+              { icon: Calendar, title: 'Calendar View', desc: 'Schedule content and deadlines with an intuitive calendar interface' },
+              { icon: BarChart3, title: 'Task Analytics', desc: 'Track productivity metrics and completion rates with detailed charts' },
+            ].map((feature, idx) => (
+              <Card 
                 key={idx} 
-                className={`relative scroll-animate ${
-                  workflowInView ? 'animate-fade-up' : ''
+                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  newFeaturesInView ? 'animate-fade-in-scale' : ''
                 } animation-delay-${(idx + 1) * 100}`}
               >
-                <div className="text-center">
-                  <div className="text-5xl sm:text-6xl font-bold text-primary/20 mb-4">{item.step}</div>
-                  <h3 className="text-lg sm:text-xl font-bold mb-2">{item.title}</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground">{item.desc}</p>
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-4">
+                  <feature.icon className="h-6 w-6 text-white" />
                 </div>
-                {idx < 2 && (
-                  <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent" />
-                )}
-              </div>
+                <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground">{feature.desc}</p>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
+            {[
+              { icon: CheckCircle, title: 'Subtasks', desc: 'Break down complex tasks into manageable subtasks with progress tracking' },
+              { icon: Columns2, title: 'Quick Task View', desc: 'Click any task to instantly view details, subtasks, and toggle completion' },
+              { icon: Sliders, title: 'Priorities & Labels', desc: 'Set priority levels and custom labels for better task organization' },
+            ].map((feature, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  newFeaturesInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 4) * 100}`}
+              >
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
+                  <feature.icon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground">{feature.desc}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section 
+        ref={testimonialRef}
+        id="testimonials" 
+        className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
+      >
+        <div className="container mx-auto">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${testimonialInView ? 'animate-fade-up' : ''}`}>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Loved by Content Creators</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              See what our users have to say about PeakDraft
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
+            {[
+              { name: 'Sarah Johnson', role: 'Content Marketing Manager', text: 'PeakDraft has transformed how I create content. Blog posts that took hours now take minutes. The task management feature keeps my team organized!' },
+              { name: 'Michael Chen', role: 'Professional Blogger', text: 'The AI-generated blog posts are SEO-optimized and engaging. I\'ve doubled my organic traffic since using PeakDraft.' },
+              { name: 'Emily Rodriguez', role: 'Social Media Manager', text: 'Managing content for multiple clients is effortless now. The 14+ templates cover everything from Instagram captions to email newsletters.' },
+            ].map((testimonial, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-6 bg-card/50 backdrop-blur hover:shadow-elegant transition-all duration-300 scroll-animate ${
+                  testimonialInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
+                <div className="flex gap-1 mb-4" aria-label="5 star rating">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-primary text-primary" />
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground mb-4">"{testimonial.text}"</p>
+                <div>
+                  <div className="text-base sm:text-lg font-bold">{testimonial.name}</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">{testimonial.role}</div>
+                </div>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section id="pricing" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
@@ -967,91 +1009,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section 
-        ref={testimonialRef}
-        id="testimonials" 
-        className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30"
-      >
-        <div className="container mx-auto">
-          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${testimonialInView ? 'animate-fade-up' : ''}`}>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Loved by Content Creators</h2>
-            <p className="text-base sm:text-lg text-muted-foreground">
-              See what our users have to say about PeakDraft
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
-            {[
-              { name: 'Sarah Johnson', role: 'Content Marketing Manager', text: 'PeakDraft has transformed how I create content. Blog posts that took hours now take minutes. The task management feature keeps my team organized!' },
-              { name: 'Michael Chen', role: 'Professional Blogger', text: 'The AI-generated blog posts are SEO-optimized and engaging. I\'ve doubled my organic traffic since using PeakDraft.' },
-              { name: 'Emily Rodriguez', role: 'Social Media Manager', text: 'Managing content for multiple clients is effortless now. The 14+ templates cover everything from Instagram captions to email newsletters.' },
-            ].map((testimonial, idx) => (
-              <Card 
-                key={idx} 
-                className={`p-6 bg-card/50 backdrop-blur hover:shadow-elegant transition-all duration-300 scroll-animate ${
-                  testimonialInView ? 'animate-fade-in-scale' : ''
-                } animation-delay-${(idx + 1) * 100}`}
-              >
-                <div className="flex gap-1 mb-4" aria-label="5 star rating">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="text-sm sm:text-base text-muted-foreground mb-4">"{testimonial.text}"</p>
-                <div>
-                  <div className="text-base sm:text-lg font-bold">{testimonial.name}</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">{testimonial.role}</div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Free Tools Section */}
-      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Free AI Tools">
-        <div className="container mx-auto">
-          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
-            <Badge className="mb-4 bg-green-500/10 text-green-500 border-green-500/20">100% Free</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Free AI Tools</h2>
-            <p className="text-base sm:text-lg text-muted-foreground">
-              Try our powerful AI generators without signing up. Create hashtags, headlines, slogans, and more instantly!
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 max-w-5xl mx-auto mb-8">
-            {[
-              { icon: MessageSquare, title: 'ChatGPT Prompts', color: 'from-violet-500 to-purple-600' },
-              { icon: Hash, title: 'Hashtags', color: 'from-pink-500 to-rose-600' },
-              { icon: FileText, title: 'Blog Intros', color: 'from-blue-500 to-cyan-600' },
-              { icon: Mail, title: 'Email Subjects', color: 'from-orange-500 to-amber-600' },
-              { icon: TrendingUp, title: 'Headlines', color: 'from-emerald-500 to-green-600' },
-              { icon: Star, title: 'Slogans', color: 'from-indigo-500 to-violet-600' },
-            ].map((tool, idx) => (
-              <Card 
-                key={idx} 
-                className="p-4 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur"
-              >
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${tool.color} flex items-center justify-center mx-auto mb-2`}>
-                  <tool.icon className="h-5 w-5 text-white" />
-                </div>
-                <h3 className="text-xs sm:text-sm font-semibold">{tool.title}</h3>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Button size="lg" onClick={() => navigate('/free-tools')} className="group">
-              Try All 11 Free Tools
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* Blog Section */}
-      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="Latest Blog Posts">
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Latest Blog Posts">
         <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Latest from Our Blog</h2>
@@ -1087,7 +1046,7 @@ export default function Landing() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Contact Us">
+      <section id="contact" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="Contact Us">
         <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Get in Touch</h2>
