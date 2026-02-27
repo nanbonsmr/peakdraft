@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const hashtagExamples = [
   "Generate trending hashtags for a fitness motivation post",
@@ -28,6 +29,7 @@ export default function HashtagGenerator() {
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('hashtag');
 
@@ -69,7 +71,8 @@ export default function HashtagGenerator() {
         body: { 
           prompt: enhancedPrompt,
           template_type: 'hashtag',
-          language: 'en'
+          language: 'en',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -170,7 +173,9 @@ export default function HashtagGenerator() {
               />
             </div>
 
-            <Button 
+            <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
+
+            <Button
               onClick={handleGenerate} 
               disabled={isGenerating}
               className="w-full"

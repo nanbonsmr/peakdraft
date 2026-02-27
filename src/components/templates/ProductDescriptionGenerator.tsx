@@ -13,6 +13,7 @@ import { Package, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw, Pencil } fro
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const productExamples = [
   "Write a compelling product description for wireless noise-cancelling headphones with 30-hour battery life",
@@ -39,6 +40,7 @@ export default function ProductDescriptionGenerator() {
   const [tone, setTone] = useState('professional');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('product-description');
 
@@ -90,7 +92,8 @@ export default function ProductDescriptionGenerator() {
         body: {
           template_type: 'product-description',
           prompt: enhancedPrompt,
-          language: 'en'
+          language: 'en',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -220,6 +223,8 @@ export default function ProductDescriptionGenerator() {
               />
             </div>
 
+            <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
+
             <Button 
               onClick={handleGenerate} 
               disabled={isGenerating || !prompt.trim()}
@@ -246,34 +251,17 @@ export default function ProductDescriptionGenerator() {
             <CardTitle>Generated Description</CardTitle>
             {generatedContent && (
               <div className="flex flex-wrap gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleGenerate}
-                  disabled={isGenerating}
-                >
+                <Button variant="outline" size="sm" onClick={handleGenerate} disabled={isGenerating}>
                   <RefreshCw className={`w-4 h-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
                   Regenerate
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={copyToClipboard}
-                  className="w-fit"
-                >
+                <Button variant="outline" size="sm" onClick={copyToClipboard} className="w-fit">
                   <Copy className="w-4 h-4 mr-2" />
                   Copy
                 </Button>
                 <Button 
-                  variant="default" 
-                  size="sm" 
-                  onClick={() => navigate('/app/editor', { 
-                    state: { 
-                      content: generatedContent, 
-                      title: prompt.slice(0, 50),
-                      templateType: 'product-description' 
-                    } 
-                  })}
+                  variant="default" size="sm" 
+                  onClick={() => navigate('/app/editor', { state: { content: generatedContent, title: prompt.slice(0, 50), templateType: 'product-description' } })}
                   className="w-fit"
                 >
                   <Pencil className="w-4 h-4 mr-2" />
@@ -286,23 +274,18 @@ export default function ProductDescriptionGenerator() {
             {generatedContent ? (
               <div className="space-y-4">
                 <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                    {generatedContent}
-                  </pre>
+                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{generatedContent}</pre>
                 </div>
               </div>
             ) : (
               <div className="text-center py-8">
                 <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">
-                  Your product description will appear here
-                </p>
+                <p className="text-muted-foreground">Your product description will appear here</p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Recent Content */}
         <RecentContent
           recentContent={recentContent}
           templateTitle="Product Descriptions"
@@ -319,19 +302,12 @@ export default function ProductDescriptionGenerator() {
               <Lightbulb className="w-5 h-5" />
               Example Products
             </CardTitle>
-            <CardDescription>
-              Click on any example to use it as your starting point
-            </CardDescription>
+            <CardDescription>Click on any example to use it as your starting point</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-2">
               {productExamples.map((example, index) => (
-                <Button
-                  key={index}
-                  variant="ghost"
-                  className="justify-start text-left h-auto p-3 whitespace-normal"
-                  onClick={() => setPrompt(example)}
-                >
+                <Button key={index} variant="ghost" className="justify-start text-left h-auto p-3 whitespace-normal" onClick={() => setPrompt(example)}>
                   <span className="text-sm">{example}</span>
                 </Button>
               ))}

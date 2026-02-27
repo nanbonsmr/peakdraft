@@ -12,6 +12,7 @@ import { Loader2, Copy, RefreshCw, FileUser, Lightbulb, Pencil } from 'lucide-re
 import { RecentContent } from './RecentContent';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { ExportDropdown } from '@/components/ExportDropdown';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const coverLetterExamples = [
   "Software Engineer position at Google",
@@ -46,6 +47,7 @@ export default function CoverLetterGenerator() {
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('cover_letter');
 
   const handleGenerate = async () => {
@@ -105,7 +107,8 @@ Guidelines:
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: {
           prompt: enhancedPrompt,
-          template_type: 'cover_letter'
+          template_type: 'cover_letter',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -237,6 +240,8 @@ Guidelines:
               rows={5}
             />
           </div>
+
+          <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
           <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
             {isGenerating ? (

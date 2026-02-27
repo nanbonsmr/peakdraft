@@ -12,6 +12,7 @@ import { Loader2, Copy, RefreshCw, Heart, Lightbulb, Pencil } from 'lucide-react
 import { RecentContent } from './RecentContent';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { ExportDropdown } from '@/components/ExportDropdown';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const letterExamples = [
   "Thank you letter to a friend for their support",
@@ -50,6 +51,7 @@ export default function FriendlyLetterGenerator() {
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('friendly_letter');
 
   const handleGenerate = async () => {
@@ -106,7 +108,8 @@ The letter should feel authentic and convey genuine emotion.`;
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: {
           prompt: enhancedPrompt,
-          template_type: 'friendly_letter'
+          template_type: 'friendly_letter',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -227,6 +230,8 @@ The letter should feel authentic and convey genuine emotion.`;
               rows={4}
             />
           </div>
+
+          <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
           <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
             {isGenerating ? (

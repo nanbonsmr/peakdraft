@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { FileEdit, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw, Pencil } from 'lucide-react';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const letterExamples = [
   "Write a professional cover letter for a Software Engineer position at a tech startup",
@@ -38,6 +39,7 @@ export default function LetterGenerator() {
   const [letterType, setLetterType] = useState('cover');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('letter');
 
@@ -90,7 +92,8 @@ export default function LetterGenerator() {
         body: {
           template_type: 'letter',
           prompt: enhancedPrompt,
-          language: 'en'
+          language: 'en',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -209,7 +212,9 @@ export default function LetterGenerator() {
               />
             </div>
 
-            <Button 
+            <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
+
+            <Button
               onClick={handleGenerate} 
               disabled={isGenerating || !prompt.trim()}
               className="w-full"

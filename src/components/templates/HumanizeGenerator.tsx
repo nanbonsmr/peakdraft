@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const writingStyles = [
   { value: 'conversational', label: 'Conversational', icon: MessageCircle, description: 'Friendly and casual tone' },
@@ -66,6 +67,7 @@ export default function HumanizeGenerator() {
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
   const [prompt, setPrompt] = useState('');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -177,7 +179,8 @@ ${prompt}`;
         body: {
           template_type: 'humanize',
           prompt: enhancedPrompt,
-          language: 'en'
+          language: 'en',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -278,7 +281,9 @@ ${prompt}`;
                 <span>{prompt.length} characters</span>
               </div>
 
-              <Button 
+              <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
+
+              <Button
                 onClick={handleGenerate} 
                 disabled={isGenerating || !prompt.trim()}
                 className="w-full"
