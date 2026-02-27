@@ -12,6 +12,7 @@ import { Loader2, Copy, RefreshCw, FileCheck, Lightbulb, Pencil } from 'lucide-r
 import { RecentContent } from './RecentContent';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { ExportDropdown } from '@/components/ExportDropdown';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const proposalExamples = [
   "A proposal for a new marketing campaign for a tech startup",
@@ -39,6 +40,7 @@ export default function ProposalGenerator() {
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('proposal');
 
   const handleGenerate = async () => {
@@ -81,7 +83,8 @@ export default function ProposalGenerator() {
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: {
           prompt: enhancedPrompt,
-          template_type: 'proposal'
+          template_type: 'proposal',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -187,6 +190,8 @@ export default function ProposalGenerator() {
               rows={5}
             />
           </div>
+
+          <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
           <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
             {isGenerating ? (

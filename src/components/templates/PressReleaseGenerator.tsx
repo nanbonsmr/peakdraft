@@ -12,6 +12,7 @@ import { Loader2, Copy, RefreshCw, Newspaper, Lightbulb, Pencil } from 'lucide-r
 import { RecentContent } from './RecentContent';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { ExportDropdown } from '@/components/ExportDropdown';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const pressReleaseExamples = [
   "New product launch announcement",
@@ -50,6 +51,7 @@ export default function PressReleaseGenerator() {
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('press_release');
 
   const handleGenerate = async () => {
@@ -117,7 +119,8 @@ Guidelines:
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: {
           prompt: enhancedPrompt,
-          template_type: 'press_release'
+          template_type: 'press_release',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -249,6 +252,8 @@ Guidelines:
               rows={6}
             />
           </div>
+
+          <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
           <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
             {isGenerating ? (

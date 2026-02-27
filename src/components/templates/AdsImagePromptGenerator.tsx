@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, Copy, RefreshCw, ImagePlus, Lightbulb, Pencil } from 'lucide-react';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 import { useRecentContent } from '@/hooks/useRecentContent';
 
 const adsImageExamples = [
@@ -47,6 +48,7 @@ export default function AdsImagePromptGenerator() {
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('ads_image_prompt');
 
   const handleGenerate = async () => {
@@ -108,7 +110,8 @@ Make the prompt optimized for AI image generators like Midjourney, DALL-E, or St
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: {
           prompt: enhancedPrompt,
-          template_type: 'ads_image_prompt'
+          template_type: 'ads_image_prompt',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -229,6 +232,8 @@ Make the prompt optimized for AI image generators like Midjourney, DALL-E, or St
               rows={4}
             />
           </div>
+
+          <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
           <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
             {isGenerating ? (

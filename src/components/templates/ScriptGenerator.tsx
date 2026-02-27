@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { Video, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw, Pencil } from 'lucide-react';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const scriptExamples = [
   "Create a 2-minute explainer video script about blockchain technology for beginners",
@@ -47,6 +48,7 @@ export default function ScriptGenerator() {
   const [duration, setDuration] = useState('2min');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('script');
 
@@ -100,7 +102,8 @@ export default function ScriptGenerator() {
         body: {
           template_type: 'script',
           prompt: enhancedPrompt,
-          language: 'en'
+          language: 'en',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -237,7 +240,9 @@ export default function ScriptGenerator() {
               />
             </div>
 
-            <Button 
+            <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
+
+            <Button
               onClick={handleGenerate} 
               disabled={isGenerating || !prompt.trim()}
               className="w-full"

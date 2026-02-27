@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
 import { ExportDropdown } from '@/components/ExportDropdown';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const reviewExamples = [
   "Review of the latest iPhone model with focus on camera quality",
@@ -57,6 +58,7 @@ export function ProductReviewGenerator() {
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('product_review');
 
   const handleGenerate = async () => {
@@ -120,7 +122,8 @@ Requirements:
         body: {
           template_type: 'product_review',
           prompt: enhancedPrompt,
-          language: 'english'
+          language: 'english',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -251,6 +254,8 @@ Requirements:
               </Select>
             </div>
           </div>
+
+          <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
           <Button
             onClick={handleGenerate}

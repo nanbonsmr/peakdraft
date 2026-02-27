@@ -13,6 +13,7 @@ import { FileText, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw, Pencil } fr
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const cvExamples = [
   "Create a professional CV summary for a Senior Software Engineer with 5 years experience in React, Node.js, and cloud technologies",
@@ -37,6 +38,7 @@ export default function CVGenerator() {
   const [section, setSection] = useState('full');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('cv');
 
@@ -89,7 +91,8 @@ export default function CVGenerator() {
         body: {
           template_type: 'cv',
           prompt: enhancedPrompt,
-          language: 'en'
+          language: 'en',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -208,7 +211,9 @@ export default function CVGenerator() {
               />
             </div>
 
-            <Button 
+            <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
+
+            <Button
               onClick={handleGenerate} 
               disabled={isGenerating || !prompt.trim()}
               className="w-full"

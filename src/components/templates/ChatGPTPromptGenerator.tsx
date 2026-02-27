@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const promptExamples = [
   "Create a prompt for generating marketing copy for a SaaS product",
@@ -28,6 +29,7 @@ export default function ChatGPTPromptGenerator() {
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('chatgpt-prompt');
 
@@ -69,7 +71,8 @@ export default function ChatGPTPromptGenerator() {
         body: { 
           prompt: enhancedPrompt,
           template_type: 'chatgpt-prompt',
-          language: 'en'
+          language: 'en',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -165,7 +168,9 @@ export default function ChatGPTPromptGenerator() {
               />
             </div>
 
-            <Button 
+            <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
+
+            <Button
               onClick={handleGenerate} 
               disabled={isGenerating}
               className="w-full"

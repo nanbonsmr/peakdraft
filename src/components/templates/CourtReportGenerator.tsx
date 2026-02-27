@@ -12,6 +12,7 @@ import { Loader2, Copy, RefreshCw, Scale, Lightbulb, Pencil } from 'lucide-react
 import { RecentContent } from './RecentContent';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { ExportDropdown } from '@/components/ExportDropdown';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const reportExamples = [
   "Summary of witness testimony in a civil lawsuit",
@@ -39,6 +40,7 @@ export default function CourtReportGenerator() {
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('court_report');
 
   const handleGenerate = async () => {
@@ -81,7 +83,8 @@ export default function CourtReportGenerator() {
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: {
           prompt: enhancedPrompt,
-          template_type: 'court_report'
+          template_type: 'court_report',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -187,6 +190,8 @@ export default function CourtReportGenerator() {
               rows={6}
             />
           </div>
+
+          <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
           <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
             {isGenerating ? (

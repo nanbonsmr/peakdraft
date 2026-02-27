@@ -12,6 +12,7 @@ import { Loader2, Copy, RefreshCw, Briefcase, Lightbulb, Pencil } from 'lucide-r
 import { RecentContent } from './RecentContent';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { ExportDropdown } from '@/components/ExportDropdown';
+import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
 
 const businessPlanExamples = [
   "Tech startup developing AI-powered customer service",
@@ -49,6 +50,7 @@ export default function BusinessPlanGenerator() {
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('business_plan');
 
   const handleGenerate = async () => {
@@ -125,7 +127,8 @@ Guidelines:
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: {
           prompt: enhancedPrompt,
-          template_type: 'business_plan'
+          template_type: 'business_plan',
+          brand_context: getBrandContextString() || undefined
         }
       });
 
@@ -257,6 +260,8 @@ Guidelines:
               rows={6}
             />
           </div>
+
+          <InfobaseToggle enabled={infobaseEnabled} onToggle={setInfobaseEnabled} selectedEntry={selectedEntry} onSelectEntry={setSelectedEntry} />
 
           <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
             {isGenerating ? (
