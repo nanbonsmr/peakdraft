@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 serve(async (req) => {
@@ -30,26 +30,26 @@ serve(async (req) => {
       );
     }
 
-    // Create a client with the user's JWT to verify their identity
+    // Validate the token explicitly
+    const token = authHeader.replace('Bearer ', '');
     const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
       global: {
         headers: { Authorization: authHeader }
       }
     });
 
-    // Get the authenticated user from the JWT
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
+    const { data: claimsData, error: claimsError } = await supabaseUser.auth.getClaims(token);
     
-    if (userError || !user) {
-      console.log('Invalid or expired token:', userError?.message);
+    if (claimsError || !claimsData?.claims) {
+      console.log('Invalid or expired token:', claimsError?.message);
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Invalid token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const userId = user.id;
-    const userEmail = user.email;
+    const userId = claimsData.claims.sub;
+    const userEmail = claimsData.claims.email;
 
     console.log(`Admin operation requested by verified user: ${userId} (${userEmail})`);
 
