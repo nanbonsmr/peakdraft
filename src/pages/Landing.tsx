@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, X, Mail, Phone, MapPin, LayoutGrid, Calendar, BarChart3, FileText, Hash, Video, Image, MessageSquare, Briefcase, RefreshCw, Columns2, Sliders, ImagePlus, Wand2, Eye, Edit3, Gift } from 'lucide-react';
+import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, X, Mail, Phone, MapPin, LayoutGrid, Calendar, BarChart3, FileText, Hash, Video, Image, MessageSquare, Briefcase, RefreshCw, Columns2, Sliders, ImagePlus, Wand2, Eye, Edit3, Gift, Bot, BrainCircuit, History, Download } from 'lucide-react';
 import featuresShowcase from '@/assets/features-showcase-new.jpg';
 import workflowIllustration from '@/assets/workflow-illustration-new.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
@@ -138,6 +138,7 @@ export default function Landing() {
   const { ref: templatesRef, isInView: templatesInView } = useInView();
   const { ref: imageGenRef, isInView: imageGenInView } = useInView();
   const { ref: freeToolsRef, isInView: freeToolsInView } = useInView();
+  const { ref: aiChatRef, isInView: aiChatInView } = useInView();
   const { user, loading, isSignedIn } = useAuth();
 
   // Handle OAuth callback and redirect authenticated users to dashboard
@@ -317,8 +318,66 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* AI Chat Assistant Section */}
+      <section ref={aiChatRef} id="ai-chat" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="AI Chat Assistant">
+        <div className="container mx-auto">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${aiChatInView ? 'animate-fade-up' : ''}`}>
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">New Feature</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">AI Chat Assistant</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Have natural conversations with our AI to brainstorm, draft, and refine any type of content. Powered by advanced language models with real-time streaming responses.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
+            {[
+              { icon: BrainCircuit, title: 'Smart Conversations', desc: 'Context-aware AI that understands your needs and delivers tailored content suggestions', color: 'from-violet-500 to-indigo-600' },
+              { icon: History, title: 'Persistent History', desc: 'All your conversations are saved so you can revisit and continue any chat anytime', color: 'from-blue-500 to-cyan-600' },
+              { icon: Sparkles, title: 'Quick Templates', desc: 'Start instantly with pre-built prompts for blogs, emails, marketing copy and more', color: 'from-amber-500 to-orange-600' },
+              { icon: MessageSquare, title: 'Streaming Responses', desc: 'Watch AI craft your content in real-time with beautiful markdown formatting', color: 'from-emerald-500 to-green-600' },
+              { icon: Download, title: 'Export Anywhere', desc: 'Copy responses or export conversations as text files with a single click', color: 'from-pink-500 to-rose-600' },
+              { icon: Shield, title: 'Usage Tracking', desc: 'Automatic word counting tied to your subscription for transparent credit usage', color: 'from-teal-500 to-cyan-600' },
+            ].map((feature, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  aiChatInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
+                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mx-auto mb-4`}>
+                  <feature.icon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground">{feature.desc}</p>
+              </Card>
+            ))}
+          </div>
+
+          {/* Chat Preview Card */}
+          <div className={`max-w-3xl mx-auto scroll-animate ${aiChatInView ? 'animate-fade-up' : ''}`}>
+            <Card className="p-6 sm:p-8 bg-gradient-to-br from-primary/10 via-primary-glow/5 to-primary/10 border-primary/20">
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30">
+                  <Bot className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Your Creative AI Partner</h3>
+                  <p className="text-muted-foreground mb-4">
+                    From brainstorming blog ideas to crafting professional emails — chat naturally and let AI handle the heavy lifting.
+                  </p>
+                  <Button size="lg" onClick={() => navigate('/auth')} className="group">
+                    Try AI Chat
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* NEW: Task Management Feature Section */}
-      <section ref={newFeaturesRef} id="task-management" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Task Management Features">
+      <section ref={newFeaturesRef} id="task-management" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="Task Management Features">
         <div className="container mx-auto">
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${newFeaturesInView ? 'animate-fade-up' : ''}`}>
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">New Feature</Badge>
