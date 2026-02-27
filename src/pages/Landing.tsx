@@ -18,6 +18,7 @@ import PublicFooter from '@/components/PublicFooter';
 import { PromotionPopup } from '@/components/PromotionPopup';
 
 import { HeroPreview } from '@/components/landing/HeroPreview';
+import { SectionReveal } from '@/components/landing/SectionReveal';
 
 const siteUrl = 'https://peakdraft.netlify.app';
 
@@ -295,6 +296,7 @@ export default function Landing() {
       </section>
 
       {/* Stats Section */}
+      <SectionReveal>
       <section ref={statsRef} className="py-12 sm:py-16 bg-muted/30" aria-label="Platform Statistics">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
@@ -317,8 +319,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* Templates Showcase Section */}
+      <SectionReveal>
       <section ref={templatesRef} id="templates" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="AI Content Templates">
         <div className="container mx-auto">
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${templatesInView ? 'animate-fade-up' : ''}`}>
@@ -422,8 +426,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* AI Chat Assistant Section */}
+      <SectionReveal>
       <section ref={aiChatRef} id="ai-chat" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="AI Chat Assistant">
         <div className="container mx-auto">
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${aiChatInView ? 'animate-fade-up' : ''}`}>
@@ -480,8 +486,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* AI Image Generation & Editing Section */}
+      <SectionReveal>
       <section ref={imageGenRef} id="image-generation" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="AI Image Generation">
         <div className="container mx-auto">
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${imageGenInView ? 'animate-fade-up' : ''}`}>
@@ -522,8 +530,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* Free AI Tools Section */}
+      <SectionReveal>
       <section ref={freeToolsRef} id="free-tools" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="Free AI Tools">
         <div className="container mx-auto">
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${freeToolsInView ? 'animate-fade-up' : ''}`}>
@@ -574,8 +584,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* How It Works */}
+      <SectionReveal>
       <section ref={workflowRef} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${workflowInView ? 'animate-fade-up' : ''}`}>
@@ -622,8 +634,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* About Section */}
+      <SectionReveal>
       <section ref={aboutRef} id="about" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="About PeakDraft">
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-16">
@@ -675,8 +689,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* Features Section */}
+      <SectionReveal>
       <section 
         ref={featuresRef}
         id="features" 
@@ -727,8 +743,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* Task Management Feature Section */}
+      <SectionReveal>
       <section ref={newFeaturesRef} id="task-management" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="Task Management Features">
         <div className="container mx-auto">
           <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${newFeaturesInView ? 'animate-fade-up' : ''}`}>
@@ -782,8 +800,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* Testimonials */}
+      <SectionReveal>
       <section 
         ref={testimonialRef}
         id="testimonials" 
@@ -824,8 +844,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* Pricing Section */}
+      <SectionReveal>
       <section id="pricing" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
@@ -1008,8 +1030,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* Blog Section */}
+      <SectionReveal>
       <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Latest Blog Posts">
         <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
@@ -1044,8 +1068,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* Contact Section */}
+      <SectionReveal>
       <section id="contact" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="Contact Us">
         <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center mb-12">
@@ -1088,8 +1114,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </SectionReveal>
 
       {/* CTA Section */}
+      <SectionReveal>
       <section ref={ctaRef} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Get Started with PeakDraft">
         <div className="container mx-auto">
           <Card className={`max-w-4xl mx-auto p-6 sm:p-8 lg:p-12 text-center bg-gradient-to-br from-primary/10 via-primary-glow/5 to-accent/10 border-primary/20 scroll-animate ${
@@ -1111,6 +1139,7 @@ export default function Landing() {
           </Card>
         </div>
       </section>
+      </SectionReveal>
 
       <PublicFooter />
     </main>
