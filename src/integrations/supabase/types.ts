@@ -206,6 +206,30 @@ export type Database = {
           },
         ]
       }
+      free_tool_usage: {
+        Row: {
+          id: string
+          tool_id: string
+          usage_date: string
+          used_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          tool_id: string
+          usage_date?: string
+          used_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          tool_id?: string
+          usage_date?: string
+          used_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       image_generations: {
         Row: {
           created_at: string
