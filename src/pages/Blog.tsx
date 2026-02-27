@@ -32,6 +32,37 @@ Whether you're creating YouTube thumbnails, Instagram posts, or product mockups,
     featured: true
   },
   {
+    id: 'free-ai-tools-guide',
+    title: '15 Free AI Tools Every Content Creator Needs in 2026',
+    excerpt: 'Discover PeakDraft\'s suite of 15 free AI-powered content generators — from hashtag and headline generators to SEO meta descriptions and FAQ creators. No credit card required.',
+    content: `PeakDraft offers 15 free AI-powered content generators that cover every aspect of digital content creation. From social media captions to SEO meta descriptions, these tools help you produce professional content in seconds.
+
+The complete free tool suite includes:
+- **ChatGPT Prompt Generator**: Craft effective prompts for AI assistants
+- **Hashtag Generator**: Generate trending hashtags for maximum reach
+- **Blog Intro Generator**: Create engaging introductions that hook readers
+- **Social Media Caption Generator**: Write scroll-stopping captions
+- **Email Subject Line Generator**: Boost open rates with compelling subject lines
+- **Product Description Generator**: Create persuasive product copy that sells
+- **SEO Meta Description Generator**: Optimize your search engine presence
+- **Call-to-Action Generator**: Drive conversions with powerful CTAs
+- **Headline Generator**: Grab attention with magnetic headlines
+- **Slogan Generator**: Create memorable brand taglines
+- **Testimonial Generator**: Build authentic review templates
+- **Post Ideas Generator**: Never run out of content ideas
+- **Video Prompt Generator**: Create prompts for AI video generation
+- **Bio Generator**: Write professional social media bios
+- **FAQ Generator**: Build comprehensive FAQ sections
+
+Free users get 20 generations per day. Premium users enjoy unlimited access.`,
+    category: 'Free Tools',
+    author: 'PeakDraft Team',
+    date: '2026-02-27',
+    readTime: '9 min read',
+    image: '/favicon.png',
+    featured: true
+  },
+  {
     id: 'ai-content-generation-templates-guide',
     title: 'Complete Guide to AI Content Generation Templates in 2026',
     excerpt: 'Discover how AI-powered templates can revolutionize your content creation workflow. Learn about blog generators, social media tools, and more.',
@@ -307,6 +338,7 @@ Our tool creates compelling descriptions by:
 const categories = [
   { name: 'All', icon: FileText },
   { name: 'AI Image Generation', icon: Sparkles },
+  { name: 'Free Tools', icon: Zap },
   { name: 'Templates', icon: Sparkles },
   { name: 'Comparison', icon: Target },
   { name: 'SEO', icon: TrendingUp },
