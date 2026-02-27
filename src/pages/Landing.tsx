@@ -213,18 +213,34 @@ export default function Landing() {
       <PublicNavbar />
       <PromotionPopup showOnLanding />
 
-      {/* Hero Section with Animations */}
-      <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Static Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-glow/10 to-accent/20" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.15),transparent_60%)]" />
+      {/* Hero Section — Glassmorphism & Soft */}
+      <section className="relative pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Soft gradient mesh background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary-glow/10" />
         
+        {/* Floating blurred orbs */}
+        <motion.div
+          className="absolute top-10 left-[10%] w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-primary/20 blur-[100px]"
+          animate={{ scale: [1, 1.2, 1], x: [0, 30, 0], y: [0, -20, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute bottom-10 right-[5%] w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-primary-glow/20 blur-[100px]"
+          animate={{ scale: [1.1, 1, 1.1], x: [0, -20, 0], y: [0, 30, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        />
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 sm:w-72 sm:h-72 rounded-full bg-accent/15 blur-[80px]"
+          animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        />
+
         <div className="container mx-auto relative z-10">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Column - Text Content */}
             <div className="text-center lg:text-left">
               <motion.div 
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/60 backdrop-blur-xl border border-border/40 shadow-sm mb-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -235,29 +251,27 @@ export default function Landing() {
                 >
                   <Sparkles className="h-4 w-4 text-primary" />
                 </motion.div>
-                <span className="text-sm font-medium">All-in-One AI Content Platform</span>
+                <span className="text-sm font-medium text-foreground/80">All-in-One AI Content Platform</span>
               </motion.div>
               
               <motion.h1 
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent leading-tight bg-[length:200%_auto]"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 leading-[1.1] tracking-tight"
                 initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0, backgroundPosition: ['0% center', '200% center'] }}
-                transition={{ 
-                  opacity: { duration: 0.6, delay: 0.2 },
-                  y: { duration: 0.6, delay: 0.2 },
-                  backgroundPosition: { duration: 5, repeat: Infinity, ease: 'linear' }
-                }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.15 }}
               >
-                Your All-in-One
+                <span className="text-foreground">Your All-in-One</span>
                 <br />
-                AI Content Platform
+                <span className="bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">
+                  AI Content Platform
+                </span>
               </motion.h1>
               
               <motion.p 
-                className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-6 sm:mb-8"
+                className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
+                transition={{ duration: 0.6, delay: 0.35 }}
               >
                 Chat with AI to brainstorm ideas, generate stunning images, create content with 25+ templates, 
                 and stay organized with built-in task management — all in one powerful platform.
@@ -267,11 +281,11 @@ export default function Landing() {
                 className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
               >
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button size="lg" onClick={() => navigate('/auth')} className="group w-full sm:w-auto">
-                    Start Writing Now
+                  <Button size="lg" onClick={() => navigate('/auth')} className="group w-full sm:w-auto shadow-lg shadow-primary/20 text-base px-8 h-12">
+                    Get Started Free
                     <motion.span
                       className="ml-2"
                       animate={{ x: [0, 5, 0] }}
@@ -282,14 +296,33 @@ export default function Landing() {
                   </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto">
-                    Learn More
+                  <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto bg-background/60 backdrop-blur-sm border-border/50 text-base px-8 h-12">
+                    Explore Features
                   </Button>
                 </motion.div>
               </motion.div>
+
+              {/* Trust indicators */}
+              <motion.div
+                className="mt-10 sm:mt-12 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-muted-foreground"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+              >
+                {[
+                  { icon: Shield, text: 'No credit card required' },
+                  { icon: Zap, text: '15 free tools included' },
+                  { icon: Users, text: '50K+ creators' },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-1.5">
+                    <item.icon className="h-4 w-4 text-primary/70" />
+                    <span>{item.text}</span>
+                  </div>
+                ))}
+              </motion.div>
             </div>
 
-            {/* Right Column - Dashboard Preview with Mouse Parallax */}
+            {/* Right Column - Dashboard Preview */}
             <HeroPreview />
           </div>
         </div>
