@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { useChatStream, type ChatMessage, type Conversation } from "@/hooks/useChatStream";
+import { useChatStream, type ChatMessage } from "@/hooks/useChatStream";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Send,
   Plus,
@@ -21,15 +22,18 @@ import {
   Copy,
   Check,
   Download,
+  PanelLeftClose,
+  PanelLeft,
+  Zap,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 const QUICK_PROMPTS = [
-  { icon: PenLine, label: "Write a blog post", prompt: "Write a compelling blog post about " },
-  { icon: Mail, label: "Draft an email", prompt: "Draft a professional email about " },
-  { icon: FileText, label: "Create ad copy", prompt: "Create engaging ad copy for " },
-  { icon: Lightbulb, label: "Brainstorm ideas", prompt: "Give me 10 creative content ideas for " },
+  { icon: PenLine, label: "Write a blog post", desc: "Create engaging long-form content", prompt: "Write a compelling blog post about " },
+  { icon: Mail, label: "Draft an email", desc: "Professional & persuasive emails", prompt: "Draft a professional email about " },
+  { icon: FileText, label: "Create ad copy", desc: "High-converting advertisements", prompt: "Create engaging ad copy for " },
+  { icon: Lightbulb, label: "Brainstorm ideas", desc: "Generate creative concepts", prompt: "Give me 10 creative content ideas for " },
 ];
 
 export default function Chat() {
@@ -83,122 +87,205 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] gap-0 -m-4 sm:-m-6">
+    <div className="flex h-[calc(100vh-8rem)] gap-0 -m-4 sm:-m-6 rounded-xl overflow-hidden border border-border/30 bg-background/50 backdrop-blur-sm">
       {/* Conversation Sidebar */}
-      <div
-        className={cn(
-          "border-r border-border/50 flex flex-col bg-muted/30 transition-all duration-300 shrink-0",
-          showSidebar ? "w-64" : "w-0 overflow-hidden"
-        )}
-      >
-        <div className="p-3 border-b border-border/50">
-          <Button onClick={startNewChat} className="w-full gap-2" size="sm">
-            <Plus className="h-4 w-4" /> New Chat
-          </Button>
-        </div>
-        <ScrollArea className="flex-1">
-          <div className="p-2 space-y-1">
-            {conversations.map((conv) => (
-              <div
-                key={conv.id}
-                className={cn(
-                  "group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm transition-colors",
-                  activeConversationId === conv.id
-                    ? "bg-primary/10 text-primary"
-                    : "hover:bg-muted text-muted-foreground"
-                )}
-                onClick={() => loadMessages(conv.id)}
+      <AnimatePresence mode="wait">
+        {showSidebar && (
+          <motion.div
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 280, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="border-r border-border/30 flex flex-col bg-muted/20 shrink-0 overflow-hidden"
+          >
+            <div className="p-3 border-b border-border/30">
+              <Button
+                onClick={startNewChat}
+                className="w-full gap-2 bg-gradient-to-r from-primary/90 to-primary hover:from-primary hover:to-primary/90 shadow-md shadow-primary/10 transition-all duration-300"
+                size="sm"
               >
-                <MessageSquare className="h-4 w-4 shrink-0" />
-                <span className="truncate flex-1">{conv.title}</span>
-                <button
-                  className="opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteConversation(conv.id);
-                  }}
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
+                <Plus className="h-4 w-4" /> New Chat
+              </Button>
+            </div>
+            <ScrollArea className="flex-1">
+              <div className="p-2 space-y-0.5">
+                <AnimatePresence>
+                  {conversations.map((conv, i) => (
+                    <motion.div
+                      key={conv.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ delay: i * 0.03 }}
+                      className={cn(
+                        "group flex items-center gap-2.5 px-3 py-2.5 rounded-lg cursor-pointer text-sm transition-all duration-200",
+                        activeConversationId === conv.id
+                          ? "bg-primary/10 text-foreground border border-primary/20 shadow-sm shadow-primary/5"
+                          : "hover:bg-muted/60 text-muted-foreground border border-transparent"
+                      )}
+                      onClick={() => loadMessages(conv.id)}
+                    >
+                      <MessageSquare className={cn(
+                        "h-4 w-4 shrink-0 transition-colors",
+                        activeConversationId === conv.id ? "text-primary" : ""
+                      )} />
+                      <span className="truncate flex-1 font-medium">{conv.title}</span>
+                      <button
+                        className="opacity-0 group-hover:opacity-100 hover:text-destructive transition-all duration-200 p-0.5 rounded"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteConversation(conv.id);
+                        }}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+                {conversations.length === 0 && (
+                  <div className="flex flex-col items-center py-12 gap-3 text-muted-foreground">
+                    <MessageSquare className="h-8 w-8 opacity-30" />
+                    <p className="text-xs">No conversations yet</p>
+                  </div>
+                )}
               </div>
-            ))}
-            {conversations.length === 0 && (
-              <p className="text-xs text-muted-foreground text-center py-8">
-                No conversations yet
-              </p>
-            )}
-          </div>
-        </ScrollArea>
-      </div>
+            </ScrollArea>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 relative">
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border/50">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => setShowSidebar(!showSidebar)}
-          >
-            <MessageSquare className="h-4 w-4" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-              <Bot className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-sm">PeakDraft AI</h2>
-              <p className="text-[10px] text-muted-foreground">Writing Assistant</p>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/30 bg-background/80 backdrop-blur-md z-10">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 hover:bg-muted/60"
+              onClick={() => setShowSidebar(!showSidebar)}
+            >
+              {showSidebar ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
+            </Button>
+            <div className="flex items-center gap-2.5">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                <Bot className="h-4.5 w-4.5 text-white" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-sm flex items-center gap-1.5">
+                  PeakDraft AI
+                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-gradient-to-r from-violet-500/15 to-indigo-500/15 text-violet-400 border border-violet-500/20">
+                    <Zap className="h-2.5 w-2.5" /> Pro
+                  </span>
+                </h2>
+                <p className="text-[10px] text-muted-foreground">Powered by AI • Writing Assistant</p>
+              </div>
             </div>
           </div>
+          {isStreaming && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20"
+            >
+              <div className="flex gap-0.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-bounce [animation-delay:0ms]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-bounce [animation-delay:150ms]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-bounce [animation-delay:300ms]" />
+              </div>
+              <span className="text-[10px] text-primary font-medium">Generating</span>
+            </motion.div>
+          )}
         </div>
 
         {/* Messages */}
         <ScrollArea className="flex-1">
-          <div className="max-w-3xl mx-auto px-4 py-6">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
             {messages.length === 0 && !isLoading ? (
-              <div className="flex flex-col items-center justify-center h-full min-h-[50vh] gap-6">
-                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                  <Sparkles className="h-8 w-8 text-primary" />
-                </div>
-                <div className="text-center space-y-2">
-                  <h3 className="text-xl font-semibold">How can I help you write?</h3>
-                  <p className="text-sm text-muted-foreground max-w-md">
-                    I can help with blog posts, emails, ad copy, social media content, and more.
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="flex flex-col items-center justify-center min-h-[55vh] gap-8"
+              >
+                {/* Animated Hero Icon */}
+                <motion.div
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+                  className="relative"
+                >
+                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-violet-500/20 to-indigo-500/20 blur-2xl scale-150" />
+                  <div className="relative h-20 w-20 rounded-3xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-violet-500/30">
+                    <Sparkles className="h-10 w-10 text-white" />
+                  </div>
+                </motion.div>
+
+                <div className="text-center space-y-3">
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    How can I help you write?
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
+                    Your AI-powered writing companion. Create blog posts, emails, ad copy, social media content, and more.
                   </p>
                 </div>
-                <div className="grid grid-cols-2 gap-3 w-full max-w-lg">
-                  {QUICK_PROMPTS.map((qp) => (
-                    <button
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
+                  {QUICK_PROMPTS.map((qp, i) => (
+                    <motion.button
                       key={qp.label}
-                      className="flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:bg-muted/50 hover:border-primary/30 transition-all text-left text-sm"
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + i * 0.1 }}
+                      className="group flex items-start gap-3 p-4 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 text-left hover:shadow-lg hover:shadow-primary/5"
                       onClick={() => {
                         setInput(qp.prompt);
                         textareaRef.current?.focus();
                       }}
                     >
-                      <qp.icon className="h-4 w-4 text-primary shrink-0" />
-                      <span className="text-muted-foreground">{qp.label}</span>
-                    </button>
+                      <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-violet-500/10 to-indigo-500/10 flex items-center justify-center shrink-0 group-hover:from-violet-500/20 group-hover:to-indigo-500/20 transition-colors">
+                        <qp.icon className="h-4 w-4 text-violet-400" />
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium text-foreground block">{qp.label}</span>
+                        <span className="text-[11px] text-muted-foreground">{qp.desc}</span>
+                      </div>
+                    </motion.button>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             ) : (
-              <div className="space-y-6">
-                {messages.map((msg) => (
-                  <MessageBubble key={msg.id} message={msg} />
-                ))}
+              <div className="space-y-1">
+                <AnimatePresence>
+                  {messages.map((msg, i) => (
+                    <motion.div
+                      key={msg.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <MessageBubble message={msg} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
                 {isLoading && (
-                  <div className="flex items-start gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shrink-0">
-                      <Bot className="h-4 w-4 text-primary-foreground" />
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-start gap-3 py-5"
+                  >
+                    <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/20">
+                      <Bot className="h-4 w-4 text-white" />
                     </div>
-                    <div className="flex items-center gap-2 py-2">
-                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    <div className="flex items-center gap-3 py-2.5 px-4 rounded-2xl bg-muted/40 border border-border/30">
+                      <div className="flex gap-1">
+                        <span className="h-2 w-2 rounded-full bg-violet-400 animate-bounce [animation-delay:0ms]" />
+                        <span className="h-2 w-2 rounded-full bg-violet-400 animate-bounce [animation-delay:150ms]" />
+                        <span className="h-2 w-2 rounded-full bg-violet-400 animate-bounce [animation-delay:300ms]" />
+                      </div>
                       <span className="text-sm text-muted-foreground">Thinking...</span>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
                 <div ref={messagesEndRef} />
               </div>
@@ -206,24 +293,24 @@ export default function Chat() {
           </div>
         </ScrollArea>
 
-        {/* Input */}
-        <div className="border-t border-border/50 p-4">
+        {/* Input Area */}
+        <div className="border-t border-border/30 bg-background/80 backdrop-blur-md p-4">
           <div className="max-w-3xl mx-auto">
-            <div className="flex items-end gap-2 bg-muted/30 rounded-xl border border-border/50 focus-within:border-primary/50 transition-colors p-2">
+            <div className="flex items-end gap-2 bg-muted/20 rounded-2xl border border-border/40 focus-within:border-primary/50 focus-within:shadow-lg focus-within:shadow-primary/5 transition-all duration-300 p-2.5">
               <Textarea
                 ref={textareaRef}
                 value={input}
                 onChange={handleTextareaInput}
                 onKeyDown={handleKeyDown}
-                placeholder="Type your message..."
-                className="min-h-[40px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-2 text-sm"
+                placeholder="Ask me to write anything..."
+                className="min-h-[44px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-2 text-sm placeholder:text-muted-foreground/60"
                 rows={1}
               />
               {isStreaming ? (
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-9 w-9 shrink-0 text-destructive"
+                  className="h-10 w-10 shrink-0 rounded-xl text-destructive hover:bg-destructive/10"
                   onClick={stopStreaming}
                 >
                   <StopCircle className="h-5 w-5" />
@@ -231,17 +318,19 @@ export default function Chat() {
               ) : (
                 <Button
                   size="icon"
-                  className="h-9 w-9 shrink-0"
+                  className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 shadow-lg shadow-violet-500/20 transition-all duration-300 disabled:opacity-30 disabled:shadow-none"
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="h-4 w-4 text-white" />
                 </Button>
               )}
             </div>
-            <p className="text-[10px] text-muted-foreground text-center mt-2">
-              PeakDraft AI can make mistakes. Review important content carefully.
-            </p>
+            <div className="flex items-center justify-center gap-2 mt-2.5">
+              <span className="text-[10px] text-muted-foreground/60">
+                Press Enter to send • Shift+Enter for new line
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -271,47 +360,71 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   };
 
   return (
-    <div className={cn("group flex items-start gap-3", isUser && "flex-row-reverse")}>
+    <div className={cn("group flex items-start gap-3 py-4", isUser && "flex-row-reverse")}>
+      {/* Avatar */}
       <div
         className={cn(
-          "h-8 w-8 rounded-lg flex items-center justify-center shrink-0",
+          "h-9 w-9 rounded-xl flex items-center justify-center shrink-0 shadow-md",
           isUser
-            ? "bg-secondary"
-            : "bg-gradient-to-br from-primary to-primary/60"
+            ? "bg-gradient-to-br from-secondary to-secondary/80 shadow-secondary/10"
+            : "bg-gradient-to-br from-violet-500 to-indigo-600 shadow-violet-500/20"
         )}
       >
         {isUser ? (
           <User className="h-4 w-4 text-secondary-foreground" />
         ) : (
-          <Bot className="h-4 w-4 text-primary-foreground" />
+          <Bot className="h-4 w-4 text-white" />
         )}
       </div>
-      <div className="max-w-[85%]">
+
+      {/* Content */}
+      <div className={cn("max-w-[85%]", isUser && "flex flex-col items-end")}>
+        <span className={cn(
+          "text-[10px] font-medium mb-1.5 block",
+          isUser ? "text-muted-foreground/70 text-right" : "text-violet-400"
+        )}>
+          {isUser ? "You" : "PeakDraft AI"}
+        </span>
         <div
           className={cn(
-            "rounded-xl px-4 py-3 text-sm",
+            "rounded-2xl px-4 py-3 text-sm leading-relaxed",
             isUser
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted/50 border border-border/50"
+              ? "bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-tr-md shadow-lg shadow-violet-500/15"
+              : "bg-muted/30 border border-border/40 rounded-tl-md"
           )}
         >
           {isUser ? (
             <p className="whitespace-pre-wrap">{message.content}</p>
           ) : (
-            <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:my-2">
+            <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1.5 prose-headings:my-2.5 prose-headings:font-semibold prose-ul:my-1.5 prose-ol:my-1.5 prose-li:my-0.5 prose-pre:my-2 prose-pre:rounded-xl prose-pre:bg-background/60 prose-code:text-violet-400 prose-code:bg-violet-500/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:text-xs prose-a:text-violet-400 prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground">
               <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
           )}
         </div>
+
+        {/* Action Buttons */}
         {!isUser && message.content && (
-          <div className="flex items-center gap-1 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 text-muted-foreground" onClick={handleCopy}>
+          <div className="flex items-center gap-0.5 mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "h-7 px-2.5 text-[11px] gap-1.5 rounded-lg transition-all duration-200",
+                copied ? "text-emerald-400 bg-emerald-500/10" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+              )}
+              onClick={handleCopy}
+            >
               {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-              {copied ? "Copied" : "Copy"}
+              {copied ? "Copied!" : "Copy"}
             </Button>
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 text-muted-foreground" onClick={handleExportTxt}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2.5 text-[11px] gap-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200"
+              onClick={handleExportTxt}
+            >
               <Download className="h-3 w-3" />
-              Export .txt
+              Export
             </Button>
           </div>
         )}
