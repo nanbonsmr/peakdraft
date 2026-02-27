@@ -56,7 +56,7 @@ export function AppSidebar() {
 
   const mainItems = [
     { title: "Dashboard", url: "/app", icon: Home },
-    { title: "AI Chat", url: "/app/chat", icon: MessageCircle, badge: "New", badgeVariant: "new" as const },
+    { title: "AI Chat", url: "/app/chat", icon: MessageCircle, badge: "Pro", badgeVariant: "pro" as const },
     { title: "Templates", url: "/app/templates", icon: Sparkles, badge: "25+", badgeVariant: "default" as const },
     { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2, badge: "Free", badgeVariant: "free" as const },
     { title: "Image Generation", url: "/app/image-generation", icon: ImageIcon, badge: "Pro", badgeVariant: "pro" as const },
