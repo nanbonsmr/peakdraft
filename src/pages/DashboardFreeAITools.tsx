@@ -40,7 +40,7 @@ const tools = [
 export default function DashboardFreeAITools() {
   const [searchParams] = useSearchParams();
   const [activeTool, setActiveTool] = useState<string | null>(null);
-  const { usageCount, remaining, hasReachedLimit, dailyLimit, recordUsage } = useFreeToolUsage();
+  const { usageCount, remaining, hasReachedLimit, isPremium, dailyLimit, recordUsage } = useFreeToolUsage();
 
   useEffect(() => {
     const toolParam = searchParams.get('tool');
@@ -70,35 +70,50 @@ export default function DashboardFreeAITools() {
         </div>
 
         {/* Daily Usage Banner */}
-        <Card className={hasReachedLimit ? 'border-destructive/50 bg-destructive/5' : ''}>
-          <CardContent className="pt-4 pb-4">
-            <div className="flex items-center justify-between mb-2">
+        {isPremium ? (
+          <Card className="border-primary/30 bg-primary/5">
+            <CardContent className="pt-4 pb-4">
               <div className="flex items-center gap-2 text-sm font-medium">
-                <Zap className="h-4 w-4 text-amber-500" />
-                Daily Free Generations
+                <Zap className="h-4 w-4 text-primary" />
+                Unlimited Generations
+                <Badge variant="secondary" className="ml-1">Premium</Badge>
               </div>
-              <span className="text-sm text-muted-foreground">
-                {usageCount} / {dailyLimit} used
-              </span>
-            </div>
-            <Progress value={usagePercent} className="h-2" />
-            {hasReachedLimit ? (
-              <div className="flex items-center justify-between mt-2">
-                <p className="text-xs text-destructive">
-                  You've reached your daily limit. Upgrade for unlimited access!
-                </p>
-                <Button size="sm" variant="default" className="ml-4 shrink-0" onClick={() => window.location.href = '/app/pricing'}>
-                  <Zap className="h-3.5 w-3.5 mr-1" />
-                  Upgrade Now
-                </Button>
-              </div>
-            ) : (
-              <p className="text-xs text-muted-foreground mt-2">
-                {remaining} generation{remaining !== 1 ? 's' : ''} remaining today
+              <p className="text-xs text-muted-foreground mt-1">
+                Your plan includes unlimited free tool access — no daily cap.
               </p>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className={hasReachedLimit ? 'border-destructive/50 bg-destructive/5' : ''}>
+            <CardContent className="pt-4 pb-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Zap className="h-4 w-4 text-amber-500" />
+                  Daily Free Generations
+                </div>
+                <span className="text-sm text-muted-foreground">
+                  {usageCount} / {dailyLimit} used
+                </span>
+              </div>
+              <Progress value={usagePercent} className="h-2" />
+              {hasReachedLimit ? (
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-xs text-destructive">
+                    You've reached your daily limit. Upgrade for unlimited access!
+                  </p>
+                  <Button size="sm" variant="default" className="ml-4 shrink-0" onClick={() => window.location.href = '/app/pricing'}>
+                    <Zap className="h-3.5 w-3.5 mr-1" />
+                    Upgrade Now
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground mt-2">
+                  {remaining} generation{remaining !== 1 ? 's' : ''} remaining today
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Tools Grid */}
         <div className="grid gap-4">
