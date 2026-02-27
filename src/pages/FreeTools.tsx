@@ -193,15 +193,19 @@ export default function FreeTools() {
         <title>Free AI Tools - Hashtag, Headline, Slogan, Video & Content Generators | PeakDraft</title>
         <meta name="description" content="Use 15 free AI tools: Hashtag Generator, Headline Generator, Slogan Generator, Post Ideas, Video Prompt, Bio Generator, FAQ Generator & more. Sign up for free!" />
         <meta name="keywords" content="free AI tools, free hashtag generator, free headline generator, free slogan generator, free post ideas generator, free video prompt generator, free bio generator, free FAQ generator, AI content tools" />
-        <link rel="canonical" href="https://peakdraft.com/free-tools" />
+        <link rel="canonical" href="https://peakdraft.netlify.app/free-tools" />
+        <meta name="robots" content="index, follow" />
         
         <meta property="og:title" content="15 Free AI Content Tools | PeakDraft" />
-        <meta property="og:description" content="Generate hashtags, headlines, slogans, post ideas, video prompts, bios, FAQs & more with our free AI tools. Sign up for free!" />
-        <meta property="og:url" content="https://peakdraft.com/free-tools" />
+        <meta property="og:description" content="Generate hashtags, headlines, slogans, post ideas, video prompts, bios, FAQs & more with our free AI tools. 20 free generations daily." />
+        <meta property="og:url" content="https://peakdraft.netlify.app/free-tools" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://peakdraft.netlify.app/og-image.png" />
         
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="15 Free AI Content Tools | PeakDraft" />
-        <meta name="twitter:description" content="Free AI generators: Hashtags, Headlines, Slogans, Post Ideas, Video Prompts, Bios, FAQs & more. Free to use!" />
+        <meta name="twitter:description" content="Free AI generators: Hashtags, Headlines, Slogans, Post Ideas, Video Prompts, Bios, FAQs & more. 20 free generations daily!" />
+        <meta name="twitter:image" content="https://peakdraft.netlify.app/og-image.png" />
         
         <script type="application/ld+json">
           {JSON.stringify(freeToolsStructuredData)}

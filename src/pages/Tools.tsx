@@ -111,10 +111,18 @@ export default function Tools() {
   return (
     <>
       <Helmet>
-        <title>Free Online Tools - Image Compressor, QR Generator, Text Tools | PeakDraft</title>
-        <meta name="description" content="Free online tools for image compression, format conversion, QR code generation, text case conversion, word counting, and more. Sign up to access all tools." />
-        <meta name="keywords" content="image compressor, qr code generator, text tools, color converter, word counter, lorem ipsum generator, free online tools" />
-        <link rel="canonical" href="https://peakdraft.lovable.app/tools" />
+        <title>Free Online Utility Tools - Image Compressor, QR Generator, Developer Tools | PeakDraft</title>
+        <meta name="description" content="Free online utility tools: image compressor, format converter, QR code generator, JSON formatter, Base64 encoder, password generator, hash generator, and more. All browser-based." />
+        <meta name="keywords" content="image compressor, qr code generator, JSON formatter, Base64 encoder, password generator, hash generator, UUID generator, text tools, free online tools, developer tools" />
+        <link rel="canonical" href="https://peakdraft.netlify.app/tools" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Free Online Utility Tools | PeakDraft" />
+        <meta property="og:description" content="Image compression, QR codes, JSON formatting, password generation, and more — all free, browser-based tools." />
+        <meta property="og:url" content="https://peakdraft.netlify.app/tools" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Free Online Utility Tools | PeakDraft" />
+        <meta name="twitter:description" content="Free browser-based tools for images, text, development, and security." />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-background">

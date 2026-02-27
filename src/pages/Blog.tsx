@@ -374,13 +374,13 @@ export default function Blog() {
     "@type": "Blog",
     "name": "PeakDraft Blog",
     "description": "Expert insights on AI content generation, SEO tips, template guides, and digital marketing strategies.",
-    "url": "https://peakdraft.app/blog",
+    "url": "https://peakdraft.netlify.app/blog",
     "publisher": {
       "@type": "Organization",
       "name": "PeakDraft",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://peakdraft.app/favicon.png"
+        "url": "https://peakdraft.netlify.app/favicon.png"
       }
     },
     "blogPost": blogPosts.map(post => ({
@@ -392,7 +392,7 @@ export default function Blog() {
         "@type": "Person",
         "name": post.author
       },
-      "url": `https://peakdraft.app/blog/${post.id}`
+      "url": `https://peakdraft.netlify.app/blog/${post.id}`
     }))
   };
 
@@ -404,13 +404,13 @@ export default function Blog() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://peakdraft.app"
+        "item": "https://peakdraft.netlify.app"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Blog",
-        "item": "https://peakdraft.app/blog"
+        "item": "https://peakdraft.netlify.app/blog"
       }
     ]
   };
@@ -421,21 +421,21 @@ export default function Blog() {
         <title>PeakDraft Blog - AI Content Generation Tips, Templates & Guides</title>
         <meta name="description" content="Expert insights on AI content generation, SEO strategies, template guides, competitor comparisons, and digital marketing tips. Learn how to create better content with AI." />
         <meta name="keywords" content="AI writing blog, content generation tips, SEO guide, AI templates, PeakDraft vs Jasper, content marketing, social media strategy, email marketing, product descriptions, AI writing tools" />
-        <link rel="canonical" href="https://peakdraft.app/blog" />
+        <link rel="canonical" href="https://peakdraft.netlify.app/blog" />
         
         {/* Open Graph */}
         <meta property="og:title" content="PeakDraft Blog - AI Content Generation Tips & Guides" />
         <meta property="og:description" content="Expert insights on AI content generation, SEO strategies, and digital marketing tips." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://peakdraft.app/blog" />
-        <meta property="og:image" content="https://peakdraft.app/favicon.png" />
+        <meta property="og:url" content="https://peakdraft.netlify.app/blog" />
+        <meta property="og:image" content="https://peakdraft.netlify.app/favicon.png" />
         <meta property="og:site_name" content="PeakDraft" />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="PeakDraft Blog - AI Content Generation Tips & Guides" />
         <meta name="twitter:description" content="Expert insights on AI content generation, SEO strategies, and digital marketing tips." />
-        <meta name="twitter:image" content="https://peakdraft.app/favicon.png" />
+        <meta name="twitter:image" content="https://peakdraft.netlify.app/favicon.png" />
         
         {/* Structured Data */}
         <script type="application/ld+json">

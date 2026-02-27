@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -61,8 +62,42 @@ export default function Contact() {
     }
   };
 
+  const contactSchema_ld = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact PeakDraft",
+    "description": "Get in touch with PeakDraft's support team for questions about AI content generation, pricing, or technical help.",
+    "url": "https://peakdraft.netlify.app/contact"
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://peakdraft.netlify.app" },
+      { "@type": "ListItem", "position": 2, "name": "Contact", "item": "https://peakdraft.netlify.app/contact" }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Contact Us - PeakDraft AI Content Generator Support</title>
+        <meta name="description" content="Contact PeakDraft for questions about AI content generation, image creation, pricing, or technical support. Email us or fill out the contact form." />
+        <meta name="keywords" content="contact PeakDraft, AI content generator support, customer service, help, feedback" />
+        <link rel="canonical" href="https://peakdraft.netlify.app/contact" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Contact PeakDraft - AI Content Generator Support" />
+        <meta property="og:description" content="Get in touch with PeakDraft's team for help with AI content generation, pricing, or technical questions." />
+        <meta property="og:url" content="https://peakdraft.netlify.app/contact" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Contact PeakDraft" />
+        <meta name="twitter:description" content="Reach out to PeakDraft's support team for AI content generation help." />
+        <script type="application/ld+json">{JSON.stringify(contactSchema_ld)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+      </Helmet>
+
       <PublicNavbar />
 
       {/* Hero Section */}
