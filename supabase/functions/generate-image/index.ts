@@ -9,10 +9,69 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { prompt, template_type, style_preset } = await req.json();
+    const { prompt, template_type, style_preset, mode, source_image_url, edit_instruction } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // === EDIT MODE ===
+    if (mode === 'edit') {
+      if (!source_image_url || !edit_instruction) {
+        throw new Error("source_image_url and edit_instruction are required for edit mode");
+      }
+
+      console.log('Edit mode: Editing image with instruction:', edit_instruction.substring(0, 200));
+
+      const editResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash-image",
+          messages: [{
+            role: "user",
+            content: [
+              { type: "text", text: `You are an expert image editor. Apply the following edit precisely and professionally: ${edit_instruction}. Maintain the overall quality, style, and composition of the original image while making the requested changes.` },
+              { type: "image_url", image_url: { url: source_image_url } }
+            ]
+          }],
+          modalities: ["image", "text"],
+        }),
+      });
+
+      if (!editResponse.ok) {
+        if (editResponse.status === 429) {
+          return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
+            status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        if (editResponse.status === 402) {
+          return new Response(JSON.stringify({ error: "Usage limit reached. Please add credits to continue." }), {
+            status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        const errText = await editResponse.text();
+        console.error("Image edit error:", editResponse.status, errText);
+        throw new Error(`Image editing failed: ${editResponse.status}`);
+      }
+
+      const editData = await editResponse.json();
+      const editMessage = editData.choices?.[0]?.message;
+      const editedImageUrl = editMessage?.images?.[0]?.image_url?.url;
+      const editDescription = editMessage?.content || '';
+
+      if (!editedImageUrl) {
+        throw new Error("Image editing failed. Please try a different instruction.");
+      }
+
+      console.log('Image edited successfully');
+      return new Response(JSON.stringify({ image_url: editedImageUrl, description: editDescription }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // === GENERATE MODE ===
     // Step 1: Use a text model to craft an expert-level image prompt
     const metaPrompt = buildMetaPrompt(prompt, template_type, style_preset);
     

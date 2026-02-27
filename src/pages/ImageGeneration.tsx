@@ -5,9 +5,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Loader2, Download, ImageIcon, Sparkles, Instagram, Film, Megaphone,
-  LayoutTemplate, Palette, Type, ShoppingBag, BarChart3, RefreshCw, Trash2, Clock, Crown, Lock
+  LayoutTemplate, Palette, Type, ShoppingBag, BarChart3, RefreshCw, Trash2,
+  Clock, Crown, Lock, Pencil, X, ZoomIn, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
 const imageTemplates = [
-  { id: 'social-media', name: 'Social Media Post', description: 'Instagram, Facebook, Twitter posts optimized for engagement', icon: Instagram, color: 'text-pink-500', bgColor: 'bg-pink-500/10' ,
+  { id: 'social-media', name: 'Social Media Post', description: 'Instagram, Facebook, Twitter posts optimized for engagement', icon: Instagram, color: 'text-pink-500', bgColor: 'bg-pink-500/10',
     examples: ['A motivational quote post with sunrise background', 'Product launch announcement with confetti', 'Behind-the-scenes team photo for a tech startup'] },
   { id: 'poster', name: 'Poster Design', description: 'Event posters, movie posters, promotional posters', icon: LayoutTemplate, color: 'text-violet-500', bgColor: 'bg-violet-500/10',
     examples: ['Music festival poster with neon lights', 'Conference event poster with speakers', 'Movie-style poster for a product launch'] },
@@ -61,6 +63,14 @@ export default function ImageGeneration() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [gallery, setGallery] = useState<ImageRecord[]>([]);
   const [isLoadingGallery, setIsLoadingGallery] = useState(true);
+
+  // Preview & Edit state
+  const [previewImage, setPreviewImage] = useState<ImageRecord | null>(null);
+  const [previewIndex, setPreviewIndex] = useState(-1);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editInstruction, setEditInstruction] = useState('');
+  const [isEditProcessing, setIsEditProcessing] = useState(false);
+
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -98,10 +108,10 @@ export default function ImageGeneration() {
     return new Blob([arr], { type: mime });
   };
 
-  const saveImageToStorage = async (base64Url: string): Promise<string> => {
+  const saveImageToStorage = async (base64Url: string, templateType?: string): Promise<string> => {
     if (!profile) throw new Error('Not authenticated');
     const blob = base64ToBlob(base64Url);
-    const fileName = `${profile.user_id}/${Date.now()}-${selectedTemplate}.png`;
+    const fileName = `${profile.user_id}/${Date.now()}-${templateType || 'edited'}.png`;
 
     const { error: uploadError } = await supabase.storage
       .from('generated-images')
@@ -141,8 +151,7 @@ export default function ImageGeneration() {
       setGeneratedImage(base64Url);
       setImageDescription(data.description || '');
 
-      // Upload to storage and save metadata
-      const publicUrl = await saveImageToStorage(base64Url);
+      const publicUrl = await saveImageToStorage(base64Url, selectedTemplate);
 
       await supabase.from('image_generations').insert({
         user_id: profile.user_id,
@@ -152,7 +161,6 @@ export default function ImageGeneration() {
         image_url: publicUrl,
       });
 
-      // Count as word usage (image = 50 words equivalent)
       await supabase.rpc('update_word_usage', { user_uuid: profile.user_id, words_to_add: 50 });
       await refreshProfile();
       await loadGallery();
@@ -166,9 +174,55 @@ export default function ImageGeneration() {
     }
   };
 
+  const handleEditImage = async () => {
+    if (!editInstruction.trim() || !previewImage) return;
+    if (!profile) return;
+
+    setIsEditProcessing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-image', {
+        body: {
+          mode: 'edit',
+          source_image_url: previewImage.image_url,
+          edit_instruction: editInstruction,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const base64Url = data.image_url;
+
+      // Save edited image
+      const publicUrl = await saveImageToStorage(base64Url, previewImage.template_type + '-edited');
+
+      await supabase.from('image_generations').insert({
+        user_id: profile.user_id,
+        template_type: previewImage.template_type,
+        prompt: `[Edited] ${editInstruction} — Original: ${previewImage.prompt}`,
+        style_preset: previewImage.style_preset,
+        image_url: publicUrl,
+      });
+
+      await supabase.rpc('update_word_usage', { user_uuid: profile.user_id, words_to_add: 50 });
+      await refreshProfile();
+      await loadGallery();
+
+      // Update preview to show new image
+      setPreviewImage(prev => prev ? { ...prev, image_url: publicUrl, prompt: `[Edited] ${editInstruction}` } : null);
+      setEditInstruction('');
+      setIsEditing(false);
+
+      toast({ title: "Image edited & saved!", description: "Your edited image has been saved to the gallery." });
+    } catch (err: any) {
+      console.error('Image edit error:', err);
+      toast({ title: "Edit failed", description: err.message || "Failed to edit image.", variant: "destructive" });
+    } finally {
+      setIsEditProcessing(false);
+    }
+  };
+
   const handleDeleteImage = async (image: ImageRecord) => {
     try {
-      // Extract file path from URL
       const url = new URL(image.image_url);
       const pathParts = url.pathname.split('/generated-images/');
       if (pathParts[1]) {
@@ -176,6 +230,7 @@ export default function ImageGeneration() {
       }
       await supabase.from('image_generations').delete().eq('id', image.id);
       setGallery(prev => prev.filter(g => g.id !== image.id));
+      if (previewImage?.id === image.id) setPreviewImage(null);
       toast({ title: "Deleted", description: "Image removed from gallery." });
     } catch (err: any) {
       toast({ title: "Delete failed", description: err.message, variant: "destructive" });
@@ -190,6 +245,23 @@ export default function ImageGeneration() {
     link.download = `peakdraft-${selectedTemplate || 'image'}-${Date.now()}.png`;
     link.target = '_blank';
     link.click();
+  };
+
+  const openPreview = (img: ImageRecord, index: number) => {
+    setPreviewImage(img);
+    setPreviewIndex(index);
+    setIsEditing(false);
+    setEditInstruction('');
+  };
+
+  const navigatePreview = (direction: 'prev' | 'next') => {
+    const newIndex = direction === 'prev' ? previewIndex - 1 : previewIndex + 1;
+    if (newIndex >= 0 && newIndex < gallery.length) {
+      setPreviewImage(gallery[newIndex]);
+      setPreviewIndex(newIndex);
+      setIsEditing(false);
+      setEditInstruction('');
+    }
   };
 
   const templateLabel = (type: string) => imageTemplates.find(t => t.id === type)?.name || type;
@@ -216,6 +288,7 @@ export default function ImageGeneration() {
               <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> 8 professional image templates</li>
               <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> 6 style presets (Professional, Vibrant, Artistic...)</li>
               <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> Unlimited image gallery with cloud storage</li>
+              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> AI-powered image editing</li>
               <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> Download in high resolution</li>
             </ul>
             <Button size="lg" onClick={() => navigate('/app/pricing')} className="w-full max-w-xs mx-auto">
@@ -375,7 +448,7 @@ export default function ImageGeneration() {
               <Badge variant="secondary" className="ml-2">{gallery.length}</Badge>
             )}
           </CardTitle>
-          <CardDescription>Previously generated images saved to your account</CardDescription>
+          <CardDescription>Click any image to preview, edit, or download</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoadingGallery ? (
@@ -390,8 +463,12 @@ export default function ImageGeneration() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {gallery.map((img) => (
-                <div key={img.id} className="group relative rounded-xl border overflow-hidden bg-muted hover:shadow-lg transition-shadow">
+              {gallery.map((img, index) => (
+                <div
+                  key={img.id}
+                  className="group relative rounded-xl border overflow-hidden bg-muted hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => openPreview(img, index)}
+                >
                   <div className="aspect-square overflow-hidden">
                     <img
                       src={img.image_url}
@@ -407,23 +484,19 @@ export default function ImageGeneration() {
                       {format(new Date(img.created_at), 'MMM d, yyyy · h:mm a')}
                     </p>
                   </div>
-                  {/* Hover actions */}
-                  <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className="h-8 w-8 backdrop-blur-sm bg-background/80"
-                      onClick={(e) => { e.stopPropagation(); downloadImage(img.image_url); }}
-                    >
-                      <Download className="h-3.5 w-3.5" />
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-background/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                    <Button size="icon" variant="secondary" className="h-10 w-10" onClick={(e) => { e.stopPropagation(); openPreview(img, index); }}>
+                      <ZoomIn className="h-5 w-5" />
                     </Button>
-                    <Button
-                      size="icon"
-                      variant="destructive"
-                      className="h-8 w-8 backdrop-blur-sm bg-destructive/80"
-                      onClick={(e) => { e.stopPropagation(); handleDeleteImage(img); }}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
+                    <Button size="icon" variant="secondary" className="h-10 w-10" onClick={(e) => { e.stopPropagation(); openPreview(img, index); setIsEditing(true); }}>
+                      <Pencil className="h-5 w-5" />
+                    </Button>
+                    <Button size="icon" variant="secondary" className="h-10 w-10" onClick={(e) => { e.stopPropagation(); downloadImage(img.image_url); }}>
+                      <Download className="h-5 w-5" />
+                    </Button>
+                    <Button size="icon" variant="destructive" className="h-10 w-10" onClick={(e) => { e.stopPropagation(); handleDeleteImage(img); }}>
+                      <Trash2 className="h-5 w-5" />
                     </Button>
                   </div>
                 </div>
@@ -432,6 +505,126 @@ export default function ImageGeneration() {
           )}
         </CardContent>
       </Card>
+
+      {/* Preview & Edit Modal */}
+      <Dialog open={!!previewImage} onOpenChange={(open) => { if (!open) { setPreviewImage(null); setIsEditing(false); setEditInstruction(''); } }}>
+        <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] p-0 overflow-hidden">
+          <div className="flex flex-col lg:flex-row h-full max-h-[90vh]">
+            {/* Image Preview */}
+            <div className="relative flex-1 bg-muted flex items-center justify-center min-h-[300px]">
+              {previewImage && (
+                <img
+                  src={previewImage.image_url}
+                  alt={previewImage.prompt}
+                  className="max-w-full max-h-[70vh] object-contain"
+                />
+              )}
+
+              {/* Navigation arrows */}
+              {previewIndex > 0 && (
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full backdrop-blur-sm bg-background/70"
+                  onClick={() => navigatePreview('prev')}
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+              )}
+              {previewIndex < gallery.length - 1 && (
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full backdrop-blur-sm bg-background/70"
+                  onClick={() => navigatePreview('next')}
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              )}
+            </div>
+
+            {/* Sidebar Info & Edit */}
+            <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l flex flex-col">
+              <DialogHeader className="p-4 pb-2">
+                <DialogTitle className="text-base">Image Details</DialogTitle>
+              </DialogHeader>
+
+              <div className="flex-1 overflow-y-auto p-4 pt-0 space-y-4">
+                {previewImage && (
+                  <>
+                    <div>
+                      <Badge variant="outline" className="text-xs mb-2">{templateLabel(previewImage.template_type)}</Badge>
+                      <p className="text-sm text-muted-foreground">{previewImage.prompt}</p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">
+                        {format(new Date(previewImage.created_at), 'MMM d, yyyy · h:mm a')}
+                      </p>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={() => downloadImage(previewImage.image_url)} className="flex-1">
+                        <Download className="mr-1.5 h-3.5 w-3.5" />Download
+                      </Button>
+                      <Button size="sm" variant={isEditing ? 'secondary' : 'outline'} onClick={() => setIsEditing(!isEditing)}>
+                        <Pencil className="mr-1.5 h-3.5 w-3.5" />{isEditing ? 'Cancel' : 'Edit'}
+                      </Button>
+                      <Button size="sm" variant="destructive" onClick={() => { handleDeleteImage(previewImage); setPreviewImage(null); }}>
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+
+                    {/* Edit Panel */}
+                    {isEditing && (
+                      <Card className="border-primary/20 bg-primary/5">
+                        <CardContent className="p-3 space-y-3">
+                          <div className="flex items-center gap-2 text-primary">
+                            <Pencil className="h-4 w-4" />
+                            <span className="font-medium text-sm">AI Image Editor</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Describe what changes you want — add elements, change colors, remove objects, adjust style, etc.
+                          </p>
+                          <Textarea
+                            placeholder="e.g., Make the background darker, add a golden sun flare, remove the text..."
+                            value={editInstruction}
+                            onChange={(e) => setEditInstruction(e.target.value)}
+                            rows={3}
+                            className="resize-none text-sm"
+                          />
+                          <div className="flex flex-wrap gap-1.5">
+                            {['Change background color', 'Add text overlay', 'Make it brighter', 'Add blur effect', 'Remove background'].map((suggestion) => (
+                              <Badge
+                                key={suggestion}
+                                variant="outline"
+                                className="cursor-pointer hover:bg-accent transition-colors text-[10px]"
+                                onClick={() => setEditInstruction(suggestion)}
+                              >
+                                {suggestion}
+                              </Badge>
+                            ))}
+                          </div>
+                          <Button
+                            size="sm"
+                            onClick={handleEditImage}
+                            disabled={isEditProcessing || !editInstruction.trim()}
+                            className="w-full"
+                          >
+                            {isEditProcessing ? (
+                              <><Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />Editing...</>
+                            ) : (
+                              <><Sparkles className="mr-2 h-3.5 w-3.5" />Apply Edit</>
+                            )}
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
