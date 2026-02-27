@@ -11,6 +11,27 @@ import { Link } from 'react-router-dom';
 
 const blogPosts = [
   {
+    id: 'ai-image-generation-guide',
+    title: 'AI Image Generation & Editing: The Complete Guide for Content Creators in 2026',
+    excerpt: 'Learn how to create stunning visuals with AI image generation. From social media graphics to product mockups, discover how PeakDraft\'s 2-step pipeline and natural language editing revolutionize visual content creation.',
+    content: `AI image generation has transformed visual content creation. With PeakDraft's intelligent 2-step pipeline, you can create professional-quality images in seconds — no design skills required.
+
+Our AI Image Generation features include:
+- **2-Step Intelligent Pipeline**: A text model first crafts an expert-level prompt, then the image model generates stunning visuals
+- **Natural Language Editing**: Edit any generated image by describing changes in plain English
+- **8 Template Types**: Social media posts, posters, advertisements, YouTube thumbnails, logos, banners, product mockups, and infographics
+- **6 Style Presets**: Minimal, vibrant, professional, artistic, dark & moody, and retro
+- **Lightbox Preview**: View your creations in full-screen with instant download
+
+Whether you're creating YouTube thumbnails, Instagram posts, or product mockups, AI image generation saves hours of design work while producing results that rival professional designers.`,
+    category: 'AI Image Generation',
+    author: 'PeakDraft Team',
+    date: '2026-02-27',
+    readTime: '11 min read',
+    image: '/favicon.png',
+    featured: true
+  },
+  {
     id: 'ai-content-generation-templates-guide',
     title: 'Complete Guide to AI Content Generation Templates in 2026',
     excerpt: 'Discover how AI-powered templates can revolutionize your content creation workflow. Learn about blog generators, social media tools, and more.',
@@ -285,6 +306,7 @@ Our tool creates compelling descriptions by:
 
 const categories = [
   { name: 'All', icon: FileText },
+  { name: 'AI Image Generation', icon: Sparkles },
   { name: 'Templates', icon: Sparkles },
   { name: 'Comparison', icon: Target },
   { name: 'SEO', icon: TrendingUp },
