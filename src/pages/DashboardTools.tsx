@@ -31,8 +31,34 @@ import {
   Merge,
   ImageIcon,
   Lock,
-  Unlock
+  Unlock,
+  Braces,
+  Binary,
+  Code2,
+  Link,
+  FileType,
+  GitCompare,
+  Clock,
+  Ruler,
+  KeyRound,
+  Fingerprint,
+  Key,
+  ShieldCheck
 } from 'lucide-react';
+import {
+  JSONFormatter,
+  Base64Tool,
+  CSSMinifier,
+  SlugGenerator,
+  MarkdownPreviewer,
+  TextDiffChecker,
+  TimestampConverter,
+  UnitConverter,
+  PasswordGenerator,
+  HashGenerator,
+  UUIDGenerator,
+  JWTDecoder,
+} from '@/components/tools/AdvancedTools';
 
 // Tool Components
 const ImageCompressor = () => {
@@ -1536,6 +1562,22 @@ export const tools = [
   { id: 'email-signature', name: 'Email Signature Generator', description: 'Create professional HTML email signatures', icon: Mail, color: 'text-rose-500', component: EmailSignatureGenerator },
   { id: 'headline-analyzer', name: 'Headline Analyzer', description: 'Analyze and score your headlines for engagement', icon: Target, color: 'text-amber-500', component: HeadlineAnalyzer },
   { id: 'social-sizes', name: 'Social Media Size Guide', description: 'Image dimensions for all social media platforms', icon: Image, color: 'text-violet-500', component: SocialMediaSizeGuide },
+  // Developer Tools
+  { id: 'json-formatter', name: 'JSON Formatter', description: 'Format, validate, and minify JSON data', icon: Braces, color: 'text-sky-500', component: JSONFormatter },
+  { id: 'base64', name: 'Base64 Encoder/Decoder', description: 'Encode or decode Base64 strings', icon: Binary, color: 'text-lime-500', component: Base64Tool },
+  { id: 'css-minifier', name: 'CSS Minifier', description: 'Minify CSS code to reduce file size', icon: Code2, color: 'text-fuchsia-500', component: CSSMinifier },
+  { id: 'slug-generator', name: 'Slug Generator', description: 'Generate URL-friendly slugs from text', icon: Link, color: 'text-teal-500', component: SlugGenerator },
+  // Text/Writing Tools
+  { id: 'markdown-preview', name: 'Markdown Previewer', description: 'Write and preview Markdown in real time', icon: FileType, color: 'text-orange-400', component: MarkdownPreviewer },
+  { id: 'text-diff', name: 'Text Diff Checker', description: 'Compare two texts and highlight differences', icon: GitCompare, color: 'text-red-400', component: TextDiffChecker },
+  // Math/Data Tools
+  { id: 'timestamp', name: 'Timestamp Converter', description: 'Convert between Unix timestamps and dates', icon: Clock, color: 'text-blue-400', component: TimestampConverter },
+  { id: 'unit-converter', name: 'Unit Converter', description: 'Convert length, weight, temperature, and data units', icon: Ruler, color: 'text-green-400', component: UnitConverter },
+  // Security Tools
+  { id: 'password-gen', name: 'Password Generator', description: 'Generate secure random passwords', icon: KeyRound, color: 'text-rose-400', component: PasswordGenerator },
+  { id: 'hash-gen', name: 'Hash Generator', description: 'Generate SHA-1, SHA-256, SHA-384, SHA-512 hashes', icon: Fingerprint, color: 'text-purple-400', component: HashGenerator },
+  { id: 'uuid-gen', name: 'UUID Generator', description: 'Generate random UUIDs (v4)', icon: Key, color: 'text-cyan-400', component: UUIDGenerator },
+  { id: 'jwt-decoder', name: 'JWT Decoder', description: 'Decode and inspect JSON Web Tokens', icon: ShieldCheck, color: 'text-amber-400', component: JWTDecoder },
 ];
 
 export default function DashboardTools() {
