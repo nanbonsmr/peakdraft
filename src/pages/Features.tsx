@@ -8,7 +8,7 @@ import {
   MessageSquare, TrendingUp, FileText, Star, LayoutGrid, Calendar, 
   BarChart3, CheckCircle, ArrowRight, Users, Shield, Clock, 
   Target, Layers, Repeat, Bell, Search, Download, Globe, 
-  Eye, Tag, Timer, Share2, ListChecks
+  Eye, Tag, Timer, Share2, ListChecks, ImagePlus, Wand2, Edit3, Gift
 } from 'lucide-react';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
@@ -19,23 +19,35 @@ const jsonLdFeatures = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   "name": "PeakDraft Features",
-  "description": "Complete list of AI content generation and task management features",
+  "description": "Complete list of AI content generation, image creation, free tools, and task management features",
   "itemListElement": [
     {
       "@type": "ListItem",
       "position": 1,
       "name": "AI Content Templates",
-      "description": "14+ professional AI writing templates for blogs, social media, emails, and more"
+      "description": "25+ professional AI writing templates for blogs, social media, emails, and more"
     },
     {
       "@type": "ListItem",
       "position": 2,
+      "name": "AI Image Generation & Editing",
+      "description": "Generate and edit images with AI using natural language instructions and 8 style presets"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "15 Free AI Tools",
+      "description": "Access 15 free AI content generators daily with no credit card required"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
       "name": "Task Management",
       "description": "Built-in Kanban boards, calendar views, and productivity analytics"
     },
     {
       "@type": "ListItem",
-      "position": 3,
+      "position": 5,
       "name": "Multi-Format Export",
       "description": "Export content as PDF, DOCX, TXT or copy to clipboard"
     }
@@ -222,22 +234,22 @@ export default function Features() {
   return (
     <>
       <Helmet>
-        <title>Features - AI Content Templates & Task Management | PeakDraft</title>
-        <meta name="description" content="Explore 14+ AI-powered content templates for blogs, social media, emails, ad copy & more. Plus built-in task management with Kanban boards, calendar views & analytics." />
-        <meta name="keywords" content="AI content templates, blog generator, social media content, email marketing, task management, Kanban board, content calendar, productivity tools" />
+        <title>Features - AI Content, Image Generation & Task Management | PeakDraft</title>
+        <meta name="description" content="Explore 25+ AI content templates, AI image generation & editing, 15 free daily tools, plus built-in task management with Kanban boards, calendar views & analytics." />
+        <meta name="keywords" content="AI content templates, AI image generator, AI image editor, free AI tools, blog generator, social media content, email marketing, task management, Kanban board, content calendar, productivity tools" />
         <link rel="canonical" href={`${siteUrl}/features`} />
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${siteUrl}/features`} />
-        <meta property="og:title" content="Features - AI Content Templates & Task Management | PeakDraft" />
-        <meta property="og:description" content="14+ AI templates for content creation plus powerful task management tools. Everything you need to create and organize content." />
+        <meta property="og:title" content="Features - AI Content, Image Generation & Task Management | PeakDraft" />
+        <meta property="og:description" content="25+ AI templates, image generation & editing, 15 free tools, plus powerful task management. Everything you need." />
         <meta property="og:image" content={`${siteUrl}/og-features.png`} />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="PeakDraft Features - AI Content & Task Management" />
-        <meta name="twitter:description" content="14+ AI templates for content creation plus powerful task management tools." />
+        <meta name="twitter:title" content="PeakDraft Features - AI Content, Images & Task Management" />
+        <meta name="twitter:description" content="25+ AI templates, image generation & editing, 15 free tools, plus powerful task management." />
         
         {/* Additional SEO */}
         <meta name="robots" content="index, follow" />
@@ -259,11 +271,11 @@ export default function Features() {
             Complete Feature Overview
           </Badge>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent">
-            Everything You Need to Create & Organize Content
+            Everything You Need to Create, Generate & Organize
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            14+ AI-powered content templates combined with powerful task management tools. 
-            From blog posts to video scripts, from Kanban boards to analytics - all in one platform.
+            25+ AI content templates, AI image generation & editing, 15 free daily tools, 
+            and powerful task management — all in one platform.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" onClick={() => navigate('/auth')} className="group">
@@ -282,7 +294,7 @@ export default function Features() {
         <div className="container mx-auto">
           <div className="text-center mb-12 sm:mb-16">
             <Badge className="mb-4">AI Content Templates</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">14+ Professional AI Writing Templates</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">25+ Professional AI Writing Templates</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Generate any type of content with our specialized AI templates. Each template is optimized for its specific use case.
             </p>
@@ -310,6 +322,131 @@ export default function Features() {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* AI Image Generation Section */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8" id="image-generation">
+        <div className="container mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <Badge className="mb-4 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20">AI Image Generation</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Create & Edit Images with AI</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Generate stunning visuals with our intelligent 2-step pipeline, then refine them with natural language editing.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+            {[
+              {
+                icon: ImagePlus,
+                title: 'Intelligent 2-Step Generation',
+                description: 'Your prompt is first refined by an AI design director into a professional creative brief, then used to generate the final image.',
+                features: ['AI prompt refinement', 'Professional creative briefs', 'Composition & lighting optimization', 'Technical spec injection'],
+                color: 'from-cyan-500 to-blue-600'
+              },
+              {
+                icon: Edit3,
+                title: 'Natural Language Editing',
+                description: 'Edit any generated image by describing the changes you want. "Make the sky a sunset orange" or "Add snow to the mountains."',
+                features: ['Text-based image editing', 'Preserves original composition', 'Iterative refinements', 'Before/after comparison'],
+                color: 'from-violet-500 to-purple-600'
+              },
+              {
+                icon: Eye,
+                title: 'Lightbox Preview & Gallery',
+                description: 'Full-size image preview with gallery navigation, metadata display, and quick actions for download, edit, and delete.',
+                features: ['Full-size lightbox', 'Gallery navigation', 'Image metadata', 'Quick action buttons'],
+                color: 'from-emerald-500 to-green-600'
+              },
+              {
+                icon: Wand2,
+                title: '8 Style Presets & Templates',
+                description: 'Choose from style presets like minimal, vibrant, cinematic, or vintage. Use templates for social media, ads, posters, and more.',
+                features: ['8 style presets', '6 template types', 'Brand-consistent output', 'Professional quality'],
+                color: 'from-amber-500 to-orange-600'
+              },
+            ].map((feature, idx) => (
+              <Card key={idx} className="p-6 hover:shadow-elegant transition-all duration-300 hover:scale-[1.02] bg-card/50 backdrop-blur">
+                <div className="flex items-start gap-4">
+                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center flex-shrink-0`}>
+                    <feature.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                    <p className="text-muted-foreground mb-4">{feature.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {feature.features.map((f, fIdx) => (
+                        <Badge key={fIdx} variant="secondary" className="text-xs">{f}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Free AI Tools Section */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" id="free-tools">
+        <div className="container mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <Badge className="mb-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">Free Forever</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">15 Free AI Tools — No Credit Card Required</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Access powerful content generators completely free. 20 generations per day on free accounts, unlimited with any paid plan.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
+            {[
+              { icon: MessageSquare, title: 'ChatGPT Prompt Generator', desc: 'Create effective prompts for AI assistants with role definitions and constraints', color: 'from-green-500 to-emerald-600' },
+              { icon: Hash, title: 'Hashtag Generator', desc: 'Discover trending hashtags to maximize social media reach', color: 'from-pink-500 to-rose-600' },
+              { icon: FileText, title: 'Blog Intro Generator', desc: 'Hook readers with compelling opening paragraphs', color: 'from-blue-500 to-blue-600' },
+              { icon: MessageSquare, title: 'Caption Generator', desc: 'Engaging captions for Instagram, Twitter, and more', color: 'from-green-500 to-teal-600' },
+              { icon: Mail, title: 'Email Subject Lines', desc: 'Write subject lines that boost open rates', color: 'from-orange-500 to-amber-600' },
+              { icon: Star, title: 'Product Descriptions', desc: 'Persuasive copy that drives purchases', color: 'from-purple-500 to-violet-600' },
+              { icon: Search, title: 'SEO Meta Descriptions', desc: 'Optimized meta descriptions for better rankings', color: 'from-cyan-500 to-blue-600' },
+              { icon: Target, title: 'CTA Generator', desc: 'Action-oriented calls-to-action that convert', color: 'from-rose-500 to-red-600' },
+              { icon: TrendingUp, title: 'Headline Generator', desc: 'Attention-grabbing headlines with power words', color: 'from-amber-500 to-orange-600' },
+              { icon: Sparkles, title: 'Slogan Generator', desc: 'Memorable brand taglines and slogans', color: 'from-indigo-500 to-blue-600' },
+              { icon: Star, title: 'Testimonial Generator', desc: 'Authentic customer review templates', color: 'from-yellow-500 to-orange-600' },
+              { icon: TrendingUp, title: 'Post Ideas Generator', desc: 'Fresh content ideas for any niche', color: 'from-lime-500 to-green-600' },
+              { icon: Video, title: 'Video Prompt Generator', desc: 'Detailed prompts for AI video tools', color: 'from-red-500 to-rose-600' },
+              { icon: Users, title: 'Bio Generator', desc: 'Professional bios for social profiles', color: 'from-teal-500 to-cyan-600' },
+              { icon: CheckCircle, title: 'FAQ Generator', desc: 'Comprehensive FAQs for your business', color: 'from-sky-500 to-blue-600' },
+            ].map((tool, idx) => (
+              <Card key={idx} className="p-4 hover:shadow-elegant transition-all duration-300 hover:scale-[1.02] bg-card/50 backdrop-blur">
+                <div className="flex items-start gap-3">
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${tool.color} flex items-center justify-center flex-shrink-0`}>
+                    <tool.icon className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold mb-1">{tool.title}</h3>
+                    <p className="text-sm text-muted-foreground">{tool.desc}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <Card className="max-w-3xl mx-auto p-6 bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border-emerald-500/20">
+            <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center flex-shrink-0">
+                <Gift className="h-7 w-7 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold mb-1">20 Free Generations Per Day</h3>
+                <p className="text-sm text-muted-foreground">
+                  Every account gets 20 free AI generations daily across all 15 tools. Premium users enjoy unlimited access with no daily cap.
+                </p>
+              </div>
+              <Button onClick={() => navigate('/auth')} className="shrink-0">
+                Get Started Free
+              </Button>
+            </div>
+          </Card>
         </div>
       </section>
 
