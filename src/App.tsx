@@ -38,6 +38,7 @@ import SharedTask from "./pages/SharedTask";
 import NotFound from "./pages/NotFound";
 import Editor from "./pages/Editor";
 import DashboardTools from "./pages/DashboardTools";
+import ImageGeneration from "./pages/ImageGeneration";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminTemplates from "./pages/admin/AdminTemplates";
@@ -88,6 +89,7 @@ function AnimatedRoutes() {
                         <Route path="editor" element={<PageTransition><Editor /></PageTransition>} />
                         <Route path="tools" element={<PageTransition><DashboardTools /></PageTransition>} />
                         <Route path="free-ai-tools" element={<PageTransition><DashboardFreeAITools /></PageTransition>} />
+                        <Route path="image-generation" element={<PageTransition><ImageGeneration /></PageTransition>} />
                       </Routes>
                     </AnimatePresence>
                   </main>
