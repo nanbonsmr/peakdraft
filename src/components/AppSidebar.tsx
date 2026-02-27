@@ -13,6 +13,7 @@ import {
   ImageIcon,
   MessageCircle,
   Building2,
+  ChevronRight,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,6 +39,7 @@ export function AppSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const [isAdmin, setIsAdmin] = useState(false);
+  const collapsed = state === "collapsed";
 
   useEffect(() => {
     checkAdminAccess();
@@ -55,98 +57,167 @@ export function AppSidebar() {
     }
   };
 
-  const mainItems = [
-    { title: "Dashboard", url: "/app", icon: Home },
+  const creativeItems = [
     { title: "AI Chat", url: "/app/chat", icon: MessageCircle, badge: "Pro", badgeVariant: "pro" as const },
     { title: "Templates", url: "/app/templates", icon: Sparkles, badge: "25+", badgeVariant: "default" as const },
+    { title: "Image Gen", url: "/app/image-generation", icon: ImageIcon, badge: "Pro", badgeVariant: "pro" as const },
     { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2, badge: "Free", badgeVariant: "free" as const },
-    { title: "Image Generation", url: "/app/image-generation", icon: ImageIcon, badge: "Pro", badgeVariant: "pro" as const },
-    { title: "Tools", url: "/app/tools", icon: Wrench, badge: "New", badgeVariant: "new" as const },
+  ];
+
+  const workspaceItems = [
     { title: "Infobase", url: "/app/infobase", icon: Building2, badge: "New", badgeVariant: "new" as const },
+    { title: "Tools", url: "/app/tools", icon: Wrench, badge: "New", badgeVariant: "new" as const },
     { title: "Tasks", url: "/app/tasks", icon: CheckSquare },
+  ];
+
+  const accountItems = [
     { title: "Usage", url: "/app/usage", icon: BarChart3 },
     { title: "Pricing", url: "/app/pricing", icon: CreditCard, badge: "Pro", badgeVariant: "pro" as const },
     { title: "Settings", url: "/app/settings", icon: Settings },
   ];
 
-  // Add admin item if user is admin
   if (isAdmin) {
-    mainItems.push({
-      title: "Admin",
-      url: "/admin",
-      icon: Shield,
-    });
+    accountItems.push({ title: "Admin", url: "/admin", icon: Shield });
   }
 
   const isActive = (path: string) => currentPath === path;
-  
-  const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive 
-      ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium shadow-sm" 
-      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200";
+
+  const getBadgeClasses = (variant?: string) => {
+    switch (variant) {
+      case 'free': return 'bg-emerald-500/15 text-emerald-500 border-emerald-500/20 dark:bg-emerald-400/15 dark:text-emerald-400';
+      case 'new': return 'bg-amber-500/15 text-amber-600 border-amber-500/20 dark:bg-amber-400/15 dark:text-amber-400';
+      case 'pro': return 'bg-violet-500/15 text-violet-600 border-violet-500/20 dark:bg-violet-400/15 dark:text-violet-400';
+      default: return 'bg-primary/10 text-primary border-primary/20';
+    }
+  };
+
+  const renderItem = (item: { title: string; url: string; icon: any; badge?: string; badgeVariant?: string }) => (
+    <SidebarMenuItem key={item.title}>
+      <SidebarMenuButton asChild>
+        <NavLink
+          to={item.url}
+          end
+          className={({ isActive: active }) =>
+            `group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 ${
+              active
+                ? "bg-gradient-to-r from-primary/15 to-primary/5 text-primary font-semibold shadow-sm shadow-primary/5 border border-primary/10"
+                : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
+            }`
+          }
+        >
+          <item.icon className={`w-[18px] h-[18px] shrink-0 transition-transform duration-200 group-hover:scale-110 ${
+            isActive(item.url) ? 'text-primary' : ''
+          }`} />
+          {!collapsed && (
+            <span className="flex items-center justify-between flex-1 min-w-0">
+              <span className="truncate">{item.title}</span>
+              <span className="flex items-center gap-1.5">
+                {item.badge && (
+                  <Badge
+                    variant="secondary"
+                    className={`text-[9px] px-1.5 py-0 h-[18px] font-semibold border ${getBadgeClasses(item.badgeVariant)}`}
+                  >
+                    {item.badge}
+                  </Badge>
+                )}
+                {isActive(item.url) && (
+                  <ChevronRight className="w-3.5 h-3.5 text-primary/60" />
+                )}
+              </span>
+            </span>
+          )}
+        </NavLink>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
 
   return (
-    <Sidebar className={state === "collapsed" ? "w-16" : "w-64"} collapsible="icon">
-      <SidebarContent className="bg-sidebar">
+    <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible="icon">
+      <SidebarContent className="bg-sidebar border-r border-sidebar-border/50">
         {/* Logo */}
-        <div className="p-4 border-b border-sidebar-border">
-          <div className="flex items-center gap-2">
-            <img src="/favicon.png" alt="PeakDraft Logo" className="w-8 h-8 rounded-lg drop-shadow-md" />
-            {state !== "collapsed" && (
+        <div className="p-4 pb-2">
+          <div className="flex items-center gap-2.5">
+            <div className="relative">
+              <img src="/favicon.png" alt="PeakDraft Logo" className="w-9 h-9 rounded-xl shadow-md ring-1 ring-primary/10" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-sidebar" />
+            </div>
+            {!collapsed && (
               <div>
-                <h1 className="font-bold text-lg text-sidebar-foreground">
+                <h1 className="font-bold text-lg tracking-tight text-sidebar-foreground">
                   PeakDraft
                 </h1>
+                <p className="text-[10px] text-muted-foreground/60 font-medium -mt-0.5">AI Writing Platform</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Main Navigation */}
+        {/* Dashboard */}
+        <div className="px-3 pt-1 pb-1">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <NavLink
+                  to="/app"
+                  end
+                  className={({ isActive: active }) =>
+                    `group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                      active
+                        ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25"
+                        : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
+                    }`
+                  }
+                >
+                  <Home className="w-[18px] h-[18px] shrink-0" />
+                  {!collapsed && <span>Dashboard</span>}
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </div>
+
+        {/* Creative Tools */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider px-2">
-            Main
+          <SidebarGroupLabel className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-[0.12em] px-4 mb-0.5">
+            Create
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} end className={getNavCls}>
-                      <item.icon className="w-4 h-4" />
-                      {state !== "collapsed" && (
-                        <span className="flex items-center gap-2">
-                          {item.title}
-                          {item.badge && (
-                            <Badge 
-                              variant="secondary" 
-                              className={`text-[10px] px-1.5 py-0 h-4 ${
-                                item.badgeVariant === 'free' 
-                                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
-                                  : item.badgeVariant === 'new'
-                                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-                                  : item.badgeVariant === 'pro'
-                                  ? 'bg-violet-500/20 text-violet-400 border-violet-500/30'
-                                  : 'bg-primary/20 text-primary border-primary/30'
-                              }`}
-                            >
-                              {item.badge}
-                            </Badge>
-                          )}
-                        </span>
-                      )}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {creativeItems.map(renderItem)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Workspace */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-[0.12em] px-4 mb-0.5">
+            Workspace
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {workspaceItems.map(renderItem)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Account */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-[0.12em] px-4 mb-0.5">
+            Account
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {accountItems.map(renderItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Word Usage Progress */}
-        {state !== "collapsed" && (
-          <div className="mt-auto border-t border-sidebar-border">
-            <WordUsageProgress compact />
+        {!collapsed && (
+          <div className="mt-auto p-3 pt-2">
+            <div className="rounded-xl bg-sidebar-accent/50 border border-sidebar-border/50 p-3">
+              <WordUsageProgress compact />
+            </div>
           </div>
         )}
 
