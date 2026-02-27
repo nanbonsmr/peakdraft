@@ -41,6 +41,12 @@ interface ContentSection {
   imageCaption?: string;
 }
 
+interface InternalLink {
+  label: string;
+  href: string;
+  description: string;
+}
+
 interface BlogPost {
   id: string;
   title: string;
@@ -54,6 +60,7 @@ interface BlogPost {
   image: string;
   featured: boolean;
   keywords: string[];
+  internalLinks?: InternalLink[];
 }
 
 const blogPosts: BlogPost[] = [
@@ -87,11 +94,11 @@ const blogPosts: BlogPost[] = [
 
       "## Use Cases: How Creators Are Using AI Image Generation\n\n### Content Marketers\nGenerate blog headers, social media visuals, and email graphics in minutes instead of hours. Maintain a consistent visual identity across all channels without a dedicated designer.\n\n### E-commerce Businesses\nCreate product mockups, lifestyle shots, and advertising visuals. Test different visual approaches before investing in professional photography.\n\n### YouTubers & Streamers\nDesign click-worthy thumbnails that drive views. Test different thumbnail styles and iterate quickly based on performance data.\n\n### Social Media Managers\nProduce a steady stream of on-brand visual content for multiple platforms. Create seasonal and event-specific graphics on tight deadlines.\n\n### Freelancers & Agencies\nRapidly prototype visual concepts for client presentations. Generate mood boards and style explorations without expensive stock photo subscriptions.",
 
-      { type: 'callout' as const, content: "Pro Tip: Premium plan users get unlimited image generations. Free plan users can access 20 generations per day across all free AI tools — more than enough for testing and occasional use." },
+      { type: 'callout' as const, content: "Pro Tip: Premium plan users get unlimited image generations. Free plan users can access 20 generations per day across all free AI tools — more than enough for testing and occasional use. Learn more in our guide to PeakDraft's 15 Free AI Tools." },
 
       "## AI Image Generation vs. Traditional Design\n\n### Speed\nAI generates images in seconds. Traditional design takes hours or days. For content that needs to move fast, AI is unbeatable.\n\n### Cost\nA single PeakDraft subscription replaces the need for expensive stock photo subscriptions, freelance designers, or complex design software.\n\n### Flexibility\nNeed to change the entire color scheme? The mood? The composition? With AI, it's a 30-second edit. With traditional tools, it could mean starting over.\n\n### Consistency\nStyle presets ensure visual consistency across your entire content library — something that's surprisingly difficult to maintain with multiple designers or stock photos.\n\n### When Traditional Design Still Wins\nFor extremely specific brand guidelines, complex illustrations, or print materials requiring exact color matching, professional designers remain essential. AI image generation excels as a complement to — not a replacement for — professional design work.",
 
-      "## Getting Started with PeakDraft Image Generation\n\n1. **Navigate to Image Generation**: Find it in your dashboard under the Image Generation section\n2. **Choose Your Template**: Select from 8 purpose-built templates\n3. **Select a Style**: Pick the style preset that matches your brand\n4. **Describe Your Image**: Write a brief description of what you want\n5. **Generate**: Click generate and watch the AI create your image\n6. **Edit (Optional)**: Use natural language editing to refine the result\n7. **Download**: Save your image in high quality, ready to publish\n\n## Conclusion\n\nAI image generation is no longer a novelty — it's a practical, powerful tool that every content creator should have in their arsenal. PeakDraft's intelligent 2-step pipeline, 8 specialized templates, 6 style presets, and natural language editing make it the most accessible and capable AI image tool available.\n\nStop spending hours on visual content creation. Start generating professional-quality images in seconds and focus your time on what matters most — connecting with your audience and growing your business."
+      "## Getting Started with PeakDraft Image Generation\n\n1. **Navigate to Image Generation**: Find it in your dashboard under the Image Generation section\n2. **Choose Your Template**: Select from 8 purpose-built templates\n3. **Select a Style**: Pick the style preset that matches your brand\n4. **Describe Your Image**: Write a brief description of what you want\n5. **Generate**: Click generate and watch the AI create your image\n6. **Edit (Optional)**: Use natural language editing to refine the result\n7. **Download**: Save your image in high quality, ready to publish\n\nExplore all of PeakDraft's capabilities on our Features page — including 25+ AI writing templates, task management, and more.\n\n## Conclusion\n\nAI image generation is no longer a novelty — it's a practical, powerful tool that every content creator should have in their arsenal. PeakDraft's intelligent 2-step pipeline, 8 specialized templates, 6 style presets, and natural language editing make it the most accessible and capable AI image tool available.\n\nPair it with PeakDraft's 15 free AI content generators for a complete content creation workflow — from visual assets to captions, headlines, and hashtags.\n\nStop spending hours on visual content creation. Start generating professional-quality images in seconds and focus your time on what matters most — connecting with your audience and growing your business."
     ],
     category: 'AI Image Generation',
     author: 'PeakDraft Team',
@@ -99,7 +106,12 @@ const blogPosts: BlogPost[] = [
     readTime: '11 min read',
     image: aiImageGenerationImg,
     featured: true,
-    keywords: ['AI image generation', 'AI image editing', 'visual content creation', 'image generator', 'social media graphics', 'YouTube thumbnails', 'product mockups', 'AI design tool', 'PeakDraft image generation']
+    keywords: ['AI image generation', 'AI image editing', 'visual content creation', 'image generator', 'social media graphics', 'YouTube thumbnails', 'product mockups', 'AI design tool', 'PeakDraft image generation'],
+    internalLinks: [
+      { label: '15 Free AI Tools Guide', href: '/blog/free-ai-tools-guide', description: 'Explore all 15 free AI content generators included with PeakDraft' },
+      { label: 'PeakDraft Features', href: '/features', description: 'See the full suite of AI content creation and productivity features' },
+      { label: 'AI Content Templates Guide', href: '/blog/ai-content-generation-templates-guide', description: 'Learn how to use 25+ AI writing templates for every content type' },
+    ]
   },
   {
     id: 'free-ai-tools-guide',
@@ -133,7 +145,7 @@ const blogPosts: BlogPost[] = [
 
       { type: 'callout' as const, content: "Pro Tip: Use the Post Ideas Generator first to plan your content calendar, then work through the other tools to create all the assets you need for each piece of content. This workflow can produce a full week's content in under an hour." },
 
-      "## Free Tools vs. Premium Templates\n\nPeakDraft's free tools and premium templates serve different purposes:\n\n**Free Tools** are designed for quick, specific content tasks — generating a headline, a set of hashtags, or a meta description. They produce focused, single-purpose output.\n\n**Premium Templates** (25+ available) are designed for comprehensive content creation — full blog posts, complete email campaigns, detailed product descriptions, and long-form content. They offer more customization options including tone, language, keyword integration, and content length.\n\nThink of free tools as your daily utility belt, and premium templates as your full workshop. Most successful creators use both.\n\n## Conclusion\n\nPeakDraft's 15 free AI tools eliminate the friction from everyday content creation tasks. Whether you need a single headline or a week's worth of social media captions, these generators produce professional-quality output in seconds. With 20 daily generations on the free plan and unlimited access for premium users, there's no reason to struggle with writer's block or spend hours on repetitive content tasks.\n\nStart using PeakDraft's free AI tools today and reclaim the hours you've been spending on content creation. Your audience — and your schedule — will thank you."
+      "## Free Tools vs. Premium Templates\n\nPeakDraft's free tools and premium templates serve different purposes:\n\n**Free Tools** are designed for quick, specific content tasks — generating a headline, a set of hashtags, or a meta description. They produce focused, single-purpose output.\n\n**Premium Templates** (25+ available) are designed for comprehensive content creation — full blog posts, complete email campaigns, detailed product descriptions, and long-form content. They offer more customization options including tone, language, keyword integration, and content length.\n\nAnd don't forget about AI Image Generation — PeakDraft also lets you create and edit stunning visuals with AI. Read our complete guide to AI Image Generation to learn more.\n\nThink of free tools as your daily utility belt, and premium templates as your full workshop. Most successful creators use both. Explore the full suite on our Features page.\n\n## Conclusion\n\nPeakDraft's 15 free AI tools eliminate the friction from everyday content creation tasks. Whether you need a single headline or a week's worth of social media captions, these generators produce professional-quality output in seconds. With 20 daily generations on the free plan and unlimited access for premium users, there's no reason to struggle with writer's block or spend hours on repetitive content tasks.\n\nStart using PeakDraft's free AI tools today and reclaim the hours you've been spending on content creation. Your audience — and your schedule — will thank you."
     ],
     category: 'Free Tools',
     author: 'PeakDraft Team',
@@ -141,7 +153,12 @@ const blogPosts: BlogPost[] = [
     readTime: '9 min read',
     image: freeAiToolsImg,
     featured: true,
-    keywords: ['free AI tools', 'AI content generators', 'free writing tools', 'hashtag generator', 'headline generator', 'SEO meta description', 'social media caption generator', 'content creation tools', 'PeakDraft free tools', 'AI writing assistant']
+    keywords: ['free AI tools', 'AI content generators', 'free writing tools', 'hashtag generator', 'headline generator', 'SEO meta description', 'social media caption generator', 'content creation tools', 'PeakDraft free tools', 'AI writing assistant'],
+    internalLinks: [
+      { label: 'AI Image Generation Guide', href: '/blog/ai-image-generation-guide', description: 'Create and edit stunning visuals with AI — the complete guide' },
+      { label: 'PeakDraft Features', href: '/features', description: 'Explore all features including 25+ templates, task management, and more' },
+      { label: 'AI Writing Best Practices', href: '/blog/ai-writing-best-practices', description: 'Get the best results from AI writing tools with proven techniques' },
+    ]
   },
   {
     id: 'ai-content-generation-templates-guide',
@@ -183,7 +200,12 @@ const blogPosts: BlogPost[] = [
     readTime: '12 min read',
     image: aiTemplatesGuideImg,
     featured: true,
-    keywords: ['AI templates', 'content generation', 'AI writing', 'blog generator', 'social media generator', 'content marketing', 'productivity']
+    keywords: ['AI templates', 'content generation', 'AI writing', 'blog generator', 'social media generator', 'content marketing', 'productivity'],
+    internalLinks: [
+      { label: 'AI Image Generation Guide', href: '/blog/ai-image-generation-guide', description: 'Generate and edit professional images with AI' },
+      { label: '15 Free AI Tools', href: '/blog/free-ai-tools-guide', description: 'Discover 15 free AI content generators included with PeakDraft' },
+      { label: 'PeakDraft Features', href: '/features', description: 'See every feature PeakDraft offers for content creators' },
+    ]
   },
   {
     id: 'peakdraft-vs-competitors-comparison',
@@ -802,6 +824,32 @@ export default function BlogPost() {
                   ))}
                 </div>
               </div>
+
+              {/* Internal Links / Related Resources */}
+              {post.internalLinks && post.internalLinks.length > 0 && (
+                <div className="mt-12 pt-8 border-t border-border">
+                  <h4 className="text-lg font-semibold text-foreground mb-4">📚 Related Resources</h4>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {post.internalLinks.map((link, index) => (
+                      <Link
+                        key={index}
+                        to={link.href}
+                        className="group block p-4 rounded-lg border border-border hover:border-primary/40 hover:bg-primary/5 transition-all"
+                      >
+                        <h5 className="font-medium text-foreground group-hover:text-primary transition-colors mb-1">
+                          {link.label}
+                        </h5>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {link.description}
+                        </p>
+                        <span className="inline-flex items-center gap-1 text-xs text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Read more <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
               
               {/* CTA Section */}
               <Card className="mt-12 bg-primary/5 border-primary/20">
