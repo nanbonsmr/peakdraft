@@ -57,7 +57,7 @@ export function AppSidebar() {
     { title: "Dashboard", url: "/app", icon: Home },
     { title: "Templates", url: "/app/templates", icon: Sparkles, badge: "25+", badgeVariant: "default" as const },
     { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2, badge: "Free", badgeVariant: "free" as const },
-    { title: "Image Generation", url: "/app/image-generation", icon: ImageIcon, badge: "New", badgeVariant: "new" as const },
+    { title: "Image Generation", url: "/app/image-generation", icon: ImageIcon, badge: "Pro", badgeVariant: "pro" as const },
     { title: "Tools", url: "/app/tools", icon: Wrench, badge: "New", badgeVariant: "new" as const },
     { title: "Tasks", url: "/app/tasks", icon: CheckSquare },
     { title: "Usage", url: "/app/usage", icon: BarChart3 },
