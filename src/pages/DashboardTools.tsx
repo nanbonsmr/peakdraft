@@ -1540,51 +1540,66 @@ const PDFDecrypt = () => {
 };
 
 
+export type ToolCategory = 'all' | 'general' | 'pdf' | 'marketing' | 'developer' | 'text' | 'math' | 'security';
+
+export const toolCategories: { value: ToolCategory; label: string }[] = [
+  { value: 'all', label: 'All Tools' },
+  { value: 'general', label: 'General' },
+  { value: 'pdf', label: 'PDF' },
+  { value: 'marketing', label: 'Marketing' },
+  { value: 'developer', label: 'Developer' },
+  { value: 'text', label: 'Text' },
+  { value: 'math', label: 'Math' },
+  { value: 'security', label: 'Security' },
+];
+
 export const tools = [
   // General Tools
-  { id: 'image-compress', name: 'Image Compressor', description: 'Reduce image file size while maintaining quality', icon: Minimize2, color: 'text-blue-500', component: ImageCompressor },
-  { id: 'image-convert', name: 'Image Converter', description: 'Convert images between PNG, JPG, and WebP formats', icon: FileImage, color: 'text-green-500', component: ImageConverter },
-  { id: 'text-case', name: 'Text Case Converter', description: 'Convert text to uppercase, lowercase, title case, and more', icon: Type, color: 'text-purple-500', component: TextCaseConverter },
-  { id: 'word-counter', name: 'Word Counter', description: 'Count words, characters, sentences, and reading time', icon: Hash, color: 'text-orange-500', component: WordCounter },
-  { id: 'qr-generator', name: 'QR Code Generator', description: 'Generate QR codes from text or URLs', icon: QrCode, color: 'text-pink-500', component: QRCodeGenerator },
-  { id: 'color-converter', name: 'Color Converter', description: 'Convert colors between HEX, RGB, and HSL', icon: Palette, color: 'text-cyan-500', component: ColorConverter },
-  { id: 'lorem-generator', name: 'Lorem Ipsum Generator', description: 'Generate placeholder text for your designs', icon: AlignLeft, color: 'text-yellow-500', component: LoremGenerator },
+  { id: 'image-compress', name: 'Image Compressor', description: 'Reduce image file size while maintaining quality', icon: Minimize2, color: 'text-blue-500', component: ImageCompressor, category: 'general' as ToolCategory },
+  { id: 'image-convert', name: 'Image Converter', description: 'Convert images between PNG, JPG, and WebP formats', icon: FileImage, color: 'text-green-500', component: ImageConverter, category: 'general' as ToolCategory },
+  { id: 'text-case', name: 'Text Case Converter', description: 'Convert text to uppercase, lowercase, title case, and more', icon: Type, color: 'text-purple-500', component: TextCaseConverter, category: 'general' as ToolCategory },
+  { id: 'word-counter', name: 'Word Counter', description: 'Count words, characters, sentences, and reading time', icon: Hash, color: 'text-orange-500', component: WordCounter, category: 'general' as ToolCategory },
+  { id: 'qr-generator', name: 'QR Code Generator', description: 'Generate QR codes from text or URLs', icon: QrCode, color: 'text-pink-500', component: QRCodeGenerator, category: 'general' as ToolCategory },
+  { id: 'color-converter', name: 'Color Converter', description: 'Convert colors between HEX, RGB, and HSL', icon: Palette, color: 'text-cyan-500', component: ColorConverter, category: 'general' as ToolCategory },
+  { id: 'lorem-generator', name: 'Lorem Ipsum Generator', description: 'Generate placeholder text for your designs', icon: AlignLeft, color: 'text-yellow-500', component: LoremGenerator, category: 'general' as ToolCategory },
   // PDF Tools
-  { id: 'pdf-merge', name: 'PDF Merger', description: 'Combine multiple PDF files into one document', icon: Merge, color: 'text-red-500', component: PDFMerger },
-  { id: 'pdf-split', name: 'PDF Splitter', description: 'Extract specific pages from a PDF file', icon: Scissors, color: 'text-orange-600', component: PDFSplitter },
-  { id: 'image-to-pdf', name: 'Image to PDF', description: 'Convert images to PDF documents', icon: FileText, color: 'text-blue-600', component: ImageToPDF },
-  { id: 'pdf-to-image', name: 'PDF to Image', description: 'Convert PDF pages to image files', icon: ImageIcon, color: 'text-green-600', component: PDFToImage },
-  { id: 'pdf-password', name: 'PDF Password Protect', description: 'Encrypt PDF files with password protection', icon: Lock, color: 'text-purple-600', component: PDFPasswordProtect },
-  { id: 'pdf-decrypt', name: 'PDF Decrypt', description: 'Decrypt password-protected PDF files', icon: Unlock, color: 'text-teal-600', component: PDFDecrypt },
+  { id: 'pdf-merge', name: 'PDF Merger', description: 'Combine multiple PDF files into one document', icon: Merge, color: 'text-red-500', component: PDFMerger, category: 'pdf' as ToolCategory },
+  { id: 'pdf-split', name: 'PDF Splitter', description: 'Extract specific pages from a PDF file', icon: Scissors, color: 'text-orange-600', component: PDFSplitter, category: 'pdf' as ToolCategory },
+  { id: 'image-to-pdf', name: 'Image to PDF', description: 'Convert images to PDF documents', icon: FileText, color: 'text-blue-600', component: ImageToPDF, category: 'pdf' as ToolCategory },
+  { id: 'pdf-to-image', name: 'PDF to Image', description: 'Convert PDF pages to image files', icon: ImageIcon, color: 'text-green-600', component: PDFToImage, category: 'pdf' as ToolCategory },
+  { id: 'pdf-password', name: 'PDF Password Protect', description: 'Encrypt PDF files with password protection', icon: Lock, color: 'text-purple-600', component: PDFPasswordProtect, category: 'pdf' as ToolCategory },
+  { id: 'pdf-decrypt', name: 'PDF Decrypt', description: 'Decrypt password-protected PDF files', icon: Unlock, color: 'text-teal-600', component: PDFDecrypt, category: 'pdf' as ToolCategory },
   // Marketing Tools
-  { id: 'utm-builder', name: 'UTM Link Builder', description: 'Create trackable campaign URLs with UTM parameters', icon: Link2, color: 'text-indigo-500', component: UTMBuilder },
-  { id: 'meta-tags', name: 'Meta Tag Generator', description: 'Generate SEO meta tags and Open Graph tags', icon: Globe, color: 'text-emerald-500', component: MetaTagGenerator },
-  { id: 'email-signature', name: 'Email Signature Generator', description: 'Create professional HTML email signatures', icon: Mail, color: 'text-rose-500', component: EmailSignatureGenerator },
-  { id: 'headline-analyzer', name: 'Headline Analyzer', description: 'Analyze and score your headlines for engagement', icon: Target, color: 'text-amber-500', component: HeadlineAnalyzer },
-  { id: 'social-sizes', name: 'Social Media Size Guide', description: 'Image dimensions for all social media platforms', icon: Image, color: 'text-violet-500', component: SocialMediaSizeGuide },
+  { id: 'utm-builder', name: 'UTM Link Builder', description: 'Create trackable campaign URLs with UTM parameters', icon: Link2, color: 'text-indigo-500', component: UTMBuilder, category: 'marketing' as ToolCategory },
+  { id: 'meta-tags', name: 'Meta Tag Generator', description: 'Generate SEO meta tags and Open Graph tags', icon: Globe, color: 'text-emerald-500', component: MetaTagGenerator, category: 'marketing' as ToolCategory },
+  { id: 'email-signature', name: 'Email Signature Generator', description: 'Create professional HTML email signatures', icon: Mail, color: 'text-rose-500', component: EmailSignatureGenerator, category: 'marketing' as ToolCategory },
+  { id: 'headline-analyzer', name: 'Headline Analyzer', description: 'Analyze and score your headlines for engagement', icon: Target, color: 'text-amber-500', component: HeadlineAnalyzer, category: 'marketing' as ToolCategory },
+  { id: 'social-sizes', name: 'Social Media Size Guide', description: 'Image dimensions for all social media platforms', icon: Image, color: 'text-violet-500', component: SocialMediaSizeGuide, category: 'marketing' as ToolCategory },
   // Developer Tools
-  { id: 'json-formatter', name: 'JSON Formatter', description: 'Format, validate, and minify JSON data', icon: Braces, color: 'text-sky-500', component: JSONFormatter },
-  { id: 'base64', name: 'Base64 Encoder/Decoder', description: 'Encode or decode Base64 strings', icon: Binary, color: 'text-lime-500', component: Base64Tool },
-  { id: 'css-minifier', name: 'CSS Minifier', description: 'Minify CSS code to reduce file size', icon: Code2, color: 'text-fuchsia-500', component: CSSMinifier },
-  { id: 'slug-generator', name: 'Slug Generator', description: 'Generate URL-friendly slugs from text', icon: Link, color: 'text-teal-500', component: SlugGenerator },
+  { id: 'json-formatter', name: 'JSON Formatter', description: 'Format, validate, and minify JSON data', icon: Braces, color: 'text-sky-500', component: JSONFormatter, category: 'developer' as ToolCategory },
+  { id: 'base64', name: 'Base64 Encoder/Decoder', description: 'Encode or decode Base64 strings', icon: Binary, color: 'text-lime-500', component: Base64Tool, category: 'developer' as ToolCategory },
+  { id: 'css-minifier', name: 'CSS Minifier', description: 'Minify CSS code to reduce file size', icon: Code2, color: 'text-fuchsia-500', component: CSSMinifier, category: 'developer' as ToolCategory },
+  { id: 'slug-generator', name: 'Slug Generator', description: 'Generate URL-friendly slugs from text', icon: Link, color: 'text-teal-500', component: SlugGenerator, category: 'developer' as ToolCategory },
   // Text/Writing Tools
-  { id: 'markdown-preview', name: 'Markdown Previewer', description: 'Write and preview Markdown in real time', icon: FileType, color: 'text-orange-400', component: MarkdownPreviewer },
-  { id: 'text-diff', name: 'Text Diff Checker', description: 'Compare two texts and highlight differences', icon: GitCompare, color: 'text-red-400', component: TextDiffChecker },
+  { id: 'markdown-preview', name: 'Markdown Previewer', description: 'Write and preview Markdown in real time', icon: FileType, color: 'text-orange-400', component: MarkdownPreviewer, category: 'text' as ToolCategory },
+  { id: 'text-diff', name: 'Text Diff Checker', description: 'Compare two texts and highlight differences', icon: GitCompare, color: 'text-red-400', component: TextDiffChecker, category: 'text' as ToolCategory },
   // Math/Data Tools
-  { id: 'timestamp', name: 'Timestamp Converter', description: 'Convert between Unix timestamps and dates', icon: Clock, color: 'text-blue-400', component: TimestampConverter },
-  { id: 'unit-converter', name: 'Unit Converter', description: 'Convert length, weight, temperature, and data units', icon: Ruler, color: 'text-green-400', component: UnitConverter },
+  { id: 'timestamp', name: 'Timestamp Converter', description: 'Convert between Unix timestamps and dates', icon: Clock, color: 'text-blue-400', component: TimestampConverter, category: 'math' as ToolCategory },
+  { id: 'unit-converter', name: 'Unit Converter', description: 'Convert length, weight, temperature, and data units', icon: Ruler, color: 'text-green-400', component: UnitConverter, category: 'math' as ToolCategory },
   // Security Tools
-  { id: 'password-gen', name: 'Password Generator', description: 'Generate secure random passwords', icon: KeyRound, color: 'text-rose-400', component: PasswordGenerator },
-  { id: 'hash-gen', name: 'Hash Generator', description: 'Generate SHA-1, SHA-256, SHA-384, SHA-512 hashes', icon: Fingerprint, color: 'text-purple-400', component: HashGenerator },
-  { id: 'uuid-gen', name: 'UUID Generator', description: 'Generate random UUIDs (v4)', icon: Key, color: 'text-cyan-400', component: UUIDGenerator },
-  { id: 'jwt-decoder', name: 'JWT Decoder', description: 'Decode and inspect JSON Web Tokens', icon: ShieldCheck, color: 'text-amber-400', component: JWTDecoder },
+  { id: 'password-gen', name: 'Password Generator', description: 'Generate secure random passwords', icon: KeyRound, color: 'text-rose-400', component: PasswordGenerator, category: 'security' as ToolCategory },
+  { id: 'hash-gen', name: 'Hash Generator', description: 'Generate SHA-1, SHA-256, SHA-384, SHA-512 hashes', icon: Fingerprint, color: 'text-purple-400', component: HashGenerator, category: 'security' as ToolCategory },
+  { id: 'uuid-gen', name: 'UUID Generator', description: 'Generate random UUIDs (v4)', icon: Key, color: 'text-cyan-400', component: UUIDGenerator, category: 'security' as ToolCategory },
+  { id: 'jwt-decoder', name: 'JWT Decoder', description: 'Decode and inspect JSON Web Tokens', icon: ShieldCheck, color: 'text-amber-400', component: JWTDecoder, category: 'security' as ToolCategory },
 ];
 
 export default function DashboardTools() {
   const [searchParams] = useSearchParams();
   const toolParam = searchParams.get('tool');
   const [activeTool, setActiveTool] = useState<string | null>(toolParam);
+  const [activeCategory, setActiveCategory] = useState<ToolCategory>('all');
 
+  const filteredTools = activeCategory === 'all' ? tools : tools.filter(t => t.category === activeCategory);
   const ActiveToolComponent = activeTool ? tools.find(t => t.id === activeTool)?.component : null;
 
   return (
@@ -1595,23 +1610,38 @@ export default function DashboardTools() {
       </div>
 
       {!activeTool ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tools.map((tool) => (
-            <Card 
-              key={tool.id} 
-              className="cursor-pointer hover:shadow-lg transition-all hover:scale-[1.02] border-2 hover:border-primary/50"
-              onClick={() => setActiveTool(tool.id)}
-            >
-              <CardHeader>
-                <div className={`w-12 h-12 rounded-lg bg-muted flex items-center justify-center mb-2`}>
-                  <tool.icon className={`h-6 w-6 ${tool.color}`} />
-                </div>
-                <CardTitle>{tool.name}</CardTitle>
-                <CardDescription>{tool.description}</CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
+        <>
+          <div className="flex flex-wrap gap-2">
+            {toolCategories.map((cat) => (
+              <Button
+                key={cat.value}
+                variant={activeCategory === cat.value ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setActiveCategory(cat.value)}
+              >
+                {cat.label}
+              </Button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredTools.map((tool) => (
+              <Card 
+                key={tool.id} 
+                className="cursor-pointer hover:shadow-lg transition-all hover:scale-[1.02] border-2 hover:border-primary/50"
+                onClick={() => setActiveTool(tool.id)}
+              >
+                <CardHeader>
+                  <div className={`w-12 h-12 rounded-lg bg-muted flex items-center justify-center mb-2`}>
+                    <tool.icon className={`h-6 w-6 ${tool.color}`} />
+                  </div>
+                  <CardTitle>{tool.name}</CardTitle>
+                  <CardDescription>{tool.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </>
       ) : (
         <div className="max-w-2xl">
           <Button variant="ghost" onClick={() => setActiveTool(null)} className="mb-6">
