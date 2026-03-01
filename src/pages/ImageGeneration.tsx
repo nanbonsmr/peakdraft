@@ -268,9 +268,10 @@ export default function ImageGeneration() {
 
   if (!hasAccess) {
     return (
-      <div className="max-w-2xl mx-auto py-8 sm:py-16 px-4 text-center space-y-4 sm:space-y-6">
-        <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
-          <Lock className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
+      <div className="max-w-2xl mx-auto py-8 sm:py-16 px-4 text-center space-y-6">
+        <div className="relative mx-auto w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center">
+          <Lock className="h-10 w-10 text-primary" />
+          <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary animate-pulse" />
         </div>
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">AI Image Generation</h1>
@@ -278,18 +279,18 @@ export default function ImageGeneration() {
             This feature is available on <span className="font-semibold text-primary">Pro</span> and <span className="font-semibold text-primary">Enterprise</span> plans.
           </p>
         </div>
-        <Card className="border-primary/20 bg-primary/5">
-          <CardContent className="p-4 sm:p-6 space-y-4">
+        <Card className="border-primary/20 bg-primary/5 backdrop-blur-sm">
+          <CardContent className="p-6 space-y-5">
             <div className="flex items-center justify-center gap-2 text-primary">
               <Crown className="h-5 w-5" />
-              <span className="font-semibold text-sm sm:text-base">Unlock AI Image Generation</span>
+              <span className="font-semibold">Unlock AI Image Generation</span>
             </div>
-            <ul className="text-xs sm:text-sm text-muted-foreground space-y-2 text-left max-w-md mx-auto">
-              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> 8 professional image templates</li>
-              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> 6 style presets (Professional, Vibrant, Artistic...)</li>
-              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> Unlimited image gallery with cloud storage</li>
-              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> AI-powered image editing</li>
-              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary shrink-0" /> Download in high resolution</li>
+            <ul className="text-sm text-muted-foreground space-y-2.5 text-left max-w-md mx-auto">
+              <li className="flex items-center gap-2.5"><Sparkles className="h-4 w-4 text-primary shrink-0" /> 8 professional image templates</li>
+              <li className="flex items-center gap-2.5"><Sparkles className="h-4 w-4 text-primary shrink-0" /> 6 style presets (Professional, Vibrant, Artistic...)</li>
+              <li className="flex items-center gap-2.5"><Sparkles className="h-4 w-4 text-primary shrink-0" /> Unlimited image gallery with cloud storage</li>
+              <li className="flex items-center gap-2.5"><Sparkles className="h-4 w-4 text-primary shrink-0" /> AI-powered image editing</li>
+              <li className="flex items-center gap-2.5"><Sparkles className="h-4 w-4 text-primary shrink-0" /> Download in high resolution</li>
             </ul>
             <Button size="lg" onClick={() => navigate('/app/pricing')} className="w-full max-w-xs mx-auto">
               <Crown className="mr-2 h-4 w-4" />
@@ -302,40 +303,42 @@ export default function ImageGeneration() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-xl sm:text-3xl font-bold flex items-center gap-2 sm:gap-3 flex-wrap">
-          <div className="p-2 sm:p-2.5 bg-primary/10 rounded-xl">
-            <ImageIcon className="h-5 w-5 sm:h-7 sm:w-7 text-primary" />
+        <h1 className="text-xl sm:text-3xl font-bold flex items-center gap-3 flex-wrap">
+          <div className="p-2.5 bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl border border-primary/20">
+            <ImageIcon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
           </div>
           AI Image Generation
-          <Badge variant="secondary" className="bg-violet-500/20 text-violet-400 border-violet-500/30 text-xs">Pro</Badge>
+          <Badge variant="secondary" className="bg-violet-500/15 text-violet-400 border-violet-500/20 text-xs backdrop-blur-sm">Pro</Badge>
         </h1>
-        <p className="text-muted-foreground mt-1 text-xs sm:text-base">Create stunning visuals with AI — choose a template and describe your vision</p>
+        <p className="text-muted-foreground/80 mt-1.5 text-xs sm:text-base">Create stunning visuals with AI — choose a template and describe your vision</p>
       </div>
 
       {/* Template Grid */}
       <div>
         <h2 className="text-base sm:text-lg font-semibold mb-3">Choose a Template</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {imageTemplates.map((tpl) => {
             const Icon = tpl.icon;
             const isSelected = selectedTemplate === tpl.id;
             return (
               <Card
                 key={tpl.id}
-                className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  isSelected ? 'ring-2 ring-primary shadow-lg' : 'hover:border-primary/40'
+                className={`group cursor-pointer transition-all duration-300 border backdrop-blur-sm ${
+                  isSelected
+                    ? 'ring-2 ring-primary shadow-lg border-primary/30 bg-primary/5'
+                    : 'border-border/30 hover:border-primary/30 hover:shadow-md bg-background/60'
                 }`}
                 onClick={() => { setSelectedTemplate(tpl.id); setGeneratedImage(null); }}
               >
-                <CardContent className="p-3 sm:p-4 text-center">
-                  <div className={`mx-auto w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${tpl.bgColor} flex items-center justify-center mb-2 sm:mb-3`}>
+                <CardContent className="p-4 sm:p-5 text-center">
+                  <div className={`mx-auto w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${tpl.bgColor} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${tpl.color}`} />
                   </div>
-                  <h3 className="font-medium text-xs sm:text-sm">{tpl.name}</h3>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-1 line-clamp-2 hidden xs:block">{tpl.description}</p>
+                  <h3 className="font-semibold text-xs sm:text-sm">{tpl.name}</h3>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground/70 mt-1 line-clamp-2 hidden xs:block">{tpl.description}</p>
                 </CardContent>
               </Card>
             );
@@ -346,7 +349,7 @@ export default function ImageGeneration() {
       {/* Generation Form */}
       {selectedTemplate && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-          <Card>
+          <Card className="border-border/30 bg-background/60 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 {activeTemplate && <activeTemplate.icon className={`h-5 w-5 ${activeTemplate.color}`} />}
@@ -402,35 +405,45 @@ export default function ImageGeneration() {
           </Card>
 
           {/* Preview / Result */}
-          <Card>
-            <CardHeader><CardTitle>Generated Image</CardTitle></CardHeader>
+          <Card className="border-border/30 bg-background/60 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                Generated Image
+              </CardTitle>
+            </CardHeader>
             <CardContent>
               {isGenerating ? (
                 <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                  <Loader2 className="h-12 w-12 animate-spin mb-4 text-primary" />
-                  <p className="font-medium">Creating your image...</p>
-                  <p className="text-sm mt-1">This may take 10-30 seconds</p>
+                  <div className="relative">
+                    <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl animate-pulse" />
+                    <Loader2 className="relative h-12 w-12 animate-spin text-primary" />
+                  </div>
+                  <p className="font-medium mt-6">Creating your image...</p>
+                  <p className="text-sm mt-1 text-muted-foreground/60">This may take 10-30 seconds</p>
                 </div>
               ) : generatedImage ? (
                 <div className="space-y-4">
-                  <div className="rounded-xl overflow-hidden border bg-muted">
+                  <div className="rounded-xl overflow-hidden border border-border/30 bg-muted/50">
                     <img src={generatedImage} alt={prompt} className="w-full h-auto object-contain max-h-[500px]" />
                   </div>
-                  {imageDescription && <p className="text-sm text-muted-foreground">{imageDescription}</p>}
+                  {imageDescription && <p className="text-sm text-muted-foreground/80">{imageDescription}</p>}
                   <div className="flex gap-2">
                     <Button onClick={() => downloadImage()} className="flex-1">
                       <Download className="mr-2 h-4 w-4" />Download
                     </Button>
-                    <Button variant="outline" onClick={handleGenerate} disabled={isGenerating}>
+                    <Button variant="outline" onClick={handleGenerate} disabled={isGenerating} className="border-border/40">
                       <RefreshCw className="mr-2 h-4 w-4" />Regenerate
                     </Button>
                   </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                  <ImageIcon className="h-16 w-16 mb-4 opacity-20" />
+                  <div className="p-4 rounded-2xl bg-muted/30 mb-4">
+                    <ImageIcon className="h-12 w-12 opacity-20" />
+                  </div>
                   <p className="font-medium">Your image will appear here</p>
-                  <p className="text-sm mt-1">Select a template and describe your vision</p>
+                  <p className="text-sm mt-1 text-muted-foreground/60">Select a template and describe your vision</p>
                 </div>
               )}
             </CardContent>
@@ -439,13 +452,15 @@ export default function ImageGeneration() {
       )}
 
       {/* Gallery Section */}
-      <Card>
+      <Card className="border-border/30 bg-background/60 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-lg bg-primary/10">
+              <Clock className="h-4 w-4 text-primary" />
+            </div>
             Your Image Gallery
             {gallery.length > 0 && (
-              <Badge variant="secondary" className="ml-2">{gallery.length}</Badge>
+              <Badge variant="secondary" className="ml-2 bg-muted/50">{gallery.length}</Badge>
             )}
           </CardTitle>
           <CardDescription>Click any image to preview, edit, or download</CardDescription>
@@ -457,46 +472,48 @@ export default function ImageGeneration() {
             </div>
           ) : gallery.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <ImageIcon className="h-12 w-12 mx-auto mb-3 opacity-20" />
+              <div className="p-4 rounded-2xl bg-muted/30 mx-auto w-fit mb-3">
+                <ImageIcon className="h-12 w-12 opacity-20" />
+              </div>
               <p className="font-medium">No images yet</p>
-              <p className="text-sm mt-1">Generate your first image above to see it here</p>
+              <p className="text-sm mt-1 text-muted-foreground/60">Generate your first image above to see it here</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
               {gallery.map((img, index) => (
                 <div
                   key={img.id}
-                  className="group relative rounded-xl border overflow-hidden bg-muted hover:shadow-lg transition-shadow cursor-pointer"
+                  className="group relative rounded-xl border border-border/30 overflow-hidden bg-background/40 backdrop-blur-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 cursor-pointer"
                   onClick={() => openPreview(img, index)}
                 >
                   <div className="aspect-square overflow-hidden">
                     <img
                       src={img.image_url}
                       alt={img.prompt}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                   </div>
                   <div className="p-3 space-y-1.5">
-                    <Badge variant="outline" className="text-[10px]">{templateLabel(img.template_type)}</Badge>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{img.prompt}</p>
-                    <p className="text-[10px] text-muted-foreground/60">
+                    <Badge variant="outline" className="text-[10px] border-border/40">{templateLabel(img.template_type)}</Badge>
+                    <p className="text-xs text-muted-foreground/80 line-clamp-2">{img.prompt}</p>
+                    <p className="text-[10px] text-muted-foreground/50">
                       {format(new Date(img.created_at), 'MMM d, yyyy · h:mm a')}
                     </p>
                   </div>
                   {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-background/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                    <Button size="icon" variant="secondary" className="h-10 w-10" onClick={(e) => { e.stopPropagation(); openPreview(img, index); }}>
-                      <ZoomIn className="h-5 w-5" />
+                  <div className="absolute inset-0 bg-background/70 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2.5">
+                    <Button size="icon" variant="secondary" className="h-10 w-10 rounded-xl bg-background/80 backdrop-blur-sm border border-border/30" onClick={(e) => { e.stopPropagation(); openPreview(img, index); }}>
+                      <ZoomIn className="h-4 w-4" />
                     </Button>
-                    <Button size="icon" variant="secondary" className="h-10 w-10" onClick={(e) => { e.stopPropagation(); openPreview(img, index); setIsEditing(true); }}>
-                      <Pencil className="h-5 w-5" />
+                    <Button size="icon" variant="secondary" className="h-10 w-10 rounded-xl bg-background/80 backdrop-blur-sm border border-border/30" onClick={(e) => { e.stopPropagation(); openPreview(img, index); setIsEditing(true); }}>
+                      <Pencil className="h-4 w-4" />
                     </Button>
-                    <Button size="icon" variant="secondary" className="h-10 w-10" onClick={(e) => { e.stopPropagation(); downloadImage(img.image_url); }}>
-                      <Download className="h-5 w-5" />
+                    <Button size="icon" variant="secondary" className="h-10 w-10 rounded-xl bg-background/80 backdrop-blur-sm border border-border/30" onClick={(e) => { e.stopPropagation(); downloadImage(img.image_url); }}>
+                      <Download className="h-4 w-4" />
                     </Button>
-                    <Button size="icon" variant="destructive" className="h-10 w-10" onClick={(e) => { e.stopPropagation(); handleDeleteImage(img); }}>
-                      <Trash2 className="h-5 w-5" />
+                    <Button size="icon" variant="destructive" className="h-10 w-10 rounded-xl" onClick={(e) => { e.stopPropagation(); handleDeleteImage(img); }}>
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
