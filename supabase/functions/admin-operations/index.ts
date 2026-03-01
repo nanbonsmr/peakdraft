@@ -599,6 +599,76 @@ serve(async (req) => {
         );
       }
 
+      case 'get-analytics': {
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+        // Total content generations + last 7 days
+        const { count: totalContentGenerations } = await supabaseAdmin
+          .from('content_generations')
+          .select('*', { count: 'exact', head: true });
+
+        const { count: contentLast7Days } = await supabaseAdmin
+          .from('content_generations')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', sevenDaysAgo);
+
+        // Total image generations + last 7 days
+        const { count: totalImageGenerations } = await supabaseAdmin
+          .from('image_generations')
+          .select('*', { count: 'exact', head: true });
+
+        const { count: imagesLast7Days } = await supabaseAdmin
+          .from('image_generations')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', sevenDaysAgo);
+
+        // Total chat conversations + last 7 days
+        const { count: totalChatConversations } = await supabaseAdmin
+          .from('chat_conversations')
+          .select('*', { count: 'exact', head: true });
+
+        const { count: chatsLast7Days } = await supabaseAdmin
+          .from('chat_conversations')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', sevenDaysAgo);
+
+        // Recent signups (last 7 days)
+        const { count: recentSignups } = await supabaseAdmin
+          .from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', sevenDaysAgo);
+
+        // Top templates by usage
+        const { data: contentData } = await supabaseAdmin
+          .from('content_generations')
+          .select('template_type');
+
+        const templateCounts: Record<string, number> = {};
+        contentData?.forEach((row: any) => {
+          templateCounts[row.template_type] = (templateCounts[row.template_type] || 0) + 1;
+        });
+        const topTemplates = Object.entries(templateCounts)
+          .map(([template_type, count]) => ({ template_type, count }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 10);
+
+        return new Response(
+          JSON.stringify({
+            analytics: {
+              totalContentGenerations: totalContentGenerations || 0,
+              totalImageGenerations: totalImageGenerations || 0,
+              totalChatConversations: totalChatConversations || 0,
+              contentLast7Days: contentLast7Days || 0,
+              imagesLast7Days: imagesLast7Days || 0,
+              chatsLast7Days: chatsLast7Days || 0,
+              recentSignups: recentSignups || 0,
+              topTemplates,
+            }
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       default:
         return new Response(
           JSON.stringify({ error: 'Unknown action' }),

@@ -21,7 +21,6 @@ import {
   Settings,
   BarChart3,
   ArrowLeft,
-  Tag,
   Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,7 +33,6 @@ const adminNavItems = [
   { title: "Templates", icon: Layout, path: "/admin/templates" },
   { title: "Promotions", icon: Megaphone, path: "/admin/promotions" },
   { title: "Notifications", icon: Bell, path: "/admin/notifications" },
-  { title: "Discount Codes", icon: Tag, path: "/admin/discounts" },
   { title: "Settings", icon: Settings, path: "/admin/settings" },
 ];
 

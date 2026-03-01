@@ -47,6 +47,7 @@ import AdminTemplates from "./pages/admin/AdminTemplates";
 import AdminPromotions from "./pages/admin/AdminPromotions";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -109,12 +110,11 @@ function AnimatedRoutes() {
               <AnimatePresence mode="wait">
                 <Routes location={location} key={location.pathname}>
                   <Route path="/" element={<PageTransition><AdminOverview /></PageTransition>} />
-                  <Route path="analytics" element={<PageTransition><AdminOverview /></PageTransition>} />
+                  <Route path="analytics" element={<PageTransition><AdminAnalytics /></PageTransition>} />
                   <Route path="users" element={<PageTransition><AdminUsers /></PageTransition>} />
                   <Route path="templates" element={<PageTransition><AdminTemplates /></PageTransition>} />
                   <Route path="promotions" element={<PageTransition><AdminPromotions /></PageTransition>} />
                   <Route path="notifications" element={<PageTransition><AdminNotifications /></PageTransition>} />
-                  <Route path="discounts" element={<PageTransition><AdminOverview /></PageTransition>} />
                   <Route path="settings" element={<PageTransition><AdminSettings /></PageTransition>} />
                 </Routes>
               </AnimatePresence>
