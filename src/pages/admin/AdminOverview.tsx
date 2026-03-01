@@ -50,9 +50,9 @@ export default function AdminOverview() {
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <Card key={i} className="animate-pulse">
+            <Card key={i} className="animate-pulse border-border/30 bg-background/60 backdrop-blur-sm">
               <CardContent className="p-6">
-                <div className="h-20 bg-muted rounded" />
+                <div className="h-20 bg-muted/50 rounded-xl" />
               </CardContent>
             </Card>
           ))}
@@ -61,157 +61,133 @@ export default function AdminOverview() {
     );
   }
 
+  const statCards = [
+    {
+      label: "Total Users",
+      value: userStats?.totalUsers || 0,
+      icon: Users,
+      gradient: "from-primary/15 to-primary/5",
+      iconBg: "bg-primary/15",
+      iconColor: "text-primary",
+      borderColor: "border-primary/20",
+    },
+    {
+      label: "Premium Users",
+      value: userStats?.premiumUsers || 0,
+      icon: Crown,
+      gradient: "from-amber-500/15 to-amber-500/5",
+      iconBg: "bg-amber-500/15",
+      iconColor: "text-amber-500",
+      borderColor: "border-amber-500/20",
+    },
+    {
+      label: "Words Generated",
+      value: userStats?.totalWordsUsed?.toLocaleString() || 0,
+      icon: FileText,
+      gradient: "from-emerald-500/15 to-emerald-500/5",
+      iconBg: "bg-emerald-500/15",
+      iconColor: "text-emerald-500",
+      borderColor: "border-emerald-500/20",
+    },
+    {
+      label: "Conversion Rate",
+      value: `${userStats?.totalUsers ? Math.round((userStats.premiumUsers / userStats.totalUsers) * 100) : 0}%`,
+      icon: TrendingUp,
+      gradient: "from-violet-500/15 to-violet-500/5",
+      iconBg: "bg-violet-500/15",
+      iconColor: "text-violet-500",
+      borderColor: "border-violet-500/20",
+    },
+  ];
+
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Dashboard Overview</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">Welcome back! Here's what's happening with PeakDraft.</p>
+        <h1 className="text-2xl sm:text-3xl font-bold">Dashboard Overview</h1>
+        <p className="text-sm sm:text-base text-muted-foreground/80 mt-1">Welcome back! Here's what's happening with PeakDraft.</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
-          <CardContent className="p-3 sm:p-4 md:p-6">
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">Total Users</p>
-                <p className="text-xl sm:text-2xl md:text-3xl font-bold">{userStats?.totalUsers || 0}</p>
+        {statCards.map((stat) => (
+          <Card
+            key={stat.label}
+            className={`group bg-gradient-to-br ${stat.gradient} ${stat.borderColor} border backdrop-blur-sm hover:shadow-lg transition-all duration-300`}
+          >
+            <CardContent className="p-4 sm:p-5">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground/80 truncate">{stat.label}</p>
+                  <p className="text-xl sm:text-2xl md:text-3xl font-bold mt-1 truncate">{stat.value}</p>
+                </div>
+                <div className={`p-2.5 sm:p-3 ${stat.iconBg} rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                  <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.iconColor}`} />
+                </div>
               </div>
-              <div className="p-2 sm:p-3 bg-blue-500/20 rounded-lg sm:rounded-xl shrink-0">
-                <Users className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-blue-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border-amber-500/20">
-          <CardContent className="p-3 sm:p-4 md:p-6">
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">Premium Users</p>
-                <p className="text-xl sm:text-2xl md:text-3xl font-bold">{userStats?.premiumUsers || 0}</p>
-              </div>
-              <div className="p-2 sm:p-3 bg-amber-500/20 rounded-lg sm:rounded-xl shrink-0">
-                <Crown className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-amber-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20">
-          <CardContent className="p-3 sm:p-4 md:p-6">
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">Words Generated</p>
-                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold truncate">{userStats?.totalWordsUsed?.toLocaleString() || 0}</p>
-              </div>
-              <div className="p-2 sm:p-3 bg-green-500/20 rounded-lg sm:rounded-xl shrink-0">
-                <FileText className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20">
-          <CardContent className="p-3 sm:p-4 md:p-6">
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">Conversion Rate</p>
-                <p className="text-xl sm:text-2xl md:text-3xl font-bold">
-                  {userStats?.totalUsers 
-                    ? Math.round((userStats.premiumUsers / userStats.totalUsers) * 100) 
-                    : 0}%
-                </p>
-              </div>
-              <div className="p-2 sm:p-3 bg-purple-500/20 rounded-lg sm:rounded-xl shrink-0">
-                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-purple-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Subscription Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <Card>
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Activity className="h-4 w-4 sm:h-5 sm:w-5" />
+        <Card className="border-border/30 bg-background/60 backdrop-blur-sm">
+          <CardHeader className="p-5 sm:p-6">
+            <CardTitle className="flex items-center gap-2.5 text-base sm:text-lg">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <Activity className="h-4 w-4 text-primary" />
+              </div>
               Subscription Distribution
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 sm:space-y-4 p-4 pt-0 sm:p-6 sm:pt-0">
-            <div className="space-y-2 sm:space-y-3">
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs sm:text-sm font-medium">Free Users</span>
-                  <span className="text-xs sm:text-sm text-muted-foreground">{userStats?.freeUsers || 0}</span>
+          <CardContent className="space-y-4 p-5 pt-0 sm:p-6 sm:pt-0">
+            {[
+              { label: "Free Users", count: userStats?.freeUsers || 0, cls: "" },
+              { label: "Basic", count: userStats?.basicUsers || 0, cls: "[&>div]:bg-blue-500" },
+              { label: "Pro", count: userStats?.proUsers || 0, cls: "[&>div]:bg-violet-500" },
+              { label: "Enterprise", count: userStats?.enterpriseUsers || 0, cls: "[&>div]:bg-amber-500" },
+            ].map((tier) => (
+              <div key={tier.label}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs sm:text-sm font-medium">{tier.label}</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground/70">{tier.count}</span>
                 </div>
                 <Progress 
-                  value={userStats?.totalUsers ? (userStats.freeUsers / userStats.totalUsers) * 100 : 0} 
-                  className="h-1.5 sm:h-2" 
+                  value={userStats?.totalUsers ? (tier.count / userStats.totalUsers) * 100 : 0}
+                  className={`h-2 rounded-full ${tier.cls}`}
                 />
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs sm:text-sm font-medium">Basic</span>
-                  <span className="text-xs sm:text-sm text-muted-foreground">{userStats?.basicUsers || 0}</span>
-                </div>
-                <Progress 
-                  value={userStats?.totalUsers ? (userStats.basicUsers / userStats.totalUsers) * 100 : 0} 
-                  className="h-1.5 sm:h-2 [&>div]:bg-blue-500" 
-                />
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs sm:text-sm font-medium">Pro</span>
-                  <span className="text-xs sm:text-sm text-muted-foreground">{userStats?.proUsers || 0}</span>
-                </div>
-                <Progress 
-                  value={userStats?.totalUsers ? (userStats.proUsers / userStats.totalUsers) * 100 : 0} 
-                  className="h-1.5 sm:h-2 [&>div]:bg-purple-500" 
-                />
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs sm:text-sm font-medium">Enterprise</span>
-                  <span className="text-xs sm:text-sm text-muted-foreground">{userStats?.enterpriseUsers || 0}</span>
-                </div>
-                <Progress 
-                  value={userStats?.totalUsers ? (userStats.enterpriseUsers / userStats.totalUsers) * 100 : 0} 
-                  className="h-1.5 sm:h-2 [&>div]:bg-amber-500" 
-                />
-              </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
+        <Card className="border-border/30 bg-background/60 backdrop-blur-sm">
+          <CardHeader className="p-5 sm:p-6">
+            <CardTitle className="flex items-center gap-2.5 text-base sm:text-lg">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <Zap className="h-4 w-4 text-primary" />
+              </div>
               Quick Actions
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
-              <a href="/admin/users" className="p-3 sm:p-4 rounded-lg border hover:bg-muted/50 transition-colors">
-                <Users className="h-4 w-4 sm:h-5 sm:w-5 mb-1.5 sm:mb-2 text-primary" />
-                <p className="font-medium text-xs sm:text-sm">Manage Users</p>
-              </a>
-              <a href="/admin/promotions" className="p-3 sm:p-4 rounded-lg border hover:bg-muted/50 transition-colors">
-                <Activity className="h-4 w-4 sm:h-5 sm:w-5 mb-1.5 sm:mb-2 text-primary" />
-                <p className="font-medium text-xs sm:text-sm">Promotions</p>
-              </a>
-              <a href="/admin/notifications" className="p-3 sm:p-4 rounded-lg border hover:bg-muted/50 transition-colors">
-                <FileText className="h-4 w-4 sm:h-5 sm:w-5 mb-1.5 sm:mb-2 text-primary" />
-                <p className="font-medium text-xs sm:text-sm">Notifications</p>
-              </a>
-              <a href="/admin/templates" className="p-3 sm:p-4 rounded-lg border hover:bg-muted/50 transition-colors">
-                <Crown className="h-4 w-4 sm:h-5 sm:w-5 mb-1.5 sm:mb-2 text-primary" />
-                <p className="font-medium text-xs sm:text-sm">Templates</p>
-              </a>
+          <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { href: "/admin/users", icon: Users, label: "Manage Users" },
+                { href: "/admin/promotions", icon: Activity, label: "Promotions" },
+                { href: "/admin/notifications", icon: FileText, label: "Notifications" },
+                { href: "/admin/templates", icon: Crown, label: "Templates" },
+              ].map((action) => (
+                <a
+                  key={action.href}
+                  href={action.href}
+                  className="group p-4 rounded-xl border border-border/30 bg-background/40 backdrop-blur-sm hover:bg-primary/5 hover:border-primary/30 transition-all duration-200"
+                >
+                  <action.icon className="h-5 w-5 mb-2 text-primary group-hover:scale-110 transition-transform duration-200" />
+                  <p className="font-medium text-xs sm:text-sm">{action.label}</p>
+                </a>
+              ))}
             </div>
           </CardContent>
         </Card>
