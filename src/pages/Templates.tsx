@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -476,6 +477,33 @@ export default function Templates() {
   }
 
   return (
+    <>
+    <Helmet>
+      <title>AI Writing Templates - Blog, Email, Ad Copy, Social Media Generators | PeakDraft</title>
+      <meta name="description" content="25+ AI writing templates: blog post generator, email writer, ad copy creator, social media content, product descriptions, cover letters, proposals & more. Create professional content in seconds." />
+      <meta name="keywords" content="AI writing templates, blog generator, email generator, ad copy generator, social media generator, product description generator, cover letter generator, AI content creator, PeakDraft" />
+      <link rel="canonical" href="https://peakdraft.netlify.app/app/templates" />
+      <meta name="robots" content="index, follow" />
+      <meta property="og:title" content="25+ AI Writing Templates | PeakDraft" />
+      <meta property="og:description" content="Generate blog posts, emails, ad copy, social media content, and more with AI-powered templates." />
+      <meta property="og:url" content="https://peakdraft.netlify.app/app/templates" />
+      <meta property="og:type" content="website" />
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content="AI Writing Templates | PeakDraft" />
+      <meta name="twitter:description" content="25+ AI-powered writing templates for blogs, emails, ads, social media & more." />
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "AI Writing Templates",
+        "description": "Collection of 25+ AI-powered content generation templates",
+        "numberOfItems": templates.length,
+        "itemListElement": templates.map((t, i) => ({
+          "@type": "ListItem",
+          "position": i + 1,
+          "item": { "@type": "SoftwareApplication", "name": t.title, "description": t.description, "applicationCategory": "UtilitiesApplication", "operatingSystem": "Web" }
+        }))
+      })}</script>
+    </Helmet>
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -630,5 +658,6 @@ export default function Templates() {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 }

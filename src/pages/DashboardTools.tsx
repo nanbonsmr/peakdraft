@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -1603,6 +1604,18 @@ export default function DashboardTools() {
   const ActiveToolComponent = activeTool ? tools.find(t => t.id === activeTool)?.component : null;
 
   return (
+    <>
+    <Helmet>
+      <title>Free Utility Tools - Image Compressor, QR Code, JSON Formatter, Password Generator | PeakDraft</title>
+      <meta name="description" content="30+ free browser-based utility tools: image compressor, QR code generator, JSON formatter, password generator, hash generator, PDF tools, text tools & developer utilities." />
+      <meta name="keywords" content="free online tools, image compressor, QR code generator, JSON formatter, Base64 encoder, password generator, hash generator, UUID generator, PDF tools, developer tools, PeakDraft" />
+      <link rel="canonical" href="https://peakdraft.netlify.app/app/tools" />
+      <meta name="robots" content="index, follow" />
+      <meta property="og:title" content="30+ Free Utility Tools | PeakDraft" />
+      <meta property="og:description" content="Browser-based tools for images, PDFs, text, development & security. Free and private." />
+      <meta property="og:url" content="https://peakdraft.netlify.app/app/tools" />
+      <meta property="og:type" content="website" />
+    </Helmet>
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Utility Tools</h1>
@@ -1672,5 +1685,6 @@ export default function DashboardTools() {
         </div>
       )}
     </div>
+    </>
   );
 }
