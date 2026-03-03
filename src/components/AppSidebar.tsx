@@ -62,6 +62,7 @@ export function AppSidebar() {
     { title: "Templates", url: "/app/templates", icon: Sparkles, badge: "25+", badgeVariant: "default" as const },
     { title: "Image Gen", url: "/app/image-generation", icon: ImageIcon, badge: "Pro", badgeVariant: "pro" as const },
     { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2, badge: "Free", badgeVariant: "free" as const },
+    { title: "Humanizer", url: "/app/humanizer", icon: Shield, badge: "New", badgeVariant: "new" as const },
   ];
 
   const workspaceItems = [

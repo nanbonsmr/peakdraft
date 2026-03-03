@@ -41,6 +41,7 @@ import DashboardTools from "./pages/DashboardTools";
 import ImageGeneration from "./pages/ImageGeneration";
 import Chat from "./pages/Chat";
 import Infobase from "./pages/Infobase";
+import Humanizer from "./pages/Humanizer";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminTemplates from "./pages/admin/AdminTemplates";
@@ -95,6 +96,7 @@ function AnimatedRoutes() {
                         <Route path="free-ai-tools" element={<PageTransition><DashboardFreeAITools /></PageTransition>} />
                         <Route path="image-generation" element={<PageTransition><ImageGeneration /></PageTransition>} />
                         <Route path="infobase" element={<PageTransition><Infobase /></PageTransition>} />
+                        <Route path="humanizer" element={<PageTransition><Humanizer /></PageTransition>} />
                       </Routes>
                     </AnimatePresence>
                   </main>
