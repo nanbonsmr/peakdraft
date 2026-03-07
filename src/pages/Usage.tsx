@@ -479,9 +479,9 @@ export default function Usage() {
                 <TrendingUp className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">
-                  Current Plan: <Badge variant="outline" className="ml-1 capitalize">{profile?.subscription_plan || 'free'}</Badge>
-                </p>
+                <div className="text-sm font-medium flex items-center gap-1">
+                  Current Plan: <Badge variant="outline" className="capitalize">{profile?.subscription_plan || 'free'}</Badge>
+                </div>
                 <p className="text-xs text-muted-foreground">
                   {wordsRemaining.toLocaleString()} words remaining • Resets monthly
                   {profile?.subscription_end_date && ` • Expires ${format(new Date(profile.subscription_end_date), 'MMM d, yyyy')}`}
