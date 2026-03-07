@@ -42,20 +42,18 @@ const TEMPLATE_COLORS = [
 ];
 
 export default function Usage() {
-  const { profile } = useAuth();
+  const { profile, refreshProfile } = useAuth();
   const [allContent, setAllContent] = useState<ContentGeneration[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | 'all'>('30d');
 
-  const wordsUsed = profile?.words_used || 0;
   const wordsLimit = profile?.words_limit || 5000;
-  const usagePercentage = Math.min((wordsUsed / wordsLimit) * 100, 100);
-  const wordsRemaining = Math.max(0, wordsLimit - wordsUsed);
 
   useEffect(() => {
     const fetchContent = async () => {
       if (!profile) return;
       setLoading(true);
+      await refreshProfile();
       const { data, error } = await supabase
         .from('content_generations')
         .select('id, template_type, prompt, word_count, created_at, language')
@@ -65,7 +63,17 @@ export default function Usage() {
       setLoading(false);
     };
     fetchContent();
-  }, [profile]);
+  }, [profile?.user_id]);
+
+  // Calculate actual words from content data for accuracy
+  const actualWordsGenerated = useMemo(() => {
+    return allContent.reduce((sum, c) => sum + (c.word_count || 0), 0);
+  }, [allContent]);
+
+  // Use the higher of profile.words_used or actual calculated words
+  const wordsUsed = Math.max(profile?.words_used || 0, actualWordsGenerated);
+  const usagePercentage = Math.min((wordsUsed / wordsLimit) * 100, 100);
+  const wordsRemaining = Math.max(0, wordsLimit - wordsUsed);
 
   // Filter content by time range
   const filteredContent = useMemo(() => {
