@@ -49,6 +49,7 @@ import AdminPromotions from "./pages/admin/AdminPromotions";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminBlog from "./pages/admin/AdminBlog";
 
 const queryClient = new QueryClient();
 
@@ -113,6 +114,7 @@ function AnimatedRoutes() {
                 <Routes location={location} key={location.pathname}>
                   <Route path="/" element={<PageTransition><AdminOverview /></PageTransition>} />
                   <Route path="analytics" element={<PageTransition><AdminAnalytics /></PageTransition>} />
+                  <Route path="blog" element={<PageTransition><AdminBlog /></PageTransition>} />
                   <Route path="users" element={<PageTransition><AdminUsers /></PageTransition>} />
                   <Route path="templates" element={<PageTransition><AdminTemplates /></PageTransition>} />
                   <Route path="promotions" element={<PageTransition><AdminPromotions /></PageTransition>} />

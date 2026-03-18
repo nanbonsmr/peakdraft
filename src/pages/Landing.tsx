@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
@@ -13,6 +13,8 @@ import dashboardPreview from '@/assets/dashboard-preview.png';
 import { useAuth } from '@/contexts/AuthContext';
 import { useInView } from '@/hooks/useInView';
 import { useParallax } from '@/hooks/useParallax';
+import { supabase } from '@/integrations/supabase/client';
+import { Clock } from 'lucide-react';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import { PromotionPopup } from '@/components/PromotionPopup';
@@ -1067,40 +1069,7 @@ export default function Landing() {
 
       {/* Blog Section */}
       <SectionReveal>
-      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Latest Blog Posts">
-        <div className="container mx-auto">
-          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Latest from Our Blog</h2>
-            <p className="text-base sm:text-lg text-muted-foreground">
-              Expert insights on AI content generation, SEO strategies, and digital marketing tips.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
-            {[
-              { title: 'Complete Guide to AI Content Generation Templates', category: 'Templates', date: 'Jan 5, 2026' },
-              { title: 'PeakDraft vs Jasper vs Copy.ai: Ultimate Comparison', category: 'Comparison', date: 'Jan 3, 2026' },
-              { title: 'How to Write SEO-Optimized Blog Posts with AI', category: 'SEO', date: 'Dec 28, 2025' },
-            ].map((post, idx) => (
-              <Card 
-                key={idx} 
-                className="p-6 hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur"
-              >
-                <Badge variant="secondary" className="mb-3 text-xs">{post.category}</Badge>
-                <h3 className="text-base sm:text-lg font-bold mb-2 line-clamp-2">{post.title}</h3>
-                <p className="text-xs text-muted-foreground">{post.date}</p>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Button size="lg" variant="outline" onClick={() => navigate('/blog')} className="group">
-              Read All Articles
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
-        </div>
-      </section>
+      <LandingBlogSection navigate={navigate} />
       </SectionReveal>
 
       {/* Contact Section */}
@@ -1177,6 +1146,62 @@ export default function Landing() {
       <PublicFooter />
     </main>
     </>
+  );
+}
+
+function LandingBlogSection({ navigate }: { navigate: (path: string) => void }) {
+  const [blogPosts, setBlogPosts] = useState<{ title: string; category: string; slug: string; published_at: string | null; featured_image: string | null; excerpt: string; reading_time: number | null }[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from('blog_posts')
+      .select('title, category, slug, published_at, featured_image, excerpt, reading_time')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(3)
+      .then(({ data }) => { if (data) setBlogPosts(data); });
+  }, []);
+
+  if (blogPosts.length === 0) return null;
+
+  return (
+    <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Latest Blog Posts">
+      <div className="container mx-auto">
+        <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Latest from Our Blog</h2>
+          <p className="text-base sm:text-lg text-muted-foreground">
+            Expert insights on AI content generation, SEO strategies, and digital marketing tips.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
+          {blogPosts.map((post, idx) => (
+            <Link key={idx} to={`/blog/${post.slug}`}>
+              <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full group">
+                {post.featured_image && (
+                  <img src={post.featured_image} alt={post.title} loading="lazy"
+                    className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500" />
+                )}
+                <div className="p-5">
+                  <Badge variant="secondary" className="mb-3 text-xs">{post.category}</Badge>
+                  <h3 className="text-base sm:text-lg font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">{post.title}</h3>
+                  <p className="text-xs text-muted-foreground line-clamp-2 mb-2">{post.excerpt}</p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    <span>{post.reading_time} min read</span>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+        <div className="text-center">
+          <Button size="lg" variant="outline" onClick={() => navigate('/blog')} className="group">
+            Read All Articles
+            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </div>
+      </div>
+    </section>
   );
 }
 
