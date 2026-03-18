@@ -13,6 +13,8 @@ import dashboardPreview from '@/assets/dashboard-preview.png';
 import { useAuth } from '@/contexts/AuthContext';
 import { useInView } from '@/hooks/useInView';
 import { useParallax } from '@/hooks/useParallax';
+import { supabase } from '@/integrations/supabase/client';
+import { Clock } from 'lucide-react';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import { PromotionPopup } from '@/components/PromotionPopup';
