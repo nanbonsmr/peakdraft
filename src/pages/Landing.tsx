@@ -1067,40 +1067,7 @@ export default function Landing() {
 
       {/* Blog Section */}
       <SectionReveal>
-      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Latest Blog Posts">
-        <div className="container mx-auto">
-          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Latest from Our Blog</h2>
-            <p className="text-base sm:text-lg text-muted-foreground">
-              Expert insights on AI content generation, SEO strategies, and digital marketing tips.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
-            {[
-              { title: 'Complete Guide to AI Content Generation Templates', category: 'Templates', date: 'Jan 5, 2026' },
-              { title: 'PeakDraft vs Jasper vs Copy.ai: Ultimate Comparison', category: 'Comparison', date: 'Jan 3, 2026' },
-              { title: 'How to Write SEO-Optimized Blog Posts with AI', category: 'SEO', date: 'Dec 28, 2025' },
-            ].map((post, idx) => (
-              <Card 
-                key={idx} 
-                className="p-6 hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur"
-              >
-                <Badge variant="secondary" className="mb-3 text-xs">{post.category}</Badge>
-                <h3 className="text-base sm:text-lg font-bold mb-2 line-clamp-2">{post.title}</h3>
-                <p className="text-xs text-muted-foreground">{post.date}</p>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Button size="lg" variant="outline" onClick={() => navigate('/blog')} className="group">
-              Read All Articles
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
-        </div>
-      </section>
+      <LandingBlogSection navigate={navigate} />
       </SectionReveal>
 
       {/* Contact Section */}
