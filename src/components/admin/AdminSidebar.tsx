@@ -31,6 +31,7 @@ const adminNavItems = [
   { title: "Overview", icon: LayoutDashboard, path: "/admin" },
   { title: "Analytics", icon: BarChart3, path: "/admin/analytics" },
   { title: "Users", icon: Users, path: "/admin/users" },
+  { title: "Blog", icon: FileText, path: "/admin/blog" },
   { title: "Templates", icon: Layout, path: "/admin/templates" },
   { title: "Promotions", icon: Megaphone, path: "/admin/promotions" },
   { title: "Notifications", icon: Bell, path: "/admin/notifications" },
