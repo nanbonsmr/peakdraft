@@ -33,6 +33,21 @@ interface BlogPost {
   created_at: string;
 }
 
+interface RelatedPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  featured_image: string | null;
+  category: string;
+  tags: string[];
+  author: string;
+  published_at: string | null;
+  reading_time: number | null;
+  featured: boolean | null;
+  created_at: string;
+}
+
 const siteUrl = 'https://peakdraft.netlify.app';
 
 export default function BlogPostPage() {
