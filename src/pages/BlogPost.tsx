@@ -245,28 +245,35 @@ export default function BlogPostPage() {
           )}
 
           {/* Content */}
-          <div className="prose prose-invert prose-lg max-w-none mb-12">
-            <ReactMarkdown
-              components={{
-                h2: ({ children }) => <h2 className="text-2xl font-bold mt-10 mb-4 text-foreground">{children}</h2>,
-                h3: ({ children }) => <h3 className="text-xl font-semibold mt-8 mb-3 text-foreground">{children}</h3>,
-                p: ({ children }) => <p className="text-muted-foreground leading-relaxed mb-4">{children}</p>,
-                ul: ({ children }) => <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-4">{children}</ul>,
-                ol: ({ children }) => <ol className="list-decimal pl-6 space-y-2 text-muted-foreground mb-4">{children}</ol>,
-                a: ({ href, children }) => <a href={href} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">{children}</a>,
-                strong: ({ children }) => <strong className="text-foreground font-semibold">{children}</strong>,
-                blockquote: ({ children }) => (
-                  <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">{children}</blockquote>
-                ),
-                img: ({ src, alt }) => (
-                  <img src={src} alt={alt || ''} loading="lazy" className="w-full rounded-lg my-6" />
-                ),
-                code: ({ children }) => <code className="bg-muted px-1.5 py-0.5 rounded text-sm">{children}</code>,
-              }}
-            >
-              {post.content}
-            </ReactMarkdown>
-          </div>
+          {post.content.trim().startsWith('<') ? (
+            <div
+              className="prose prose-invert prose-lg max-w-none mb-12 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-foreground [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-foreground [&_p]:text-muted-foreground [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_ul]:text-muted-foreground [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-2 [&_ol]:text-muted-foreground [&_a]:text-primary [&_a]:underline [&_strong]:text-foreground [&_strong]:font-semibold [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground [&_blockquote]:my-6 [&_img]:w-full [&_img]:rounded-lg [&_img]:my-6 [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_iframe]:w-full [&_iframe]:rounded-lg [&_iframe]:my-6"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+          ) : (
+            <div className="prose prose-invert prose-lg max-w-none mb-12">
+              <ReactMarkdown
+                components={{
+                  h2: ({ children }) => <h2 className="text-2xl font-bold mt-10 mb-4 text-foreground">{children}</h2>,
+                  h3: ({ children }) => <h3 className="text-xl font-semibold mt-8 mb-3 text-foreground">{children}</h3>,
+                  p: ({ children }) => <p className="text-muted-foreground leading-relaxed mb-4">{children}</p>,
+                  ul: ({ children }) => <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-4">{children}</ul>,
+                  ol: ({ children }) => <ol className="list-decimal pl-6 space-y-2 text-muted-foreground mb-4">{children}</ol>,
+                  a: ({ href, children }) => <a href={href} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">{children}</a>,
+                  strong: ({ children }) => <strong className="text-foreground font-semibold">{children}</strong>,
+                  blockquote: ({ children }) => (
+                    <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">{children}</blockquote>
+                  ),
+                  img: ({ src, alt }) => (
+                    <img src={src} alt={alt || ''} loading="lazy" className="w-full rounded-lg my-6" />
+                  ),
+                  code: ({ children }) => <code className="bg-muted px-1.5 py-0.5 rounded text-sm">{children}</code>,
+                }}
+              >
+                {post.content}
+              </ReactMarkdown>
+            </div>
+          )}
 
           <Separator className="my-8" />
 
