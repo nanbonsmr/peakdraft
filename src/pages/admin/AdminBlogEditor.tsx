@@ -8,9 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Save, Globe, ArrowLeft, Calendar, Image, Upload, X, Loader2 } from "lucide-react";
+import { BlogContentEditor } from "@/components/BlogContentEditor";
 
 interface BlogPost {
   id: string;
@@ -89,8 +89,10 @@ export default function AdminBlogEditor() {
   const generateSlug = (title: string) =>
     title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-  const calculateReadingTime = (content: string) =>
-    Math.max(1, Math.ceil(content.split(/\s+/).length / 200));
+  const calculateReadingTime = (content: string) => {
+    const text = content.replace(/<[^>]*>/g, ' ');
+    return Math.max(1, Math.ceil(text.split(/\s+/).filter(Boolean).length / 200));
+  };
 
   const uploadImage = async (file: File, target: 'featured' | 'og') => {
     setUploading(true);
@@ -245,10 +247,10 @@ export default function AdminBlogEditor() {
       <Card>
         <CardHeader><CardTitle>Content</CardTitle></CardHeader>
         <CardContent>
-          <Label>Content (Markdown supported)</Label>
-          <Textarea value={post.content || ''} onChange={e => setPost(p => ({ ...p, content: e.target.value }))}
-            placeholder="Write your blog post content here... Supports **bold**, *italic*, ## headings, - lists, [links](url), ![images](url)"
-            rows={20} className="font-mono text-sm" />
+          <BlogContentEditor
+            content={post.content || ''}
+            onChange={(html) => setPost(p => ({ ...p, content: html }))}
+          />
         </CardContent>
       </Card>
 
