@@ -89,8 +89,10 @@ export default function AdminBlogEditor() {
   const generateSlug = (title: string) =>
     title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-  const calculateReadingTime = (content: string) =>
-    Math.max(1, Math.ceil(content.split(/\s+/).length / 200));
+  const calculateReadingTime = (content: string) => {
+    const text = content.replace(/<[^>]*>/g, ' ');
+    return Math.max(1, Math.ceil(text.split(/\s+/).filter(Boolean).length / 200));
+  };
 
   const uploadImage = async (file: File, target: 'featured' | 'og') => {
     setUploading(true);
