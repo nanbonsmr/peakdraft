@@ -245,10 +245,10 @@ export default function AdminBlogEditor() {
       <Card>
         <CardHeader><CardTitle>Content</CardTitle></CardHeader>
         <CardContent>
-          <Label>Content (Markdown supported)</Label>
-          <Textarea value={post.content || ''} onChange={e => setPost(p => ({ ...p, content: e.target.value }))}
-            placeholder="Write your blog post content here... Supports **bold**, *italic*, ## headings, - lists, [links](url), ![images](url)"
-            rows={20} className="font-mono text-sm" />
+          <BlogContentEditor
+            content={post.content || ''}
+            onChange={(html) => setPost(p => ({ ...p, content: html }))}
+          />
         </CardContent>
       </Card>
 
