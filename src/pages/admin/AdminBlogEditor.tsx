@@ -8,9 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Save, Globe, ArrowLeft, Calendar, Image, Upload, X, Loader2 } from "lucide-react";
+import { BlogContentEditor } from "@/components/BlogContentEditor";
 
 interface BlogPost {
   id: string;
