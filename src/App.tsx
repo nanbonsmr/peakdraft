@@ -116,6 +116,8 @@ function AnimatedRoutes() {
                   <Route path="/" element={<PageTransition><AdminOverview /></PageTransition>} />
                   <Route path="analytics" element={<PageTransition><AdminAnalytics /></PageTransition>} />
                   <Route path="blog" element={<PageTransition><AdminBlog /></PageTransition>} />
+                  <Route path="blog/new" element={<PageTransition><AdminBlogEditor /></PageTransition>} />
+                  <Route path="blog/edit/:id" element={<PageTransition><AdminBlogEditor /></PageTransition>} />
                   <Route path="users" element={<PageTransition><AdminUsers /></PageTransition>} />
                   <Route path="templates" element={<PageTransition><AdminTemplates /></PageTransition>} />
                   <Route path="promotions" element={<PageTransition><AdminPromotions /></PageTransition>} />
