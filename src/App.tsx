@@ -35,6 +35,7 @@ import DashboardFreeAITools from "./pages/DashboardFreeAITools";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import SharedTask from "./pages/SharedTask";
+import SocialMedia from "./pages/SocialMedia";
 import NotFound from "./pages/NotFound";
 import Editor from "./pages/Editor";
 import DashboardTools from "./pages/DashboardTools";
@@ -74,6 +75,7 @@ function AnimatedRoutes() {
         <Route path="/tools" element={<PageTransition><Tools /></PageTransition>} />
         <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
         <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
+        <Route path="/social-media" element={<PageTransition><SocialMedia /></PageTransition>} />
         <Route path="/shared/task/:token" element={<PageTransition><SharedTask /></PageTransition>} />
         <Route path="/app/*" element={
           <ProtectedRoute>
