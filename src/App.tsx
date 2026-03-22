@@ -75,6 +75,7 @@ function AnimatedRoutes() {
         <Route path="/tools" element={<PageTransition><Tools /></PageTransition>} />
         <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
         <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
+        <Route path="/social-media" element={<PageTransition><SocialMedia /></PageTransition>} />
         <Route path="/shared/task/:token" element={<PageTransition><SharedTask /></PageTransition>} />
         <Route path="/app/*" element={
           <ProtectedRoute>
