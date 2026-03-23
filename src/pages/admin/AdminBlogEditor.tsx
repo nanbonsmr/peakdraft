@@ -9,8 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Save, Globe, ArrowLeft, Calendar, Image, Upload, X, Loader2 } from "lucide-react";
+import { Save, Globe, ArrowLeft, Calendar, Image, Upload, X, Loader2, Workflow } from "lucide-react";
 import { BlogContentEditor } from "@/components/BlogContentEditor";
+import { WorkflowPanel, type WorkflowContext } from "@/components/WorkflowPanel";
 
 interface BlogPost {
   id: string;
