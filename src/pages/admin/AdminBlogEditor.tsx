@@ -224,6 +224,19 @@ export default function AdminBlogEditor() {
               <Globe className="h-4 w-4" /> Publish Now
             </Button>
           )}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              if (post.content) {
+                setWorkflowContext({ content: post.content, title: post.title || "", type: "blog" });
+                setWorkflowOpen(true);
+              }
+            }}
+            disabled={!post.content}
+          >
+            <Workflow className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
