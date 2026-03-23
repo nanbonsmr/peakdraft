@@ -136,6 +136,12 @@ export default function Tasks() {
         taskId={selectedTaskId}
         onTaskCreated={handleTaskCreated}
       />
+
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={setWorkflowOpen}
+        context={workflowContext}
+      />
     </div>
   );
 }
