@@ -30,6 +30,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   Zap,
+  Workflow,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
