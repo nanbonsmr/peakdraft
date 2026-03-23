@@ -134,8 +134,14 @@ export default function BlogGenerator() {
       if (updateError) throw updateError;
 
       setGeneratedContent(generatedContentText);
+      setWorkflowContext({
+        content: generatedContentText,
+        title: prompt.slice(0, 60),
+        type: "blog",
+        keywords: keywords.split(',').map(k => k.trim()).filter(k => k),
+      });
       await refreshProfile();
-      await loadRecentContent(); // Reload recent content after generation
+      await loadRecentContent();
       
       toast({
         title: "Blog post generated!",
