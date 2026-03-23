@@ -18,6 +18,8 @@ export default function Tasks() {
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
 
   // Real-time notifications for task changes
   const handleRealtimeUpdate = useCallback(() => {
