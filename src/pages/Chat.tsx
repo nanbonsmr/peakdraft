@@ -356,7 +356,7 @@ export default function Chat() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <MessageBubble message={msg} />
+                      <MessageBubble message={msg} onOpenWorkflow={openWorkflow} />
                     </motion.div>
                   ))}
                 </AnimatePresence>
