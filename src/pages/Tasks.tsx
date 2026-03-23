@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutGrid, List, Calendar, Plus, BarChart3 } from "lucide-react";
+import { LayoutGrid, List, Calendar, Plus, BarChart3, Workflow } from "lucide-react";
 import { TaskDialog } from "@/components/tasks/TaskDialog";
 import { KanbanBoard } from "@/components/tasks/KanbanBoard";
 import { TaskListView } from "@/components/tasks/TaskListView";
@@ -11,12 +11,15 @@ import { TaskAnalytics } from "@/components/tasks/TaskAnalytics";
 import { DailyTodos } from "@/components/tasks/DailyTodos";
 import { useTaskNotifications } from "@/hooks/useTaskNotifications";
 import { useTaskReminders } from "@/hooks/useTaskReminders";
+import { WorkflowPanel, type WorkflowContext } from "@/components/WorkflowPanel";
 
 export default function Tasks() {
   const { user } = useAuth();
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
 
   // Real-time notifications for task changes
   const handleRealtimeUpdate = useCallback(() => {
@@ -54,10 +57,27 @@ export default function Tasks() {
               Organize and track your content creation tasks
             </p>
           </div>
-          <Button onClick={() => setIsTaskDialogOpen(true)} size="default" className="w-full sm:w-auto">
-            <Plus className="mr-2 h-4 w-4" />
-            New Task
-          </Button>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button onClick={() => setIsTaskDialogOpen(true)} size="default" className="flex-1 sm:flex-none">
+              <Plus className="mr-2 h-4 w-4" />
+              New Task
+            </Button>
+            <Button
+              variant="outline"
+              size="default"
+              onClick={() => {
+                setWorkflowContext({
+                  content: "Generate content for my tasks and projects",
+                  title: "Task Workflow",
+                  type: "task",
+                });
+                setWorkflowOpen(true);
+              }}
+            >
+              <Workflow className="mr-2 h-4 w-4" />
+              <span className="hidden sm:inline">Workflow</span>
+            </Button>
+          </div>
         </div>
 
         {/* Daily Todos - Compact top section */}
@@ -116,6 +136,12 @@ export default function Tasks() {
         onOpenChange={handleCloseDialog}
         taskId={selectedTaskId}
         onTaskCreated={handleTaskCreated}
+      />
+
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={setWorkflowOpen}
+        context={workflowContext}
       />
     </div>
   );

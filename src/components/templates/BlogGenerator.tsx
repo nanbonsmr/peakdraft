@@ -10,11 +10,12 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { PenTool, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw, Pencil } from 'lucide-react';
+import { PenTool, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw, Pencil, Workflow } from 'lucide-react';
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
 import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
+import { WorkflowPanel, type WorkflowContext } from '@/components/WorkflowPanel';
 
 const blogExamples = [
   "Write a comprehensive guide about sustainable living practices for beginners",
@@ -44,6 +45,8 @@ export default function BlogGenerator() {
   
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('blog');
   const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -131,8 +134,14 @@ export default function BlogGenerator() {
       if (updateError) throw updateError;
 
       setGeneratedContent(generatedContentText);
+      setWorkflowContext({
+        content: generatedContentText,
+        title: prompt.slice(0, 60),
+        type: "blog",
+        keywords: keywords.split(',').map(k => k.trim()).filter(k => k),
+      });
       await refreshProfile();
-      await loadRecentContent(); // Reload recent content after generation
+      await loadRecentContent();
       
       toast({
         title: "Blog post generated!",
@@ -307,6 +316,15 @@ export default function BlogGenerator() {
                   <Pencil className="w-4 h-4 mr-2" />
                   Edit & Export
                 </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setWorkflowOpen(true)}
+                  className="w-fit gap-2"
+                >
+                  <Workflow className="w-4 h-4" />
+                  Workflow
+                </Button>
               </div>
             )}
           </CardHeader>
@@ -368,6 +386,12 @@ export default function BlogGenerator() {
           </CardContent>
         </Card>
       </div>
+
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={setWorkflowOpen}
+        context={workflowContext}
+      />
     </div>
   );
 }

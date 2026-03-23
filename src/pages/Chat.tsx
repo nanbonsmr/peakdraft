@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { WorkflowPanel, type WorkflowContext } from "@/components/WorkflowPanel";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send,
@@ -29,6 +30,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   Zap,
+  Workflow,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -65,6 +67,13 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
+
+  const openWorkflow = (content: string) => {
+    setWorkflowContext({ content, title: content.slice(0, 60), type: "chat" });
+    setWorkflowOpen(true);
+  };
 
   useEffect(() => {
     if (isPaid) loadConversations();
@@ -347,7 +356,7 @@ export default function Chat() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <MessageBubble message={msg} />
+                      <MessageBubble message={msg} onOpenWorkflow={openWorkflow} />
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -425,11 +434,17 @@ export default function Chat() {
         </div>
       </div>
     </div>
+
+    <WorkflowPanel
+      open={workflowOpen}
+      onOpenChange={setWorkflowOpen}
+      context={workflowContext}
+    />
     </>
   );
 }
 
-function MessageBubble({ message }: { message: ChatMessage }) {
+function MessageBubble({ message, onOpenWorkflow }: { message: ChatMessage; onOpenWorkflow?: (content: string) => void }) {
   const isUser = message.role === "user";
   const [copied, setCopied] = useState(false);
 
@@ -522,6 +537,15 @@ function MessageBubble({ message }: { message: ChatMessage }) {
             >
               <Download className="h-3 w-3" />
               Export
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2.5 text-[10px] sm:text-[11px] gap-1.5 rounded-lg font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200"
+              onClick={() => onOpenWorkflow?.(message.content)}
+            >
+              <Workflow className="h-3 w-3" />
+              Workflow
             </Button>
           </div>
         )}

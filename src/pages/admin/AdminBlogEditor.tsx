@@ -9,8 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Save, Globe, ArrowLeft, Calendar, Image, Upload, X, Loader2 } from "lucide-react";
+import { Save, Globe, ArrowLeft, Calendar, Image, Upload, X, Loader2, Workflow } from "lucide-react";
 import { BlogContentEditor } from "@/components/BlogContentEditor";
+import { WorkflowPanel, type WorkflowContext } from "@/components/WorkflowPanel";
 
 interface BlogPost {
   id: string;
@@ -60,6 +61,8 @@ export default function AdminBlogEditor() {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const ogFileInputRef = useRef<HTMLInputElement>(null);
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
 
   useEffect(() => {
     if (isEditing) {
@@ -179,7 +182,17 @@ export default function AdminBlogEditor() {
       toast.error('Failed to save: ' + error.message);
     } else {
       toast.success(publishNow ? 'Published!' : 'Saved!');
-      navigate('/admin/blog');
+      if (publishNow) {
+        setWorkflowContext({
+          content: postData.content,
+          title: postData.title,
+          type: "blog",
+          keywords: meta_keywords,
+        });
+        setWorkflowOpen(true);
+      } else {
+        navigate('/admin/blog');
+      }
     }
     setSaving(false);
   };
@@ -211,6 +224,19 @@ export default function AdminBlogEditor() {
               <Globe className="h-4 w-4" /> Publish Now
             </Button>
           )}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              if (post.content) {
+                setWorkflowContext({ content: post.content, title: post.title || "", type: "blog" });
+                setWorkflowOpen(true);
+              }
+            }}
+            disabled={!post.content}
+          >
+            <Workflow className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -383,6 +409,15 @@ export default function AdminBlogEditor() {
         )}
         <Button variant="outline" onClick={() => navigate('/admin/blog')}>Cancel</Button>
       </div>
+
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={(open) => {
+          setWorkflowOpen(open);
+          if (!open && post.status === 'published') navigate('/admin/blog');
+        }}
+        context={workflowContext}
+      />
     </div>
   );
 }
