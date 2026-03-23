@@ -78,6 +78,7 @@ export default function Tasks() {
               <span className="hidden sm:inline">Workflow</span>
             </Button>
           </div>
+        </div>
 
         {/* Daily Todos - Compact top section */}
         <DailyTodos />
