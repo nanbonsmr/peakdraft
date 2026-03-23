@@ -386,6 +386,12 @@ export default function BlogGenerator() {
           </CardContent>
         </Card>
       </div>
+
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={setWorkflowOpen}
+        context={workflowContext}
+      />
     </div>
   );
 }
