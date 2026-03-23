@@ -182,7 +182,17 @@ export default function AdminBlogEditor() {
       toast.error('Failed to save: ' + error.message);
     } else {
       toast.success(publishNow ? 'Published!' : 'Saved!');
-      navigate('/admin/blog');
+      if (publishNow) {
+        setWorkflowContext({
+          content: postData.content,
+          title: postData.title,
+          type: "blog",
+          keywords: meta_keywords,
+        });
+        setWorkflowOpen(true);
+      } else {
+        navigate('/admin/blog');
+      }
     }
     setSaving(false);
   };
