@@ -67,6 +67,13 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
+
+  const openWorkflow = (content: string) => {
+    setWorkflowContext({ content, title: content.slice(0, 60), type: "chat" });
+    setWorkflowOpen(true);
+  };
 
   useEffect(() => {
     if (isPaid) loadConversations();
