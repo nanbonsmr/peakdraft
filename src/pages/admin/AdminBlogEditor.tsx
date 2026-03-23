@@ -409,6 +409,15 @@ export default function AdminBlogEditor() {
         )}
         <Button variant="outline" onClick={() => navigate('/admin/blog')}>Cancel</Button>
       </div>
+
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={(open) => {
+          setWorkflowOpen(open);
+          if (!open && post.status === 'published') navigate('/admin/blog');
+        }}
+        context={workflowContext}
+      />
     </div>
   );
 }
