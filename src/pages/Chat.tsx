@@ -538,6 +538,15 @@ function MessageBubble({ message, onOpenWorkflow }: { message: ChatMessage; onOp
               <Download className="h-3 w-3" />
               Export
             </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2.5 text-[10px] sm:text-[11px] gap-1.5 rounded-lg font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200"
+              onClick={() => onOpenWorkflow?.(message.content)}
+            >
+              <Workflow className="h-3 w-3" />
+              Workflow
+            </Button>
           </div>
         )}
       </div>
