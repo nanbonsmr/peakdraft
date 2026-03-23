@@ -45,6 +45,8 @@ export default function BlogGenerator() {
   
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('blog');
   const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
