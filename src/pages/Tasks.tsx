@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutGrid, List, Calendar, Plus, BarChart3 } from "lucide-react";
+import { LayoutGrid, List, Calendar, Plus, BarChart3, Workflow } from "lucide-react";
 import { TaskDialog } from "@/components/tasks/TaskDialog";
 import { KanbanBoard } from "@/components/tasks/KanbanBoard";
 import { TaskListView } from "@/components/tasks/TaskListView";
