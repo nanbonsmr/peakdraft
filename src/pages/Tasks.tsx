@@ -57,11 +57,27 @@ export default function Tasks() {
               Organize and track your content creation tasks
             </p>
           </div>
-          <Button onClick={() => setIsTaskDialogOpen(true)} size="default" className="w-full sm:w-auto">
-            <Plus className="mr-2 h-4 w-4" />
-            New Task
-          </Button>
-        </div>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button onClick={() => setIsTaskDialogOpen(true)} size="default" className="flex-1 sm:flex-none">
+              <Plus className="mr-2 h-4 w-4" />
+              New Task
+            </Button>
+            <Button
+              variant="outline"
+              size="default"
+              onClick={() => {
+                setWorkflowContext({
+                  content: "Generate content for my tasks and projects",
+                  title: "Task Workflow",
+                  type: "task",
+                });
+                setWorkflowOpen(true);
+              }}
+            >
+              <Workflow className="mr-2 h-4 w-4" />
+              <span className="hidden sm:inline">Workflow</span>
+            </Button>
+          </div>
 
         {/* Daily Todos - Compact top section */}
         <DailyTodos />
