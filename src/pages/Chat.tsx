@@ -434,6 +434,12 @@ export default function Chat() {
         </div>
       </div>
     </div>
+
+    <WorkflowPanel
+      open={workflowOpen}
+      onOpenChange={setWorkflowOpen}
+      context={workflowContext}
+    />
     </>
   );
 }
