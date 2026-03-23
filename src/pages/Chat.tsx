@@ -444,7 +444,7 @@ export default function Chat() {
   );
 }
 
-function MessageBubble({ message }: { message: ChatMessage }) {
+function MessageBubble({ message, onOpenWorkflow }: { message: ChatMessage; onOpenWorkflow?: (content: string) => void }) {
   const isUser = message.role === "user";
   const [copied, setCopied] = useState(false);
 
