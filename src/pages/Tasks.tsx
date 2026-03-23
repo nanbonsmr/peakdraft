@@ -11,6 +11,7 @@ import { TaskAnalytics } from "@/components/tasks/TaskAnalytics";
 import { DailyTodos } from "@/components/tasks/DailyTodos";
 import { useTaskNotifications } from "@/hooks/useTaskNotifications";
 import { useTaskReminders } from "@/hooks/useTaskReminders";
+import { WorkflowPanel, type WorkflowContext } from "@/components/WorkflowPanel";
 
 export default function Tasks() {
   const { user } = useAuth();
