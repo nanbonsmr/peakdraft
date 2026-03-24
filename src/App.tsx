@@ -102,6 +102,7 @@ function AnimatedRoutes() {
                         <Route path="image-generation" element={<PageTransition><ImageGeneration /></PageTransition>} />
                         <Route path="infobase" element={<PageTransition><Infobase /></PageTransition>} />
                         <Route path="humanizer" element={<PageTransition><Humanizer /></PageTransition>} />
+                        <Route path="workflow" element={<PageTransition><WorkflowHistory /></PageTransition>} />
                       </Routes>
                     </AnimatePresence>
                   </main>
