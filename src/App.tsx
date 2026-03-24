@@ -43,6 +43,7 @@ import ImageGeneration from "./pages/ImageGeneration";
 import Chat from "./pages/Chat";
 import Infobase from "./pages/Infobase";
 import Humanizer from "./pages/Humanizer";
+import WorkflowHistory from "./pages/WorkflowHistory";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminTemplates from "./pages/admin/AdminTemplates";
