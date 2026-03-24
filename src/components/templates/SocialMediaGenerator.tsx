@@ -10,11 +10,12 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { MessageSquare, Sparkles, Copy, CreditCard, Lightbulb, Hash, RefreshCw, Pencil } from 'lucide-react';
+import { MessageSquare, Sparkles, Copy, CreditCard, Lightbulb, Hash, RefreshCw, Pencil , Workflow } from 'lucide-react';
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
 import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
+import { WorkflowPanel, type WorkflowContext } from '@/components/WorkflowPanel';
 
 const socialExamples = [
   "Promote a new product launch with excitement and call-to-action",
@@ -49,6 +50,8 @@ export default function SocialMediaGenerator() {
   const [hashtags, setHashtags] = useState('');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('social');
   const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
@@ -382,7 +385,13 @@ export default function SocialMediaGenerator() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={setWorkflowOpen}
+        context={workflowContext}
+      />
+    </div>
     </div>
   );
 }

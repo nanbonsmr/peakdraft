@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Copy, Film, Sparkles, Lightbulb, RefreshCw, Pencil } from 'lucide-react';
+import { Loader2, Copy, Film, Sparkles, Lightbulb, RefreshCw, Pencil , Workflow } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
 import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
+import { WorkflowPanel, type WorkflowContext } from '@/components/WorkflowPanel';
 
 const videoPromptExamples = [
   "A time-lapse of a flower blooming in spring",
@@ -26,6 +27,8 @@ export default function VideoPromptGenerator() {
   const [style, setStyle] = useState('');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -269,7 +272,13 @@ export default function VideoPromptGenerator() {
             ))}
           </CardContent>
         </Card>
-      </div>
+      
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={setWorkflowOpen}
+        context={workflowContext}
+      />
+    </div>
     </div>
   );
 }
