@@ -70,6 +70,7 @@ export function AppSidebar() {
     { title: "Infobase", url: "/app/infobase", icon: Building2, badge: "New", badgeVariant: "new" as const },
     { title: "Tools", url: "/app/tools", icon: Wrench, badge: "New", badgeVariant: "new" as const },
     { title: "Tasks", url: "/app/tasks", icon: CheckSquare },
+    { title: "Workflow", url: "/app/workflow", icon: Workflow, badge: "New", badgeVariant: "new" as const },
   ];
 
   const accountItems = [
