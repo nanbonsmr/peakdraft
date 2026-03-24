@@ -8,11 +8,12 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, Copy, RefreshCw, Newspaper, Lightbulb, Pencil } from 'lucide-react';
+import { Loader2, Copy, RefreshCw, Newspaper, Lightbulb, Pencil , Workflow } from 'lucide-react';
 import { RecentContent } from './RecentContent';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
+import { WorkflowPanel, type WorkflowContext } from '@/components/WorkflowPanel';
 
 const pressReleaseExamples = [
   "New product launch announcement",
@@ -48,6 +49,8 @@ export default function PressReleaseGenerator() {
   const [tone, setTone] = useState('formal');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
@@ -296,6 +299,15 @@ Guidelines:
                   <Pencil className="w-4 h-4 mr-2" />
                   Edit & Export
                 </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setWorkflowOpen(true)}
+                  className="w-fit gap-2"
+                >
+                  <Workflow className="w-4 h-4" />
+                  Workflow
+                </Button>
               </div>
             </div>
           </CardHeader>
@@ -337,7 +349,13 @@ Guidelines:
                 {example}
               </Button>
             ))}
-          </div>
+          
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={setWorkflowOpen}
+        context={workflowContext}
+      />
+    </div>
         </CardContent>
       </Card>
     </div>

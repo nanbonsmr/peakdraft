@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Copy, RefreshCw, Linkedin, Sparkles, Pencil } from 'lucide-react';
+import { Loader2, Copy, RefreshCw, Linkedin, Sparkles, Pencil , Workflow } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,6 +13,7 @@ import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
+import { WorkflowPanel, type WorkflowContext } from '@/components/WorkflowPanel';
 
 const linkedinExamples = [
   "Share insights about the future of AI in business",
@@ -45,6 +46,8 @@ export function LinkedInPostGenerator() {
   const [tone, setTone] = useState('professional');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
@@ -263,6 +266,15 @@ Requirements:
                   <Pencil className="h-4 w-4 mr-1" />
                   Edit & Export
                 </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setWorkflowOpen(true)}
+                  className="w-fit gap-2"
+                >
+                  <Workflow className="w-4 h-4" />
+                  Workflow
+                </Button>
               </div>
             </CardTitle>
           </CardHeader>
@@ -301,7 +313,13 @@ Requirements:
                 <span className="text-sm">{example}</span>
               </Button>
             ))}
-          </div>
+          
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={setWorkflowOpen}
+        context={workflowContext}
+      />
+    </div>
         </CardContent>
       </Card>
     </div>

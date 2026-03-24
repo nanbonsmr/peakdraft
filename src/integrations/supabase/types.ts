@@ -947,6 +947,39 @@ export type Database = {
         }
         Relationships: []
       }
+      workflow_history: {
+        Row: {
+          action_type: string
+          content_preview: string | null
+          created_at: string
+          id: string
+          result_preview: string | null
+          source_title: string | null
+          source_type: string
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          content_preview?: string | null
+          created_at?: string
+          id?: string
+          result_preview?: string | null
+          source_title?: string | null
+          source_type: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          content_preview?: string | null
+          created_at?: string
+          id?: string
+          result_preview?: string | null
+          source_title?: string | null
+          source_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

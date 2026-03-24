@@ -9,10 +9,11 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Video, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw, Pencil } from 'lucide-react';
+import { Video, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw, Pencil , Workflow } from 'lucide-react';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
 import { InfobaseToggle, useInfobaseContext } from '@/components/InfobaseToggle';
+import { WorkflowPanel, type WorkflowContext } from '@/components/WorkflowPanel';
 
 const scriptExamples = [
   "Create a 2-minute explainer video script about blockchain technology for beginners",
@@ -48,6 +49,8 @@ export default function ScriptGenerator() {
   const [duration, setDuration] = useState('2min');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [workflowContext, setWorkflowContext] = useState<WorkflowContext | null>(null);
   const { infobaseEnabled, setInfobaseEnabled, selectedEntry, setSelectedEntry, getBrandContextString } = useInfobaseContext();
 
   const { recentContent, loadRecentContent, copyContentToClipboard, handleDeleteContent } = useRecentContent('script');
@@ -301,6 +304,15 @@ export default function ScriptGenerator() {
                   <Pencil className="w-4 h-4 mr-2" />
                   Edit & Export
                 </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setWorkflowOpen(true)}
+                  className="w-fit gap-2"
+                >
+                  <Workflow className="w-4 h-4" />
+                  Workflow
+                </Button>
               </div>
             )}
           </CardHeader>
@@ -360,7 +372,13 @@ export default function ScriptGenerator() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      
+      <WorkflowPanel
+        open={workflowOpen}
+        onOpenChange={setWorkflowOpen}
+        context={workflowContext}
+      />
+    </div>
     </div>
   );
 }

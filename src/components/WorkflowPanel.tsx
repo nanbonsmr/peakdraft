@@ -97,20 +97,39 @@ export function WorkflowPanel({ open, onOpenChange, context }: WorkflowPanelProp
   const relevantActionIds = getRelevantActions(context.type);
   const actions = ALL_ACTIONS.filter((a) => relevantActionIds.includes(a.id));
 
+  const logToHistory = async (actionType: string, resultPreview?: string) => {
+    if (!user || !context) return;
+    try {
+      await supabase.from("workflow_history").insert({
+        user_id: user.id,
+        action_type: actionType,
+        source_type: context.type,
+        source_title: context.title || null,
+        content_preview: context.content.slice(0, 200),
+        result_preview: resultPreview?.slice(0, 500) || null,
+      });
+    } catch (err) {
+      console.error("Failed to log workflow history:", err);
+    }
+  };
+
   const handleAction = async (actionId: ActionId) => {
     if (actionId === "chat") {
+      await logToHistory("chat");
       onOpenChange(false);
       navigate("/app/chat");
       return;
     }
 
     if (actionId === "image") {
+      await logToHistory("image");
       onOpenChange(false);
       navigate("/app/image-generation");
       return;
     }
 
     if (actionId === "blog") {
+      await logToHistory("blog");
       onOpenChange(false);
       navigate("/app/editor", {
         state: {
@@ -123,12 +142,14 @@ export function WorkflowPanel({ open, onOpenChange, context }: WorkflowPanelProp
     }
 
     if (actionId === "social") {
+      await logToHistory("social");
       onOpenChange(false);
       navigate("/app/templates", { state: { openTemplate: "social-media" } });
       return;
     }
 
     if (actionId === "email") {
+      await logToHistory("email");
       onOpenChange(false);
       navigate("/app/templates", { state: { openTemplate: "email" } });
       return;
@@ -163,6 +184,7 @@ export function WorkflowPanel({ open, onOpenChange, context }: WorkflowPanelProp
 
       if (error) throw error;
       setResult(data.generated_content);
+      await logToHistory(actionId, data.generated_content);
       setCompletedActions((prev) => new Set(prev).add(actionId));
     } catch (err: any) {
       toast({
@@ -192,6 +214,7 @@ export function WorkflowPanel({ open, onOpenChange, context }: WorkflowPanelProp
       if (error) throw error;
 
       toast({ title: "Task created!", description: `"${taskTitle}" added to your tasks` });
+      await logToHistory("task", `Task: ${taskTitle.trim()}`);
       setCompletedActions((prev) => new Set(prev).add("task"));
       setActiveAction(null);
       setTaskTitle("");
