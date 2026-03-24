@@ -214,6 +214,7 @@ export function WorkflowPanel({ open, onOpenChange, context }: WorkflowPanelProp
       if (error) throw error;
 
       toast({ title: "Task created!", description: `"${taskTitle}" added to your tasks` });
+      await logToHistory("task", `Task: ${taskTitle.trim()}`);
       setCompletedActions((prev) => new Set(prev).add("task"));
       setActiveAction(null);
       setTaskTitle("");
