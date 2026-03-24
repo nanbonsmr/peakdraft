@@ -287,6 +287,15 @@ Guidelines:
                   <Pencil className="w-4 h-4 mr-2" />
                   Edit & Export
                 </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setWorkflowOpen(true)}
+                  className="w-fit gap-2"
+                >
+                  <Workflow className="w-4 h-4" />
+                  Workflow
+                </Button>
               </div>
             </div>
           </CardHeader>
