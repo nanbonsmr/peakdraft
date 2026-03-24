@@ -184,6 +184,7 @@ export function WorkflowPanel({ open, onOpenChange, context }: WorkflowPanelProp
 
       if (error) throw error;
       setResult(data.generated_content);
+      await logToHistory(actionId, data.generated_content);
       setCompletedActions((prev) => new Set(prev).add(actionId));
     } catch (err: any) {
       toast({
