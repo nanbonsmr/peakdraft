@@ -103,6 +103,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         
+        // Clean OAuth tokens from URL hash after sign-in
+        if (event === 'SIGNED_IN' && window.location.hash.includes('access_token')) {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+        
         // Defer profile and admin check to avoid deadlock
         if (session?.user) {
           setTimeout(() => {
