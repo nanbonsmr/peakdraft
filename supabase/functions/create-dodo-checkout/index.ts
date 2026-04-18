@@ -111,7 +111,7 @@ serve(async (req) => {
       throw new Error(`Price configuration error: ${config.planName} plan price is not properly configured. Please contact support.`);
     }
 
-    const origin = req.headers.get('origin') || 'https://peakdraftapp.netlify.app';
+    const origin = req.headers.get('origin') || 'https://peakdraft.vercel.app';
     
     // Create checkout session with Dodo Payments API
     // return_url is ONLY used after successful payment
