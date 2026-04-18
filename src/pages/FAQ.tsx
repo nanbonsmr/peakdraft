@@ -44,8 +44,8 @@ const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://peakdraft.netlify.app" },
-    { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://peakdraft.netlify.app/faq" }
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://peakdraft.vercel.app" },
+    { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://peakdraft.vercel.app/faq" }
   ]
 };
 
@@ -58,11 +58,11 @@ export default function FAQ() {
         <title>FAQ - Frequently Asked Questions | PeakDraft AI Content Generator</title>
         <meta name="description" content="Find answers to common questions about PeakDraft's AI content generator, image creation, pricing plans, free tools, and technical support. Get help fast." />
         <meta name="keywords" content="PeakDraft FAQ, AI content generator questions, pricing plans, free trial, refund policy, AI writing tool help" />
-        <link rel="canonical" href="https://peakdraft.netlify.app/faq" />
+        <link rel="canonical" href="https://peakdraft.vercel.app/faq" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="FAQ - PeakDraft AI Content Generator" />
         <meta property="og:description" content="Find answers to common questions about PeakDraft's AI content generator, pricing, and support." />
-        <meta property="og:url" content="https://peakdraft.netlify.app/faq" />
+        <meta property="og:url" content="https://peakdraft.vercel.app/faq" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="FAQ - PeakDraft AI Content Generator" />

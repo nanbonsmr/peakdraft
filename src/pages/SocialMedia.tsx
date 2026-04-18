@@ -11,7 +11,7 @@ import { ArrowRight, Hash, MessageSquare, PenTool, TrendingUp, Zap, CheckCircle,
 import socialMediaHero from '@/assets/social-media-hero.jpg';
 import socialMediaFeatures from '@/assets/social-media-features.jpg';
 
-const siteUrl = 'https://peakdraft.netlify.app';
+const siteUrl = 'https://peakdraft.vercel.app';
 
 const jsonLd = {
   "@context": "https://schema.org",

@@ -149,10 +149,10 @@ export default function Chat() {
       <title>AI Chat Assistant - Ask Anything, Get Instant Answers | PeakDraft</title>
       <meta name="description" content="Chat with PeakDraft's AI assistant. Get instant answers, brainstorm ideas, draft content, and solve problems with a powerful conversational AI." />
       <meta name="keywords" content="AI chat, AI assistant, chatbot, AI conversation, ask AI, brainstorm ideas, AI writing help, PeakDraft" />
-      <link rel="canonical" href="https://peakdraft.netlify.app/app/chat" />
+      <link rel="canonical" href="https://peakdraft.vercel.app/app/chat" />
       <meta property="og:title" content="AI Chat Assistant | PeakDraft" />
       <meta property="og:description" content="Chat with AI to brainstorm, draft content, and get instant answers." />
-      <meta property="og:url" content="https://peakdraft.netlify.app/app/chat" />
+      <meta property="og:url" content="https://peakdraft.vercel.app/app/chat" />
       <meta property="og:type" content="website" />
     </Helmet>
     <div className="flex h-[calc(100vh-8rem)] sm:h-[calc(100vh-8rem)] gap-0 -m-4 sm:-m-6 rounded-xl overflow-hidden border border-border/30 bg-background/50 backdrop-blur-sm relative">

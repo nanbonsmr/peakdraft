@@ -482,11 +482,11 @@ export default function Templates() {
       <title>AI Writing Templates - Blog, Email, Ad Copy, Social Media Generators | PeakDraft</title>
       <meta name="description" content="25+ AI writing templates: blog post generator, email writer, ad copy creator, social media content, product descriptions, cover letters, proposals & more. Create professional content in seconds." />
       <meta name="keywords" content="AI writing templates, blog generator, email generator, ad copy generator, social media generator, product description generator, cover letter generator, AI content creator, PeakDraft" />
-      <link rel="canonical" href="https://peakdraft.netlify.app/app/templates" />
+      <link rel="canonical" href="https://peakdraft.vercel.app/app/templates" />
       <meta name="robots" content="index, follow" />
       <meta property="og:title" content="25+ AI Writing Templates | PeakDraft" />
       <meta property="og:description" content="Generate blog posts, emails, ad copy, social media content, and more with AI-powered templates." />
-      <meta property="og:url" content="https://peakdraft.netlify.app/app/templates" />
+      <meta property="og:url" content="https://peakdraft.vercel.app/app/templates" />
       <meta property="og:type" content="website" />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:title" content="AI Writing Templates | PeakDraft" />

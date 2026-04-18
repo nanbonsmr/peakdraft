@@ -114,11 +114,11 @@ export default function Tools() {
         <title>Free Online Utility Tools - Image Compressor, QR Generator, Developer Tools | PeakDraft</title>
         <meta name="description" content="Free online utility tools: image compressor, format converter, QR code generator, JSON formatter, Base64 encoder, password generator, hash generator, and more. All browser-based." />
         <meta name="keywords" content="image compressor, qr code generator, JSON formatter, Base64 encoder, password generator, hash generator, UUID generator, text tools, free online tools, developer tools" />
-        <link rel="canonical" href="https://peakdraft.netlify.app/tools" />
+        <link rel="canonical" href="https://peakdraft.vercel.app/tools" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="Free Online Utility Tools | PeakDraft" />
         <meta property="og:description" content="Image compression, QR codes, JSON formatting, password generation, and more — all free, browser-based tools." />
-        <meta property="og:url" content="https://peakdraft.netlify.app/tools" />
+        <meta property="og:url" content="https://peakdraft.vercel.app/tools" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Free Online Utility Tools | PeakDraft" />

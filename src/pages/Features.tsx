@@ -13,7 +13,7 @@ import {
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 
-const siteUrl = 'https://peakdraft.netlify.app';
+const siteUrl = 'https://peakdraft.vercel.app';
 
 const jsonLdFeatures = {
   "@context": "https://schema.org",

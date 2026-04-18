@@ -309,10 +309,10 @@ export default function ImageGeneration() {
       <title>AI Image Generator - Create Stunning Images from Text | PeakDraft</title>
       <meta name="description" content="Generate stunning AI images from text prompts. Create social media posts, posters, ads, YouTube thumbnails, logos, and product mockups with PeakDraft's AI image generator." />
       <meta name="keywords" content="AI image generator, text to image, AI art, social media images, poster design, YouTube thumbnail maker, logo generator, AI graphics, PeakDraft" />
-      <link rel="canonical" href="https://peakdraft.netlify.app/app/image-generation" />
+      <link rel="canonical" href="https://peakdraft.vercel.app/app/image-generation" />
       <meta property="og:title" content="AI Image Generator | PeakDraft" />
       <meta property="og:description" content="Create stunning images from text prompts. Social media, posters, ads, thumbnails & more." />
-      <meta property="og:url" content="https://peakdraft.netlify.app/app/image-generation" />
+      <meta property="og:url" content="https://peakdraft.vercel.app/app/image-generation" />
       <meta property="og:type" content="website" />
     </Helmet>
     <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
