@@ -48,7 +48,7 @@ interface RelatedPost {
   created_at: string;
 }
 
-const siteUrl = 'https://peakdraft.netlify.app';
+const siteUrl = 'https://peakdraft.vercel.app';
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();

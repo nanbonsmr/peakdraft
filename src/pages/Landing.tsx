@@ -22,7 +22,7 @@ import { PromotionPopup } from '@/components/PromotionPopup';
 import { HeroPreview } from '@/components/landing/HeroPreview';
 import { SectionReveal } from '@/components/landing/SectionReveal';
 
-const siteUrl = 'https://peakdraft.netlify.app';
+const siteUrl = 'https://peakdraft.vercel.app';
 
 const jsonLdOrganization = {
   "@context": "https://schema.org",

@@ -18,4 +18,4 @@ Disallow: /app/
 Disallow: /auth
 Disallow: /reset-password
 
-Sitemap: https://peakdraft.netlify.app/sitemap.xml
+Sitemap: https://peakdraft.vercel.app/sitemap.xml

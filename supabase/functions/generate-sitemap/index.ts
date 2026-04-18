@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     .eq("status", "published")
     .order("published_at", { ascending: false });
 
-  const baseUrl = "https://peakdraft.netlify.app";
+  const baseUrl = "https://peakdraft.vercel.app";
   const today = new Date().toISOString().split("T")[0];
 
   const staticPages = [

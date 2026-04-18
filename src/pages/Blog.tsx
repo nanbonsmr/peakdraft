@@ -26,7 +26,7 @@ interface BlogPost {
   created_at: string;
 }
 
-const siteUrl = 'https://peakdraft.netlify.app';
+const siteUrl = 'https://peakdraft.vercel.app';
 
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
