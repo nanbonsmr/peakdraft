@@ -980,6 +980,93 @@ export type Database = {
         }
         Relationships: []
       }
+      workflow_schedules: {
+        Row: {
+          action_type: string
+          content: string
+          created_at: string
+          error: string | null
+          executed_at: string | null
+          id: string
+          options: Json
+          result: string | null
+          scheduled_for: string
+          source_title: string | null
+          source_type: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          content: string
+          created_at?: string
+          error?: string | null
+          executed_at?: string | null
+          id?: string
+          options?: Json
+          result?: string | null
+          scheduled_for: string
+          source_title?: string | null
+          source_type: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          content?: string
+          created_at?: string
+          error?: string | null
+          executed_at?: string | null
+          id?: string
+          options?: Json
+          result?: string | null
+          scheduled_for?: string
+          source_title?: string | null
+          source_type?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      workflow_templates: {
+        Row: {
+          actions: Json
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          source_types: string[]
+          updated_at: string
+          use_brand_context: boolean
+          user_id: string
+        }
+        Insert: {
+          actions?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          source_types?: string[]
+          updated_at?: string
+          use_brand_context?: boolean
+          user_id: string
+        }
+        Update: {
+          actions?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          source_types?: string[]
+          updated_at?: string
+          use_brand_context?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
