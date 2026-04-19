@@ -1,41 +1,38 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import {
   Workflow,
-  Hash,
-  Image,
-  Globe,
-  ListTodo,
-  PenTool,
-  Share2,
-  Mail,
-  FileText,
   Sparkles,
-  ArrowRight,
-  CheckCircle2,
   Loader2,
-  X,
-  MessageSquare,
+  ArrowRight,
+  ListTodo,
+  Download,
+  Save,
+  Wand2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export type WorkflowContext = {
-  content: string;
-  title?: string;
-  type: "blog" | "email" | "social" | "ad" | "chat" | "general" | "task";
-  keywords?: string[];
-};
+import { ActionId, WorkflowContext } from "./workflow/types";
+import { ALL_ACTIONS, getRelevantActions, LANGUAGE_OPTIONS, TONE_OPTIONS } from "./workflow/actions";
+import { useWorkflowRunner } from "./workflow/useWorkflowRunner";
+import { useInfobase } from "@/hooks/useInfobase";
+import { SmartSuggestionsView } from "./workflow/SmartSuggestionsView";
+import { ChainBuilder } from "./workflow/ChainBuilder";
+import { ScheduleManager } from "./workflow/ScheduleManager";
+import { ResultCard } from "./workflow/ResultCard";
+
+export type { WorkflowContext } from "./workflow/types";
 
 interface WorkflowPanelProps {
   open: boolean;
@@ -43,165 +40,103 @@ interface WorkflowPanelProps {
   context: WorkflowContext | null;
 }
 
-type ActionId = "seo" | "hashtags" | "image" | "task" | "blog" | "social" | "email" | "chat";
-
-interface WorkflowAction {
-  id: ActionId;
-  label: string;
-  description: string;
-  icon: React.ElementType;
-  color: string;
-}
-
-const ALL_ACTIONS: WorkflowAction[] = [
-  { id: "seo", label: "Generate SEO Metadata", description: "Create meta title, description & keywords", icon: Globe, color: "text-emerald-500" },
-  { id: "hashtags", label: "Generate Hashtags", description: "Create relevant social media hashtags", icon: Hash, color: "text-blue-500" },
-  { id: "image", label: "Generate Image", description: "Create a featured image with AI", icon: Image, color: "text-purple-500" },
-  { id: "task", label: "Add to Tasks", description: "Create a task to track this content", icon: ListTodo, color: "text-amber-500" },
-  { id: "blog", label: "Create Blog Post", description: "Turn this content into a blog post", icon: PenTool, color: "text-rose-500" },
-  { id: "social", label: "Create Social Post", description: "Adapt content for social media", icon: Share2, color: "text-sky-500" },
-  { id: "email", label: "Create Email", description: "Turn this into an email newsletter", icon: Mail, color: "text-orange-500" },
-  { id: "chat", label: "Discuss in Chat", description: "Continue improving in AI Chat", icon: MessageSquare, color: "text-violet-500" },
-];
-
-function getRelevantActions(type: WorkflowContext["type"]): ActionId[] {
-  switch (type) {
-    case "blog":
-      return ["seo", "hashtags", "image", "social", "task", "chat"];
-    case "email":
-      return ["task", "social", "blog", "chat"];
-    case "social":
-      return ["hashtags", "image", "blog", "task", "chat"];
-    case "ad":
-      return ["image", "social", "hashtags", "task", "chat"];
-    case "chat":
-      return ["task", "blog", "social", "email", "image", "hashtags"];
-    case "task":
-      return ["blog", "social", "email", "chat", "image"];
-    default:
-      return ["seo", "hashtags", "image", "task", "blog", "social", "chat"];
-  }
-}
-
 export function WorkflowPanel({ open, onOpenChange, context }: WorkflowPanelProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [activeAction, setActiveAction] = useState<ActionId | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
+  const { activeEntry, buildBrandContext } = useInfobase();
+  const runner = useWorkflowRunner(context);
+
+  const [useBrand, setUseBrand] = useState(true);
+  const [language, setLanguage] = useState("Spanish");
+  const [tone, setTone] = useState("professional");
   const [taskTitle, setTaskTitle] = useState("");
-  const [completedActions, setCompletedActions] = useState<Set<ActionId>>(new Set());
+  const [activeAction, setActiveAction] = useState<ActionId | null>(null);
+  const [actionLoading, setActionLoading] = useState<ActionId | null>(null);
+  const [savedFetched, setSavedFetched] = useState(false);
+  const [saveTplOpen, setSaveTplOpen] = useState(false);
+  const [tplName, setTplName] = useState("");
+  const [tab, setTab] = useState("smart");
+
+  const brandContext = useMemo(
+    () => (useBrand ? buildBrandContext(activeEntry) : ""),
+    [useBrand, activeEntry, buildBrandContext]
+  );
+
+  // Reset on context change
+  useEffect(() => {
+    if (open && context) {
+      runner.resetResults();
+      setActiveAction(null);
+      setSavedFetched(false);
+      setTab("smart");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, context?.content]);
 
   if (!context) return null;
 
-  const relevantActionIds = getRelevantActions(context.type);
-  const actions = ALL_ACTIONS.filter((a) => relevantActionIds.includes(a.id));
+  const relevantIds = getRelevantActions(context.type);
+  const relevantActions = relevantIds.map((id) => ALL_ACTIONS[id]).filter(Boolean);
 
-  const logToHistory = async (actionType: string, resultPreview?: string) => {
-    if (!user || !context) return;
-    try {
-      await supabase.from("workflow_history").insert({
-        user_id: user.id,
-        action_type: actionType,
-        source_type: context.type,
-        source_title: context.title || null,
-        content_preview: context.content.slice(0, 200),
-        result_preview: resultPreview?.slice(0, 500) || null,
-      });
-    } catch (err) {
-      console.error("Failed to log workflow history:", err);
+  const handleNavAction = async (actionId: ActionId) => {
+    await runner.logHistory(actionId);
+    onOpenChange(false);
+    switch (actionId) {
+      case "chat":
+        navigate("/app/chat");
+        break;
+      case "image":
+        navigate("/app/image-generation");
+        break;
+      case "blog":
+        navigate("/app/editor", {
+          state: { content: context.content, title: context.title || "Untitled", templateType: context.type },
+        });
+        break;
+      case "social":
+        navigate("/app/templates", { state: { openTemplate: "social-media" } });
+        break;
+      case "email":
+        navigate("/app/templates", { state: { openTemplate: "email" } });
+        break;
     }
   };
 
-  const handleAction = async (actionId: ActionId) => {
-    if (actionId === "chat") {
-      await logToHistory("chat");
-      onOpenChange(false);
-      navigate("/app/chat");
-      return;
-    }
-
-    if (actionId === "image") {
-      await logToHistory("image");
-      onOpenChange(false);
-      navigate("/app/image-generation");
-      return;
-    }
-
-    if (actionId === "blog") {
-      await logToHistory("blog");
-      onOpenChange(false);
-      navigate("/app/editor", {
-        state: {
-          content: context.content,
-          title: context.title || "Untitled",
-          templateType: context.type,
-        },
+  const handleAIAction = async (actionId: ActionId) => {
+    setActiveAction(actionId);
+    setActionLoading(actionId);
+    try {
+      await runner.runAIAction(actionId, {
+        brandContext,
+        language: actionId === "translate" ? language : undefined,
+        tone: actionId === "tone" ? tone : undefined,
       });
-      return;
+    } catch (err: any) {
+      toast({ title: "Generation failed", description: err.message, variant: "destructive" });
+    } finally {
+      setActionLoading(null);
     }
+  };
 
-    if (actionId === "social") {
-      await logToHistory("social");
-      onOpenChange(false);
-      navigate("/app/templates", { state: { openTemplate: "social-media" } });
-      return;
-    }
-
-    if (actionId === "email") {
-      await logToHistory("email");
-      onOpenChange(false);
-      navigate("/app/templates", { state: { openTemplate: "email" } });
-      return;
-    }
-
+  const handleAction = (actionId: ActionId) => {
+    const meta = ALL_ACTIONS[actionId];
     if (actionId === "task") {
       setActiveAction("task");
       setTaskTitle(context.title || context.content.slice(0, 60));
       return;
     }
-
-    // AI-powered actions: SEO, hashtags
-    setActiveAction(actionId);
-    setLoading(true);
-    setResult(null);
-
-    try {
-      let prompt = "";
-      if (actionId === "seo") {
-        prompt = `Generate SEO metadata for the following content. Return a meta title (under 60 chars), meta description (under 160 chars), and 5-8 relevant keywords. Format clearly with labels.\n\nContent:\n${context.content.slice(0, 2000)}`;
-      } else if (actionId === "hashtags") {
-        prompt = `Generate 15-20 relevant hashtags for the following content. Mix popular and niche hashtags. Return them as a list.\n\nContent:\n${context.content.slice(0, 1500)}`;
-      }
-
-      const { data, error } = await supabase.functions.invoke("generate-content", {
-        body: {
-          template_type: "workflow-" + actionId,
-          prompt,
-          language: "en",
-        },
-      });
-
-      if (error) throw error;
-      setResult(data.generated_content);
-      await logToHistory(actionId, data.generated_content);
-      setCompletedActions((prev) => new Set(prev).add(actionId));
-    } catch (err: any) {
-      toast({
-        title: "Generation failed",
-        description: err.message || "Something went wrong",
-        variant: "destructive",
-      });
-      setActiveAction(null);
-    } finally {
-      setLoading(false);
+    if (meta.isNav) {
+      handleNavAction(actionId);
+      return;
+    }
+    if (meta.isAI) {
+      handleAIAction(actionId);
     }
   };
 
   const handleCreateTask = async () => {
     if (!user || !taskTitle.trim()) return;
-    setLoading(true);
-
+    setActionLoading("task");
     try {
       const { error } = await supabase.from("tasks").insert({
         user_id: user.id,
@@ -210,174 +145,315 @@ export function WorkflowPanel({ open, onOpenChange, context }: WorkflowPanelProp
         priority: "medium",
         status: "todo",
       });
-
       if (error) throw error;
-
       toast({ title: "Task created!", description: `"${taskTitle}" added to your tasks` });
-      await logToHistory("task", `Task: ${taskTitle.trim()}`);
-      setCompletedActions((prev) => new Set(prev).add("task"));
+      await runner.logHistory("task", `Task: ${taskTitle.trim()}`);
       setActiveAction(null);
       setTaskTitle("");
     } catch (err: any) {
       toast({ title: "Failed to create task", description: err.message, variant: "destructive" });
     } finally {
-      setLoading(false);
+      setActionLoading(null);
+    }
+  };
+
+  const handleSendToEditor = (resultText: string, action: ActionId) => {
+    onOpenChange(false);
+    navigate("/app/editor", {
+      state: {
+        content: resultText,
+        title: `${ALL_ACTIONS[action].label} – ${context.title || "Untitled"}`,
+        templateType: context.type,
+      },
+    });
+  };
+
+  const handleBulkExport = (format: "md" | "json") => {
+    const allResults = Object.values(runner.results);
+    if (allResults.length === 0) {
+      toast({ title: "Nothing to export yet", description: "Run an action first." });
+      return;
+    }
+    let content = "";
+    let mime = "text/markdown";
+    let ext = "md";
+    if (format === "json") {
+      content = JSON.stringify(
+        {
+          source: { type: context.type, title: context.title, content: context.content },
+          results: allResults,
+          exported_at: new Date().toISOString(),
+        },
+        null,
+        2
+      );
+      mime = "application/json";
+      ext = "json";
+    } else {
+      content =
+        `# Workflow Export\n\n**Source:** ${context.title || context.type}\n\n## Original Content\n\n${context.content}\n\n---\n\n` +
+        allResults
+          .map((r) => `## ${ALL_ACTIONS[r.action].label}\n\n${r.result}\n`)
+          .join("\n---\n\n");
+    }
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `workflow-${Date.now()}.${ext}`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "Exported!", description: `${allResults.length} result(s) bundled.` });
+  };
+
+  const handleSaveTemplate = async () => {
+    if (!user || !tplName.trim()) return;
+    const completedActions = Object.keys(runner.results) as ActionId[];
+    const queuedFromChain = runner.chain.map((s) => s.action);
+    const actions = [...new Set([...queuedFromChain, ...completedActions])];
+    if (actions.length === 0) {
+      toast({ title: "Run some actions first", description: "Templates save your action sequence." });
+      return;
+    }
+    try {
+      const { error } = await (supabase as any).from("workflow_templates").insert({
+        user_id: user.id,
+        name: tplName.trim(),
+        source_types: [context.type],
+        actions,
+        use_brand_context: useBrand,
+      });
+      if (error) throw error;
+      toast({ title: "Template saved!", description: `"${tplName}" can be re-run anytime.` });
+      setTplName("");
+      setSaveTplOpen(false);
+    } catch (err: any) {
+      toast({ title: "Save failed", description: err.message, variant: "destructive" });
     }
   };
 
   const handleClose = () => {
     setActiveAction(null);
-    setResult(null);
-    setCompletedActions(new Set());
+    runner.resetResults();
     onOpenChange(false);
   };
 
+  const fetchSuggestions = () => {
+    setSavedFetched(true);
+    runner.fetchSmartSuggestions(brandContext);
+  };
+
+  const completedCount = Object.keys(runner.results).length;
+
   return (
     <Sheet open={open} onOpenChange={handleClose}>
-      <SheetContent className="w-full sm:max-w-md p-0 flex flex-col">
+      <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col">
         <SheetHeader className="px-5 pt-5 pb-3">
           <SheetTitle className="flex items-center gap-2.5 text-lg">
             <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-              <Workflow className="h-4.5 w-4.5 text-white" />
+              <Workflow className="h-4 w-4 text-white" />
             </div>
-            Workflow Actions
+            Workflow Studio
           </SheetTitle>
           <SheetDescription className="text-xs">
-            Continue your workflow — generate related content, create tasks, or share across tools.
+            AI-curated next steps, multi-step chains, scheduling, and inline transforms.
           </SheetDescription>
+
+          {/* Brand toggle */}
+          {activeEntry && (
+            <div className="mt-2 flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-muted/30 border border-border/40">
+              <Switch id="use-brand" checked={useBrand} onCheckedChange={setUseBrand} className="scale-75" />
+              <label htmlFor="use-brand" className="text-[11px] cursor-pointer flex-1">
+                Apply <span className="font-semibold">{activeEntry.brand_name}</span> brand context
+              </label>
+            </div>
+          )}
         </SheetHeader>
 
         <Separator />
 
-        <ScrollArea className="flex-1 px-5 py-4">
-          <AnimatePresence mode="wait">
-            {activeAction && (activeAction === "seo" || activeAction === "hashtags") ? (
-              <motion.div
-                key="result"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <Button variant="ghost" size="sm" onClick={() => { setActiveAction(null); setResult(null); }} className="gap-1.5 -ml-2">
-                  <ArrowRight className="h-3.5 w-3.5 rotate-180" /> Back
-                </Button>
+        <div className="flex-1 overflow-hidden flex flex-col">
+          <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col overflow-hidden">
+            <TabsList className="mx-5 mt-3 grid grid-cols-4 h-8">
+              <TabsTrigger value="smart" className="text-[11px]">Smart</TabsTrigger>
+              <TabsTrigger value="actions" className="text-[11px]">Actions</TabsTrigger>
+              <TabsTrigger value="chain" className="text-[11px]">Chain</TabsTrigger>
+              <TabsTrigger value="schedule" className="text-[11px]">Later</TabsTrigger>
+            </TabsList>
 
-                <h3 className="font-semibold text-sm">
-                  {activeAction === "seo" ? "SEO Metadata" : "Generated Hashtags"}
-                </h3>
+            <ScrollArea className="flex-1 px-5 py-3">
+              {context.title && (
+                <div className="mb-3 p-2.5 rounded-lg bg-muted/30 border border-border/40">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Working with</p>
+                  <p className="text-sm font-medium truncate">{context.title}</p>
+                </div>
+              )}
 
-                {loading ? (
-                  <div className="flex items-center justify-center py-12 gap-3">
-                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                    <span className="text-sm text-muted-foreground">Generating...</span>
-                  </div>
-                ) : result ? (
-                  <div className="space-y-3">
-                    <div className="bg-muted/40 rounded-xl p-4 border border-border/50">
-                      <pre className="whitespace-pre-wrap text-sm font-sans leading-relaxed">{result}</pre>
-                    </div>
+              <TabsContent value="smart" className="space-y-3 mt-0">
+                <SmartSuggestionsView
+                  suggestions={runner.suggestions}
+                  loading={runner.loadingSuggestions}
+                  onFetch={fetchSuggestions}
+                  onRun={handleAction}
+                  fetched={savedFetched}
+                />
+              </TabsContent>
+
+              <TabsContent value="actions" className="space-y-2 mt-0">
+                {/* Inline option pickers for translate/tone */}
+                {(activeAction === "translate" || activeAction === "tone") && (
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40 mb-2">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">
+                      {activeAction === "translate" ? "Target language" : "New tone"}
+                    </p>
+                    <select
+                      value={activeAction === "translate" ? language : tone}
+                      onChange={(e) =>
+                        activeAction === "translate" ? setLanguage(e.target.value) : setTone(e.target.value)
+                      }
+                      className="w-full text-xs rounded-md bg-background border border-input px-2.5 py-1.5"
+                    >
+                      {(activeAction === "translate" ? LANGUAGE_OPTIONS : TONE_OPTIONS).map((o) => (
+                        <option key={o} value={o}>{o}</option>
+                      ))}
+                    </select>
                     <Button
                       size="sm"
-                      variant="outline"
-                      className="w-full gap-2"
-                      onClick={() => {
-                        navigator.clipboard.writeText(result);
-                        toast({ title: "Copied!" });
-                      }}
+                      className="w-full mt-2 h-7 text-xs gap-1.5"
+                      onClick={() => handleAIAction(activeAction)}
+                      disabled={actionLoading === activeAction}
                     >
-                      Copy to Clipboard
+                      {actionLoading === activeAction ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />}
+                      Run
                     </Button>
-                  </div>
-                ) : null}
-              </motion.div>
-            ) : activeAction === "task" ? (
-              <motion.div
-                key="task"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <Button variant="ghost" size="sm" onClick={() => setActiveAction(null)} className="gap-1.5 -ml-2">
-                  <ArrowRight className="h-3.5 w-3.5 rotate-180" /> Back
-                </Button>
-
-                <h3 className="font-semibold text-sm">Create Task</h3>
-                <div className="space-y-3">
-                  <Input
-                    value={taskTitle}
-                    onChange={(e) => setTaskTitle(e.target.value)}
-                    placeholder="Task title..."
-                    className="text-sm"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    The content will be saved as the task description.
-                  </p>
-                  <Button onClick={handleCreateTask} disabled={loading || !taskTitle.trim()} className="w-full gap-2" size="sm">
-                    {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ListTodo className="h-3.5 w-3.5" />}
-                    Create Task
-                  </Button>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="actions"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="space-y-2"
-              >
-                {context.title && (
-                  <div className="mb-4 p-3 rounded-xl bg-muted/30 border border-border/40">
-                    <p className="text-xs text-muted-foreground mb-1">Working with:</p>
-                    <p className="text-sm font-medium truncate">{context.title}</p>
                   </div>
                 )}
 
-                {actions.map((action, i) => {
-                  const isCompleted = completedActions.has(action.id);
-                  return (
-                    <motion.button
-                      key={action.id}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      onClick={() => handleAction(action.id)}
-                      disabled={isCompleted}
-                      className={cn(
-                        "w-full flex items-center gap-3.5 p-3.5 rounded-xl border transition-all duration-200 text-left group",
-                        isCompleted
-                          ? "border-emerald-500/30 bg-emerald-500/5 cursor-default"
-                          : "border-border/50 hover:border-primary/30 hover:bg-primary/5 hover:shadow-md hover:shadow-primary/5"
-                      )}
-                    >
-                      <div className={cn(
-                        "h-10 w-10 rounded-lg flex items-center justify-center shrink-0 transition-colors",
-                        isCompleted ? "bg-emerald-500/10" : "bg-muted/60 group-hover:bg-primary/10"
-                      )}>
-                        {isCompleted ? (
-                          <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                        ) : (
-                          <action.icon className={cn("h-5 w-5", action.color)} />
+                {activeAction === "task" && (
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40 mb-2 space-y-2">
+                    <Input
+                      value={taskTitle}
+                      onChange={(e) => setTaskTitle(e.target.value)}
+                      placeholder="Task title…"
+                      className="text-xs h-8"
+                    />
+                    <Button size="sm" className="w-full h-7 text-xs gap-1.5" onClick={handleCreateTask} disabled={actionLoading === "task"}>
+                      {actionLoading === "task" ? <Loader2 className="h-3 w-3 animate-spin" /> : <ListTodo className="h-3 w-3" />}
+                      Create Task
+                    </Button>
+                  </div>
+                )}
+
+                {/* Action list grouped */}
+                <div className="space-y-1.5">
+                  {relevantActions.map((action, i) => {
+                    const isLoading = actionLoading === action.id;
+                    const isDone = !!runner.results[action.id];
+                    return (
+                      <motion.button
+                        key={action.id}
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.03 }}
+                        onClick={() => handleAction(action.id)}
+                        disabled={isLoading}
+                        className={cn(
+                          "w-full flex items-center gap-2.5 p-2.5 rounded-lg border transition-all text-left group",
+                          isDone
+                            ? "border-emerald-500/30 bg-emerald-500/5"
+                            : "border-border/50 hover:border-primary/40 hover:bg-primary/5"
                         )}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-medium">{action.label}</p>
+                            {action.isAI && (
+                              <Sparkles className="h-2.5 w-2.5 text-violet-500 shrink-0" />
+                            )}
+                            {isDone && <span className="text-[10px] text-emerald-600 dark:text-emerald-400">✓</span>}
+                          </div>
+                          <p className="text-[11px] text-muted-foreground truncate">{action.description}</p>
+                        </div>
+                        {isLoading ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                        ) : (
+                          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary transition-colors shrink-0" />
+                        )}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="chain" className="mt-0">
+                <ChainBuilder
+                  available={relevantIds}
+                  chain={runner.chain}
+                  running={runner.chainRunning}
+                  onRun={(actions) =>
+                    runner.runChain(actions, { brandContext, language, tone })
+                  }
+                  onClear={runner.resetResults}
+                />
+              </TabsContent>
+
+              <TabsContent value="schedule" className="mt-0">
+                <ScheduleManager context={context} defaultAction="summarize" />
+              </TabsContent>
+
+              {/* Results section (always visible across tabs) */}
+              <AnimatePresence>
+                {completedCount > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-4 space-y-2"
+                  >
+                    <div className="flex items-center justify-between pt-3 border-t border-border/40">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Results ({completedCount})
+                      </p>
+                      <div className="flex gap-1">
+                        <Button size="sm" variant="ghost" className="h-6 text-[10px] gap-1 px-2" onClick={() => handleBulkExport("md")}>
+                          <Download className="h-2.5 w-2.5" /> MD
+                        </Button>
+                        <Button size="sm" variant="ghost" className="h-6 text-[10px] gap-1 px-2" onClick={() => handleBulkExport("json")}>
+                          <Download className="h-2.5 w-2.5" /> JSON
+                        </Button>
+                        <Button size="sm" variant="ghost" className="h-6 text-[10px] gap-1 px-2" onClick={() => setSaveTplOpen((v) => !v)}>
+                          <Save className="h-2.5 w-2.5" /> Template
+                        </Button>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={cn("text-sm font-medium", isCompleted && "text-emerald-600 dark:text-emerald-400")}>
-                          {isCompleted ? `${action.label} ✓` : action.label}
-                        </p>
-                        <p className="text-xs text-muted-foreground">{action.description}</p>
+                    </div>
+
+                    {saveTplOpen && (
+                      <div className="p-2 rounded-lg bg-muted/40 border border-border/40 flex gap-1.5">
+                        <Input
+                          value={tplName}
+                          onChange={(e) => setTplName(e.target.value)}
+                          placeholder="Recipe name…"
+                          className="text-xs h-7"
+                        />
+                        <Button size="sm" className="h-7 text-[11px] px-2" onClick={handleSaveTemplate} disabled={!tplName.trim()}>
+                          Save
+                        </Button>
                       </div>
-                      {!isCompleted && (
-                        <ArrowRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0" />
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </ScrollArea>
+                    )}
+
+                    {Object.values(runner.results).map((r) => (
+                      <ResultCard
+                        key={r.action}
+                        result={r}
+                        context={context}
+                        onSendToEditor={() => handleSendToEditor(r.result, r.action)}
+                      />
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </ScrollArea>
+          </Tabs>
+        </div>
       </SheetContent>
     </Sheet>
   );
