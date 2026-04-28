@@ -45,9 +45,12 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
         tone: opts.tone || "",
       });
 
+      const tplId = getTemplateIdFromAction(actionId);
+      const templateType = tplId ? tplId : `workflow-${actionId}`;
+
       const { data, error } = await supabase.functions.invoke("generate-content", {
         body: {
-          template_type: `workflow-${actionId}`,
+          template_type: templateType,
           prompt,
           language: "en",
           brand_context: opts.brandContext || undefined,
