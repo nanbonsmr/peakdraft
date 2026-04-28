@@ -43,7 +43,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { ALL_ACTIONS, buildActionPrompt, getRelevantActions } from "@/components/workflow/actions";
+import { ALL_ACTIONS, buildActionPrompt, getRelevantActions, getTemplateIdFromAction, TEMPLATE_ACTIONS } from "@/components/workflow/actions";
 import { ActionId, WorkflowSourceType } from "@/components/workflow/types";
 import { STARTER_TEMPLATES, StarterTemplate } from "@/components/workflow/starterTemplates";
 import { useInfobase } from "@/hooks/useInfobase";
