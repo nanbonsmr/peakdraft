@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { ActionId, ActionResult, ChainStep, SmartSuggestion, WorkflowContext } from "./types";
 import { buildActionPrompt, getTemplateIdFromAction } from "./actions";
 
@@ -11,7 +12,8 @@ interface RunOptions {
 }
 
 export function useWorkflowRunner(context: WorkflowContext | null) {
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
+  const { toast } = useToast();
   const [results, setResults] = useState<Record<string, ActionResult>>({});
   const [chain, setChain] = useState<ChainStep[]>([]);
   const [chainRunning, setChainRunning] = useState(false);
