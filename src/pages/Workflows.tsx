@@ -45,9 +45,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { ALL_ACTIONS, buildActionPrompt, getRelevantActions } from "@/components/workflow/actions";
 import { ActionId, WorkflowSourceType } from "@/components/workflow/types";
+import { STARTER_TEMPLATES, StarterTemplate } from "@/components/workflow/starterTemplates";
 import { useInfobase } from "@/hooks/useInfobase";
 import { format } from "date-fns";
 import WorkflowHistory from "./WorkflowHistory";
+import { Rocket } from "lucide-react";
 
 interface WorkflowTemplate {
   id: string;
@@ -108,11 +110,68 @@ export default function Workflows() {
         .select("*")
         .order("updated_at", { ascending: false });
       if (error) throw error;
-      setTemplates((data as WorkflowTemplate[]) || []);
+      const list = (data as WorkflowTemplate[]) || [];
+
+      // Auto-seed starter templates the first time a user lands here with zero workflows.
+      const seedFlagKey = `workflows_starters_seeded_${user.id}`;
+      const alreadySeeded = localStorage.getItem(seedFlagKey) === "1";
+      if (list.length === 0 && !alreadySeeded) {
+        const seeded = await seedStarterTemplates();
+        localStorage.setItem(seedFlagKey, "1");
+        setTemplates(seeded);
+      } else {
+        setTemplates(list);
+      }
     } catch (err: any) {
       toast({ title: "Failed to load workflows", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const seedStarterTemplates = async (): Promise<WorkflowTemplate[]> => {
+    if (!user) return [];
+    try {
+      const rows = STARTER_TEMPLATES.map((s) => ({
+        user_id: user.id,
+        name: s.name,
+        description: s.description,
+        source_types: s.source_types,
+        actions: s.actions,
+        use_brand_context: s.use_brand_context,
+      }));
+      const { data, error } = await (supabase as any)
+        .from("workflow_templates")
+        .insert(rows)
+        .select();
+      if (error) throw error;
+      toast({
+        title: "Starter workflows added",
+        description: `${rows.length} ready-to-run recipes are now in your library.`,
+      });
+      return (data as WorkflowTemplate[]) || [];
+    } catch (err: any) {
+      console.error("seedStarterTemplates failed:", err);
+      return [];
+    }
+  };
+
+  const addStarter = async (starter: StarterTemplate) => {
+    if (!user) return;
+    try {
+      const { error } = await (supabase as any).from("workflow_templates").insert({
+        user_id: user.id,
+        name: starter.name,
+        description: starter.description,
+        source_types: starter.source_types,
+        actions: starter.actions,
+        use_brand_context: starter.use_brand_context,
+      });
+      if (error) throw error;
+      toast({ title: `Added "${starter.name}"` });
+      loadTemplates();
+    } catch (err: any) {
+      toast({ title: "Failed to add starter", description: err.message, variant: "destructive" });
     }
   };
 
@@ -131,7 +190,8 @@ export default function Workflows() {
     setEditing(null);
     setFormName("");
     setFormDescription("");
-    setFormSourceTypes(["general"]);
+    // Default new workflows to all source types so they're accessible everywhere.
+    setFormSourceTypes([...SOURCE_TYPES]);
     setFormActions([]);
     setFormUseBrand(true);
     setEditorOpen(true);
@@ -383,6 +443,50 @@ export default function Workflows() {
             </Button>
           </div>
 
+          {/* Missing starter templates — quick add */}
+          {!loading && (() => {
+            const existingNames = new Set(templates.map((t) => t.name.toLowerCase()));
+            const missing = STARTER_TEMPLATES.filter((s) => !existingNames.has(s.name.toLowerCase()));
+            if (missing.length === 0) return null;
+            return (
+              <Card className="border-dashed border-violet-500/30 bg-violet-500/5">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Rocket className="h-4 w-4 text-violet-500" />
+                    Starter recipes
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Add prebuilt workflows to your library with one click.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                    {missing.map((s) => (
+                      <button
+                        key={s.key}
+                        onClick={() => addStarter(s)}
+                        className="text-left p-3 rounded-lg border border-border/50 bg-background hover:border-violet-500/40 hover:bg-violet-500/5 transition-colors"
+                      >
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <Plus className="h-3 w-3 text-violet-500" />
+                          <p className="text-xs font-semibold">{s.name}</p>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground line-clamp-2">{s.description}</p>
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {s.actions.slice(0, 4).map((a) => (
+                            <Badge key={a} variant="outline" className="text-[9px] font-normal px-1 py-0">
+                              {ALL_ACTIONS[a]?.label}
+                            </Badge>
+                          ))}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()}
+
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -396,7 +500,7 @@ export default function Workflows() {
                 <div>
                   <p className="font-medium">No saved workflows yet</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Build a recipe from any AI generation via the Workflow Panel, or create one here.
+                    Add a starter above, or build a custom recipe from scratch.
                   </p>
                 </div>
                 <Button onClick={openNew} variant="outline" className="gap-1.5">
