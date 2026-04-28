@@ -317,6 +317,14 @@ export default function Workflows() {
       toast({ title: "Add some content first", variant: "destructive" });
       return;
     }
+    if (profile && profile.words_used >= profile.words_limit) {
+      toast({
+        title: "Word limit reached",
+        description: "Please upgrade your plan to run workflows.",
+        variant: "destructive",
+      });
+      return;
+    }
     setRunRunning(true);
     const brandContext = runTemplate.use_brand_context ? buildBrandContext(activeEntry) : "";
 
@@ -359,6 +367,30 @@ export default function Workflows() {
         });
         if (error) throw error;
         const result = (data as any)?.generated_content || "";
+        const wordCount =
+          (data as any)?.word_count ||
+          (result ? result.trim().split(/\s+/).filter(Boolean).length : 0);
+
+        // Track words & persist generation so workflow usage counts toward plan
+        if (user && result) {
+          try {
+            await supabase.from("content_generations").insert({
+              user_id: user.id,
+              template_type: templateType,
+              prompt,
+              generated_content: result,
+              word_count: wordCount,
+              language: "en",
+            });
+            await supabase.rpc("update_word_usage", {
+              user_uuid: user.id,
+              words_to_add: wordCount,
+            });
+          } catch (persistErr) {
+            console.error("Workflow usage tracking failed:", persistErr);
+          }
+        }
+
         setRunStepStates((prev) =>
           prev.map((s, idx) => (idx === i ? { ...s, status: "done", result } : s))
         );
@@ -371,6 +403,17 @@ export default function Workflows() {
           content_preview: runContent.slice(0, 200),
           result_preview: result.slice(0, 500),
         });
+
+        // Stop early if user just crossed the limit
+        if (profile && profile.words_used + wordCount >= profile.words_limit) {
+          await refreshProfile();
+          toast({
+            title: "Word limit reached",
+            description: "Remaining workflow steps were skipped.",
+            variant: "destructive",
+          });
+          break;
+        }
       } catch (err: any) {
         setRunStepStates((prev) =>
           prev.map((s, idx) =>
@@ -380,6 +423,7 @@ export default function Workflows() {
         break;
       }
     }
+    await refreshProfile();
     setRunRunning(false);
     toast({ title: "Workflow finished" });
   };
