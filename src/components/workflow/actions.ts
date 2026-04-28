@@ -114,6 +114,14 @@ export function getRelevantActions(type: WorkflowSourceType): ActionId[] {
 
 export function buildActionPrompt(action: ActionId, content: string, options: Record<string, string> = {}): string {
   const excerpt = content.slice(0, 2500);
+
+  // Template actions: pass the user's content as the topic/brief for that template's generator.
+  if (typeof action === "string" && action.startsWith("tpl-")) {
+    const meta = TEMPLATE_ACTIONS.find((t) => t.id === action);
+    const label = meta?.label.replace(/^Template:\s*/, "") || "content";
+    return `Use the following input as the topic/brief and produce a high-quality ${label}. Stay focused on this topic and follow best practices for the format.\n\nInput:\n${excerpt}`;
+  }
+
   switch (action) {
     case "seo":
       return `Generate SEO metadata for the following content. Return:\n- Meta Title (under 60 chars)\n- Meta Description (under 160 chars)\n- 5-8 Keywords (comma separated)\nUse clear labels.\n\nContent:\n${excerpt}`;
