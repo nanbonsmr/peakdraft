@@ -43,7 +43,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { ALL_ACTIONS, buildActionPrompt, getRelevantActions } from "@/components/workflow/actions";
+import { ALL_ACTIONS, buildActionPrompt, getRelevantActions, getTemplateIdFromAction, TEMPLATE_ACTIONS } from "@/components/workflow/actions";
 import { ActionId, WorkflowSourceType } from "@/components/workflow/types";
 import { STARTER_TEMPLATES, StarterTemplate } from "@/components/workflow/starterTemplates";
 import { useInfobase } from "@/hooks/useInfobase";
@@ -84,6 +84,7 @@ export default function Workflows() {
   const [formSourceTypes, setFormSourceTypes] = useState<string[]>(["general"]);
   const [formActions, setFormActions] = useState<ActionId[]>([]);
   const [formUseBrand, setFormUseBrand] = useState(true);
+  const [actionSearch, setActionSearch] = useState("");
   const [saving, setSaving] = useState(false);
 
   // Run dialog
@@ -194,6 +195,7 @@ export default function Workflows() {
     setFormSourceTypes([...SOURCE_TYPES]);
     setFormActions([]);
     setFormUseBrand(true);
+    setActionSearch("");
     setEditorOpen(true);
   };
 
@@ -204,6 +206,7 @@ export default function Workflows() {
     setFormSourceTypes(tpl.source_types);
     setFormActions(tpl.actions);
     setFormUseBrand(tpl.use_brand_context);
+    setActionSearch("");
     setEditorOpen(true);
   };
 
@@ -344,9 +347,11 @@ export default function Workflows() {
 
       try {
         const prompt = buildActionPrompt(action, runContent, {});
+        const tplId = getTemplateIdFromAction(action);
+        const templateType = tplId ? tplId : `workflow-${action}`;
         const { data, error } = await supabase.functions.invoke("generate-content", {
           body: {
-            template_type: `workflow-${action}`,
+            template_type: templateType,
             prompt,
             language: "en",
             brand_context: brandContext || undefined,
@@ -667,15 +672,32 @@ export default function Workflows() {
                 </div>
               )}
 
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-3">Add action</p>
-              <div className="grid grid-cols-2 gap-1.5">
-                {ALL_ACTION_IDS.filter((a) => !formActions.includes(a)).map((a) => {
-                  const meta = ALL_ACTIONS[a];
+              {(() => {
+                const q = actionSearch.trim().toLowerCase();
+                const matches = (id: string) => {
+                  if (formActions.includes(id as ActionId)) return false;
+                  if (!q) return true;
+                  const m = ALL_ACTIONS[id];
+                  return (
+                    m.label.toLowerCase().includes(q) ||
+                    m.description.toLowerCase().includes(q) ||
+                    id.toLowerCase().includes(q)
+                  );
+                };
+
+                const builtinIds = ALL_ACTION_IDS.filter(
+                  (a) => !String(a).startsWith("tpl-") && matches(a as string)
+                );
+                const templateIds = TEMPLATE_ACTIONS.map((t) => t.id).filter((id) => matches(id));
+
+                const renderBtn = (id: string) => {
+                  const meta = ALL_ACTIONS[id];
+                  if (!meta) return null;
                   return (
                     <button
-                      key={a}
+                      key={id}
                       type="button"
-                      onClick={() => toggleAction(a)}
+                      onClick={() => toggleAction(id as ActionId)}
                       className="text-left flex items-center gap-2 p-2 rounded-md border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors"
                     >
                       <Plus className="h-3 w-3 text-primary shrink-0" />
@@ -688,8 +710,58 @@ export default function Workflows() {
                       </div>
                     </button>
                   );
-                })}
-              </div>
+                };
+
+                return (
+                  <div className="space-y-3 mt-3">
+                    <div className="flex items-center gap-2">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                        Add action
+                      </p>
+                      <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
+                        {builtinIds.length + templateIds.length} available
+                      </Badge>
+                      <div className="relative flex-1 ml-auto max-w-[220px]">
+                        <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                        <Input
+                          value={actionSearch}
+                          onChange={(e) => setActionSearch(e.target.value)}
+                          placeholder="Search actions…"
+                          className="h-7 text-xs pl-7"
+                        />
+                      </div>
+                    </div>
+
+                    {builtinIds.length > 0 && (
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">
+                          Built-in transforms
+                        </p>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {builtinIds.map((id) => renderBtn(id as string))}
+                        </div>
+                      </div>
+                    )}
+
+                    {templateIds.length > 0 && (
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">
+                          Templates ({TEMPLATE_ACTIONS.length}+ generators)
+                        </p>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {templateIds.map((id) => renderBtn(id))}
+                        </div>
+                      </div>
+                    )}
+
+                    {builtinIds.length === 0 && templateIds.length === 0 && (
+                      <p className="text-xs text-muted-foreground text-center py-4">
+                        No actions match "{actionSearch}".
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </div>
 

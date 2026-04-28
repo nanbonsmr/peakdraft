@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { ActionId, ActionResult, ChainStep, SmartSuggestion, WorkflowContext } from "./types";
-import { buildActionPrompt } from "./actions";
+import { buildActionPrompt, getTemplateIdFromAction } from "./actions";
 
 interface RunOptions {
   brandContext?: string;
@@ -45,9 +45,12 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
         tone: opts.tone || "",
       });
 
+      const tplId = getTemplateIdFromAction(actionId);
+      const templateType = tplId ? tplId : `workflow-${actionId}`;
+
       const { data, error } = await supabase.functions.invoke("generate-content", {
         body: {
-          template_type: `workflow-${actionId}`,
+          template_type: templateType,
           prompt,
           language: "en",
           brand_context: opts.brandContext || undefined,

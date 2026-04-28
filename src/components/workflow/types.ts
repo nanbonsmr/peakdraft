@@ -7,6 +7,8 @@ export type WorkflowContext = {
   keywords?: string[];
 };
 
+// Built-in workflow actions. Template actions (one per template, e.g. "tpl-blog")
+// are added dynamically in actions.ts and use string ids prefixed with `tpl-`.
 export type ActionId =
   | "seo"
   | "hashtags"
@@ -21,7 +23,8 @@ export type ActionId =
   | "repurpose"
   | "tone"
   | "improve"
-  | "outline";
+  | "outline"
+  | (string & {}); // allow dynamic template-action ids while keeping autocomplete
 
 export interface WorkflowAction {
   id: ActionId;
