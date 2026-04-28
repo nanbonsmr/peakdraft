@@ -68,7 +68,7 @@ const SOURCE_TYPES: WorkflowSourceType[] = ["blog", "email", "social", "ad", "ch
 const ALL_ACTION_IDS = Object.keys(ALL_ACTIONS) as ActionId[];
 
 export default function Workflows() {
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { activeEntry, buildBrandContext } = useInfobase();
 
