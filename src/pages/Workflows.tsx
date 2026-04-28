@@ -344,9 +344,11 @@ export default function Workflows() {
 
       try {
         const prompt = buildActionPrompt(action, runContent, {});
+        const tplId = getTemplateIdFromAction(action);
+        const templateType = tplId ? tplId : `workflow-${action}`;
         const { data, error } = await supabase.functions.invoke("generate-content", {
           body: {
-            template_type: `workflow-${action}`,
+            template_type: templateType,
             prompt,
             language: "en",
             brand_context: brandContext || undefined,
