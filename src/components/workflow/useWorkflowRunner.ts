@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { ActionId, ActionResult, ChainStep, SmartSuggestion, WorkflowContext } from "./types";
 import { buildActionPrompt, getTemplateIdFromAction } from "./actions";
 
@@ -11,7 +12,8 @@ interface RunOptions {
 }
 
 export function useWorkflowRunner(context: WorkflowContext | null) {
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
+  const { toast } = useToast();
   const [results, setResults] = useState<Record<string, ActionResult>>({});
   const [chain, setChain] = useState<ChainStep[]>([]);
   const [chainRunning, setChainRunning] = useState(false);
@@ -40,6 +42,17 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
   const runAIAction = useCallback(
     async (actionId: ActionId, opts: RunOptions = {}): Promise<string | null> => {
       if (!context) return null;
+
+      // Enforce word limit (same as templates)
+      if (profile && profile.words_used >= profile.words_limit) {
+        toast({
+          title: "Word limit reached",
+          description: "Please upgrade your plan to run more workflow actions.",
+          variant: "destructive",
+        });
+        throw new Error("Word limit reached");
+      }
+
       const prompt = buildActionPrompt(actionId, context.content, {
         language: opts.language || "",
         tone: opts.tone || "",
@@ -52,13 +65,40 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
         body: {
           template_type: templateType,
           prompt,
-          language: "en",
+          language: opts.language || "en",
           brand_context: opts.brandContext || undefined,
         },
       });
 
       if (error) throw error;
       const result = data?.generated_content || "";
+      const wordCount =
+        data?.word_count ||
+        (result ? result.trim().split(/\s+/).filter(Boolean).length : 0);
+
+      // Persist generation & deduct words so workflow counts toward user's paid usage
+      if (user && result) {
+        try {
+          await supabase.from("content_generations").insert({
+            user_id: user.id,
+            template_type: templateType,
+            prompt,
+            generated_content: result,
+            word_count: wordCount,
+            language: opts.language || "en",
+          });
+
+          await supabase.rpc("update_word_usage", {
+            user_uuid: user.id,
+            words_to_add: wordCount,
+          });
+
+          await refreshProfile();
+        } catch (persistErr) {
+          console.error("Workflow usage tracking failed:", persistErr);
+        }
+      }
+
       setResults((prev) => ({
         ...prev,
         [actionId]: { action: actionId, result, ranAt: new Date().toISOString() },
@@ -66,7 +106,7 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
       await logHistory(actionId, result);
       return result;
     },
-    [context, logHistory]
+    [context, profile, user, refreshProfile, toast, logHistory]
   );
 
   const fetchSmartSuggestions = useCallback(
