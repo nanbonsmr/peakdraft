@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { ActionId, ActionResult, ChainStep, SmartSuggestion, WorkflowContext } from "./types";
-import { buildActionPrompt } from "./actions";
+import { buildActionPrompt, getTemplateIdFromAction } from "./actions";
 
 interface RunOptions {
   brandContext?: string;
