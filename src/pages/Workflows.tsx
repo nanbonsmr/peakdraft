@@ -190,7 +190,8 @@ export default function Workflows() {
     setEditing(null);
     setFormName("");
     setFormDescription("");
-    setFormSourceTypes(["general"]);
+    // Default new workflows to all source types so they're accessible everywhere.
+    setFormSourceTypes([...SOURCE_TYPES]);
     setFormActions([]);
     setFormUseBrand(true);
     setEditorOpen(true);
