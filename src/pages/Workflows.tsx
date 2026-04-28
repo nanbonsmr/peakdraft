@@ -84,6 +84,7 @@ export default function Workflows() {
   const [formSourceTypes, setFormSourceTypes] = useState<string[]>(["general"]);
   const [formActions, setFormActions] = useState<ActionId[]>([]);
   const [formUseBrand, setFormUseBrand] = useState(true);
+  const [actionSearch, setActionSearch] = useState("");
   const [saving, setSaving] = useState(false);
 
   // Run dialog
