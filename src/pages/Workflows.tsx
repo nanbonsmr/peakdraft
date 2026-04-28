@@ -443,6 +443,50 @@ export default function Workflows() {
             </Button>
           </div>
 
+          {/* Missing starter templates — quick add */}
+          {!loading && (() => {
+            const existingNames = new Set(templates.map((t) => t.name.toLowerCase()));
+            const missing = STARTER_TEMPLATES.filter((s) => !existingNames.has(s.name.toLowerCase()));
+            if (missing.length === 0) return null;
+            return (
+              <Card className="border-dashed border-violet-500/30 bg-violet-500/5">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Rocket className="h-4 w-4 text-violet-500" />
+                    Starter recipes
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Add prebuilt workflows to your library with one click.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                    {missing.map((s) => (
+                      <button
+                        key={s.key}
+                        onClick={() => addStarter(s)}
+                        className="text-left p-3 rounded-lg border border-border/50 bg-background hover:border-violet-500/40 hover:bg-violet-500/5 transition-colors"
+                      >
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <Plus className="h-3 w-3 text-violet-500" />
+                          <p className="text-xs font-semibold">{s.name}</p>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground line-clamp-2">{s.description}</p>
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {s.actions.slice(0, 4).map((a) => (
+                            <Badge key={a} variant="outline" className="text-[9px] font-normal px-1 py-0">
+                              {ALL_ACTIONS[a]?.label}
+                            </Badge>
+                          ))}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()}
+
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -456,7 +500,7 @@ export default function Workflows() {
                 <div>
                   <p className="font-medium">No saved workflows yet</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Build a recipe from any AI generation via the Workflow Panel, or create one here.
+                    Add a starter above, or build a custom recipe from scratch.
                   </p>
                 </div>
                 <Button onClick={openNew} variant="outline" className="gap-1.5">
