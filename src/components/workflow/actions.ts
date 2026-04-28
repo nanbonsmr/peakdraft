@@ -1,6 +1,9 @@
 import { ActionId, WorkflowAction, WorkflowSourceType } from "./types";
 
-export const ALL_ACTIONS: Record<ActionId, WorkflowAction> = {
+// ============================================================
+// Built-in workflow actions (transforms / nav / task)
+// ============================================================
+const BUILTIN_ACTIONS: Record<string, WorkflowAction> = {
   seo: { id: "seo", label: "SEO Metadata", description: "Meta title, description & keywords", category: "amplify", isAI: true, isNav: false },
   hashtags: { id: "hashtags", label: "Hashtags", description: "Platform-ready hashtag set", category: "amplify", isAI: true, isNav: false },
   image: { id: "image", label: "Generate Image", description: "Open AI image studio", category: "navigate", isAI: false, isNav: true },
@@ -16,6 +19,79 @@ export const ALL_ACTIONS: Record<ActionId, WorkflowAction> = {
   improve: { id: "improve", label: "Improve Writing", description: "Polish clarity & flow", category: "transform", isAI: true, isNav: false },
   outline: { id: "outline", label: "Generate Outline", description: "Structured outline of this content", category: "transform", isAI: true, isNav: false },
 };
+
+// ============================================================
+// Template actions — every PeakDraft template is exposed as an
+// AI workflow action so users can chain ANY generator.
+// IDs use the `tpl-` prefix; the runner strips it to call
+// `generate-content` with the matching template_type.
+// ============================================================
+export interface TemplateActionMeta {
+  id: string;          // e.g. "tpl-blog"
+  templateId: string;  // e.g. "blog" — sent as template_type
+  label: string;
+  description: string;
+  category: WorkflowAction["category"];
+}
+
+export const TEMPLATE_ACTIONS: TemplateActionMeta[] = [
+  { id: "tpl-blog",                    templateId: "blog",                    label: "Template: Blog Post",            description: "Generate a full blog post", category: "transform" },
+  { id: "tpl-social",                  templateId: "social",                  label: "Template: Social Media",         description: "Generate engaging social posts", category: "transform" },
+  { id: "tpl-email",                   templateId: "email",                   label: "Template: Email Writer",         description: "Craft a professional email", category: "transform" },
+  { id: "tpl-ads",                     templateId: "ads",                     label: "Template: Ad Copy",              description: "High-converting advertisement copy", category: "transform" },
+  { id: "tpl-humanize",                templateId: "humanize",                label: "Template: Humanize Text",        description: "Make AI text sound human", category: "transform" },
+  { id: "tpl-cv",                      templateId: "cv",                      label: "Template: CV / Resume",          description: "Build an ATS-friendly CV", category: "transform" },
+  { id: "tpl-product",                 templateId: "product",                 label: "Template: Product Description",  description: "Compelling product copy", category: "transform" },
+  { id: "tpl-letter",                  templateId: "letter",                  label: "Template: Business Letter",      description: "Professional letter writer", category: "transform" },
+  { id: "tpl-script",                  templateId: "script",                  label: "Template: Video Script",         description: "Scripts with timing cues", category: "transform" },
+  { id: "tpl-hashtag",                 templateId: "hashtag",                 label: "Template: Hashtag Generator",    description: "Trending hashtag sets", category: "transform" },
+  { id: "tpl-post-ideas",              templateId: "post-ideas",              label: "Template: Post Ideas",           description: "Creative content ideas", category: "transform" },
+  { id: "tpl-chatgpt-prompt",          templateId: "chatgpt-prompt",          label: "Template: ChatGPT Prompt",       description: "Optimized AI prompts", category: "transform" },
+  { id: "tpl-image-prompt",            templateId: "image-prompt",            label: "Template: Image Prompt",         description: "Detailed AI image prompts", category: "transform" },
+  { id: "tpl-video-prompt",            templateId: "video-prompt",            label: "Template: Video Prompt",         description: "Production-ready video prompts", category: "transform" },
+  { id: "tpl-proposal",                templateId: "proposal",                label: "Template: Proposal",             description: "Business / project proposals", category: "transform" },
+  { id: "tpl-court-report",            templateId: "court-report",            label: "Template: Court Report",         description: "Formal legal documents", category: "transform" },
+  { id: "tpl-ads-image-prompt",        templateId: "ads-image-prompt",        label: "Template: Ads Image Prompt",     description: "Prompts for ad imagery", category: "transform" },
+  { id: "tpl-background-image-prompt", templateId: "background-image-prompt", label: "Template: Background Image",     description: "Prompts for backgrounds", category: "transform" },
+  { id: "tpl-friendly-letter",         templateId: "friendly-letter",         label: "Template: Friendly Letter",      description: "Warm personal letters", category: "transform" },
+  { id: "tpl-cover-letter",            templateId: "cover-letter",            label: "Template: Cover Letter",         description: "Job-winning cover letters", category: "transform" },
+  { id: "tpl-press-release",           templateId: "press-release",           label: "Template: Press Release",        description: "Media-ready announcements", category: "transform" },
+  { id: "tpl-business-plan",           templateId: "business-plan",           label: "Template: Business Plan",        description: "Investor-ready plans", category: "transform" },
+  { id: "tpl-linkedin-post",           templateId: "linkedin-post",           label: "Template: LinkedIn Post",        description: "Engaging LinkedIn content", category: "transform" },
+  { id: "tpl-newsletter",              templateId: "newsletter",              label: "Template: Newsletter",           description: "Subscriber newsletters", category: "transform" },
+  { id: "tpl-product-review",          templateId: "product-review",          label: "Template: Product Review",       description: "Authentic review writing", category: "transform" },
+  { id: "tpl-excel",                   templateId: "excel",                   label: "Template: Excel Generator",      description: "Spreadsheet plans & data", category: "transform" },
+];
+
+// Build the full action map (built-in + template actions)
+const TEMPLATE_ACTION_ENTRIES: Record<string, WorkflowAction> = Object.fromEntries(
+  TEMPLATE_ACTIONS.map((t) => [
+    t.id,
+    {
+      id: t.id,
+      label: t.label,
+      description: t.description,
+      category: t.category,
+      isAI: true,
+      isNav: false,
+    } as WorkflowAction,
+  ])
+);
+
+export const ALL_ACTIONS: Record<string, WorkflowAction> = {
+  ...BUILTIN_ACTIONS,
+  ...TEMPLATE_ACTION_ENTRIES,
+};
+
+// Helper: is this action backed by a PeakDraft template?
+export function isTemplateAction(actionId: string): boolean {
+  return actionId.startsWith("tpl-");
+}
+
+export function getTemplateIdFromAction(actionId: string): string | null {
+  const meta = TEMPLATE_ACTIONS.find((t) => t.id === actionId);
+  return meta?.templateId || null;
+}
 
 export function getRelevantActions(type: WorkflowSourceType): ActionId[] {
   switch (type) {
