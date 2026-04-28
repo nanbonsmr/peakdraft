@@ -110,11 +110,68 @@ export default function Workflows() {
         .select("*")
         .order("updated_at", { ascending: false });
       if (error) throw error;
-      setTemplates((data as WorkflowTemplate[]) || []);
+      const list = (data as WorkflowTemplate[]) || [];
+
+      // Auto-seed starter templates the first time a user lands here with zero workflows.
+      const seedFlagKey = `workflows_starters_seeded_${user.id}`;
+      const alreadySeeded = localStorage.getItem(seedFlagKey) === "1";
+      if (list.length === 0 && !alreadySeeded) {
+        const seeded = await seedStarterTemplates();
+        localStorage.setItem(seedFlagKey, "1");
+        setTemplates(seeded);
+      } else {
+        setTemplates(list);
+      }
     } catch (err: any) {
       toast({ title: "Failed to load workflows", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const seedStarterTemplates = async (): Promise<WorkflowTemplate[]> => {
+    if (!user) return [];
+    try {
+      const rows = STARTER_TEMPLATES.map((s) => ({
+        user_id: user.id,
+        name: s.name,
+        description: s.description,
+        source_types: s.source_types,
+        actions: s.actions,
+        use_brand_context: s.use_brand_context,
+      }));
+      const { data, error } = await (supabase as any)
+        .from("workflow_templates")
+        .insert(rows)
+        .select();
+      if (error) throw error;
+      toast({
+        title: "Starter workflows added",
+        description: `${rows.length} ready-to-run recipes are now in your library.`,
+      });
+      return (data as WorkflowTemplate[]) || [];
+    } catch (err: any) {
+      console.error("seedStarterTemplates failed:", err);
+      return [];
+    }
+  };
+
+  const addStarter = async (starter: StarterTemplate) => {
+    if (!user) return;
+    try {
+      const { error } = await (supabase as any).from("workflow_templates").insert({
+        user_id: user.id,
+        name: starter.name,
+        description: starter.description,
+        source_types: starter.source_types,
+        actions: starter.actions,
+        use_brand_context: starter.use_brand_context,
+      });
+      if (error) throw error;
+      toast({ title: `Added "${starter.name}"` });
+      loadTemplates();
+    } catch (err: any) {
+      toast({ title: "Failed to add starter", description: err.message, variant: "destructive" });
     }
   };
 
