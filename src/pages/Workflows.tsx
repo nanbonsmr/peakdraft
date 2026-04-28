@@ -195,6 +195,7 @@ export default function Workflows() {
     setFormSourceTypes([...SOURCE_TYPES]);
     setFormActions([]);
     setFormUseBrand(true);
+    setActionSearch("");
     setEditorOpen(true);
   };
 
@@ -205,6 +206,7 @@ export default function Workflows() {
     setFormSourceTypes(tpl.source_types);
     setFormActions(tpl.actions);
     setFormUseBrand(tpl.use_brand_context);
+    setActionSearch("");
     setEditorOpen(true);
   };
 
