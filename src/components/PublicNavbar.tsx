@@ -23,6 +23,7 @@ export function PublicNavbar() {
   const resourceLinks = [
     { href: '/blog', label: 'Blog' },
     { href: '/social-media', label: 'Social Media Tools' },
+    { href: '/workflows', label: 'AI Workflows' },
   ];
 
   return (
