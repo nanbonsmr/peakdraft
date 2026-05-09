@@ -11,6 +11,7 @@ import {
   ArrowRight, Workflow, Sparkles, Zap, Layers, Calendar, Repeat, Wand2,
   CheckCircle, Bot, FileStack, Library, BarChart3, Shield, Clock, Users,
   GitBranch, Rocket, Target, Globe, Star, Brain, PlayCircle, Save, Send,
+  Image as ImageIcon, Palette,
 } from 'lucide-react';
 
 const siteUrl = 'https://peakdraft.lovable.app';
@@ -36,12 +37,15 @@ const features = [
   { icon: FileStack, title: 'Bulk Export & Save', description: 'Send results straight to Editor, save to your Infobase, or bulk-export everything as Markdown, DOCX, or PDF.' },
   { icon: Bot, title: 'Brand Context Toggle', description: 'Inject your Infobase brand voice into any step with a per-action toggle. Stay on-brand across every output.' },
   { icon: BarChart3, title: 'Word Usage Tracking', description: 'Every step counts toward your plan transparently. Live word meter with smart limit enforcement that pauses chains gracefully.' },
+  { icon: ImageIcon, title: 'Hero Image Generator', description: 'Drop an "Image Hero" step into any chain to auto-generate a cover visual from your content. 50 words per image, fully on-brand.' },
+  { icon: Palette, title: 'Social Card Pack', description: 'One step → 4 perfectly sized visuals: Instagram square, 9:16 Story, Twitter banner, and 1200×630 OG card. Ship a full visual launch in seconds.' },
 ];
 
 const starterRecipes = [
   { icon: Rocket, name: 'Blog Launch Kit', steps: 'Blog Post → SEO Meta → Social Snippets → Newsletter', color: 'from-purple-500 to-pink-500' },
   { icon: Target, name: 'Product Drop Bundle', steps: 'Product Description → Ad Copy → Hashtags → Image Prompts', color: 'from-blue-500 to-cyan-500' },
   { icon: Send, name: 'Newsletter Repurpose', steps: 'Newsletter → LinkedIn → Tweet Thread → Blog Outline', color: 'from-amber-500 to-orange-500' },
+  { icon: ImageIcon, name: 'Visual Content Kit', steps: 'Hero Image → Social Card Pack (4 sizes) → Hashtags', color: 'from-emerald-500 to-teal-500' },
 ];
 
 const howItWorks = [
@@ -55,7 +59,7 @@ const stats = [
   { value: '25+', label: 'Template Actions', icon: Library },
   { value: '∞', label: 'Custom Recipes', icon: GitBranch },
   { value: '10x', label: 'Faster Output', icon: Zap },
-  { value: '3', label: 'Starter Kits Built-In', icon: Star },
+  { value: '4', label: 'Starter Kits Built-In', icon: Star },
 ];
 
 const benefits = [
@@ -69,6 +73,7 @@ const benefits = [
   'Transparent word counting against your plan',
   'Run the same recipe across blogs, ads, emails & more',
   'Pause-and-resume chains when limits are reached',
+  'Generate cover images & 4-size social card packs inside any chain',
 ];
 
 const useCases = [
@@ -195,7 +200,7 @@ export default function WorkflowLanding() {
                 </Badge>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">Everything you need to automate content</h2>
                 <p className="text-muted-foreground text-sm sm:text-lg max-w-2xl mx-auto">
-                  Eight powerful capabilities that turn the AI workflow into your most reliable team member.
+                  Ten powerful capabilities — including in-chain image generation — that turn the AI workflow into your most reliable team member.
                 </p>
               </div>
 
