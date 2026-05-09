@@ -73,6 +73,7 @@ const benefits = [
   'Transparent word counting against your plan',
   'Run the same recipe across blogs, ads, emails & more',
   'Pause-and-resume chains when limits are reached',
+  'Generate cover images & 4-size social card packs inside any chain',
 ];
 
 const useCases = [
