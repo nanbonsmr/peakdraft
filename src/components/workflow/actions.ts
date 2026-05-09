@@ -114,19 +114,19 @@ export function getTemplateIdFromAction(actionId: string): string | null {
 export function getRelevantActions(type: WorkflowSourceType): ActionId[] {
   switch (type) {
     case "blog":
-      return ["seo", "hashtags", "summarize", "repurpose", "image", "social", "translate", "improve", "task", "chat"];
+      return ["seo", "hashtags", "summarize", "repurpose", "image-hero", "image-social-pack", "image", "social", "translate", "improve", "task", "chat"];
     case "email":
-      return ["improve", "tone", "summarize", "translate", "social", "task", "chat"];
+      return ["improve", "tone", "summarize", "translate", "image-hero", "social", "task", "chat"];
     case "social":
-      return ["hashtags", "repurpose", "tone", "image", "blog", "translate", "task", "chat"];
+      return ["hashtags", "repurpose", "tone", "image-social-pack", "image-hero", "image", "blog", "translate", "task", "chat"];
     case "ad":
-      return ["improve", "tone", "image", "hashtags", "repurpose", "task", "chat"];
+      return ["improve", "tone", "image-hero", "image-social-pack", "image", "hashtags", "repurpose", "task", "chat"];
     case "chat":
-      return ["task", "blog", "summarize", "social", "email", "image", "outline"];
+      return ["task", "blog", "summarize", "social", "email", "image-hero", "image", "outline"];
     case "task":
-      return ["outline", "blog", "social", "email", "chat", "image"];
+      return ["outline", "blog", "social", "email", "chat", "image-hero", "image"];
     default:
-      return ["seo", "hashtags", "summarize", "improve", "image", "task", "blog", "social", "translate", "chat"];
+      return ["seo", "hashtags", "summarize", "improve", "image-hero", "image-social-pack", "image", "task", "blog", "social", "translate", "chat"];
   }
 }
 
