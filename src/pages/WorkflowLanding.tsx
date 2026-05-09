@@ -59,7 +59,7 @@ const stats = [
   { value: '25+', label: 'Template Actions', icon: Library },
   { value: '∞', label: 'Custom Recipes', icon: GitBranch },
   { value: '10x', label: 'Faster Output', icon: Zap },
-  { value: '3', label: 'Starter Kits Built-In', icon: Star },
+  { value: '4', label: 'Starter Kits Built-In', icon: Star },
 ];
 
 const benefits = [
