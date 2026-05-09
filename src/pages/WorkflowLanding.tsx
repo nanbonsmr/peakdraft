@@ -45,6 +45,7 @@ const starterRecipes = [
   { icon: Rocket, name: 'Blog Launch Kit', steps: 'Blog Post → SEO Meta → Social Snippets → Newsletter', color: 'from-purple-500 to-pink-500' },
   { icon: Target, name: 'Product Drop Bundle', steps: 'Product Description → Ad Copy → Hashtags → Image Prompts', color: 'from-blue-500 to-cyan-500' },
   { icon: Send, name: 'Newsletter Repurpose', steps: 'Newsletter → LinkedIn → Tweet Thread → Blog Outline', color: 'from-amber-500 to-orange-500' },
+  { icon: ImageIcon, name: 'Visual Content Kit', steps: 'Hero Image → Social Card Pack (4 sizes) → Hashtags', color: 'from-emerald-500 to-teal-500' },
 ];
 
 const howItWorks = [
