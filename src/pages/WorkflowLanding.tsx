@@ -11,6 +11,7 @@ import {
   ArrowRight, Workflow, Sparkles, Zap, Layers, Calendar, Repeat, Wand2,
   CheckCircle, Bot, FileStack, Library, BarChart3, Shield, Clock, Users,
   GitBranch, Rocket, Target, Globe, Star, Brain, PlayCircle, Save, Send,
+  Image as ImageIcon, Palette,
 } from 'lucide-react';
 
 const siteUrl = 'https://peakdraft.lovable.app';
