@@ -37,6 +37,8 @@ const features = [
   { icon: FileStack, title: 'Bulk Export & Save', description: 'Send results straight to Editor, save to your Infobase, or bulk-export everything as Markdown, DOCX, or PDF.' },
   { icon: Bot, title: 'Brand Context Toggle', description: 'Inject your Infobase brand voice into any step with a per-action toggle. Stay on-brand across every output.' },
   { icon: BarChart3, title: 'Word Usage Tracking', description: 'Every step counts toward your plan transparently. Live word meter with smart limit enforcement that pauses chains gracefully.' },
+  { icon: ImageIcon, title: 'Hero Image Generator', description: 'Drop an "Image Hero" step into any chain to auto-generate a cover visual from your content. 50 words per image, fully on-brand.' },
+  { icon: Palette, title: 'Social Card Pack', description: 'One step → 4 perfectly sized visuals: Instagram square, 9:16 Story, Twitter banner, and 1200×630 OG card. Ship a full visual launch in seconds.' },
 ];
 
 const starterRecipes = [
