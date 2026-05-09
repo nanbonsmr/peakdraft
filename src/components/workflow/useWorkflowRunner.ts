@@ -53,7 +53,59 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
         throw new Error("Word limit reached");
       }
 
-      const prompt = buildActionPrompt(actionId, context.content, {
+      // === Image generation actions (image-hero, image-social-pack) ===
+      if (isImageAction(actionId)) {
+        const variants =
+          actionId === "image-social-pack"
+            ? SOCIAL_PACK_VARIANTS
+            : [{ key: "hero", label: "Hero Image", template: "banner" }];
+
+        const briefBase = `${context.title ? `Title: ${context.title}\n` : ""}Content excerpt:\n${context.content.slice(0, 1500)}`;
+        const urls: { label: string; url: string }[] = [];
+
+        for (const v of variants) {
+          const { data: imgData, error: imgErr } = await supabase.functions.invoke("generate-image", {
+            body: {
+              prompt: `Create a ${v.label} visual for the following content. Make it eye-catching and on-brand.\n\n${briefBase}`,
+              template_type: v.template,
+              style_preset: "professional",
+            },
+          });
+          if (imgErr) throw imgErr;
+          const url = imgData?.image_url;
+          if (url) {
+            urls.push({ label: v.label, url });
+            if (user) {
+              await supabase.from("image_generations").insert({
+                user_id: user.id,
+                template_type: `workflow-${actionId}-${v.key}`,
+                prompt: briefBase.slice(0, 500),
+                image_url: url,
+                style_preset: "professional",
+              });
+            }
+          }
+        }
+
+        const totalCost = IMAGE_ACTION_WORD_COST[actionId] || 50;
+        if (user) {
+          await supabase.rpc("update_word_usage", {
+            user_uuid: user.id,
+            words_to_add: totalCost,
+          });
+          await refreshProfile();
+        }
+
+        const result = urls.map((u) => `![${u.label}](${u.url})`).join("\n\n");
+        setResults((prev) => ({
+          ...prev,
+          [actionId]: { action: actionId, result, ranAt: new Date().toISOString() },
+        }));
+        await logHistory(actionId, `Generated ${urls.length} image(s)`);
+        return result;
+      }
+
+
         language: opts.language || "",
         tone: opts.tone || "",
       });
