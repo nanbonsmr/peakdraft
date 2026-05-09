@@ -18,7 +18,25 @@ const BUILTIN_ACTIONS: Record<string, WorkflowAction> = {
   tone: { id: "tone", label: "Shift Tone", description: "Rewrite in a new voice", category: "transform", isAI: true, isNav: false },
   improve: { id: "improve", label: "Improve Writing", description: "Polish clarity & flow", category: "transform", isAI: true, isNav: false },
   outline: { id: "outline", label: "Generate Outline", description: "Structured outline of this content", category: "transform", isAI: true, isNav: false },
+  "image-hero": { id: "image-hero", label: "Hero Image", description: "Generate a cover image (50 words)", category: "amplify", isAI: true, isNav: false },
+  "image-social-pack": { id: "image-social-pack", label: "Social Card Pack", description: "4 sized variants: IG, Story, Twitter, OG (200 words)", category: "amplify", isAI: true, isNav: false },
 };
+
+// Image action helpers
+export const IMAGE_ACTION_IDS = new Set(["image-hero", "image-social-pack"]);
+export function isImageAction(actionId: string): boolean {
+  return IMAGE_ACTION_IDS.has(actionId);
+}
+export const IMAGE_ACTION_WORD_COST: Record<string, number> = {
+  "image-hero": 50,
+  "image-social-pack": 200,
+};
+export const SOCIAL_PACK_VARIANTS = [
+  { key: "instagram", label: "Instagram (1:1)", template: "social-media" },
+  { key: "story", label: "Story (9:16)", template: "social-media" },
+  { key: "twitter", label: "Twitter (16:9)", template: "banner" },
+  { key: "og", label: "OG Card (1200x630)", template: "banner" },
+];
 
 // ============================================================
 // Template actions — every PeakDraft template is exposed as an
@@ -96,19 +114,19 @@ export function getTemplateIdFromAction(actionId: string): string | null {
 export function getRelevantActions(type: WorkflowSourceType): ActionId[] {
   switch (type) {
     case "blog":
-      return ["seo", "hashtags", "summarize", "repurpose", "image", "social", "translate", "improve", "task", "chat"];
+      return ["seo", "hashtags", "summarize", "repurpose", "image-hero", "image-social-pack", "image", "social", "translate", "improve", "task", "chat"];
     case "email":
-      return ["improve", "tone", "summarize", "translate", "social", "task", "chat"];
+      return ["improve", "tone", "summarize", "translate", "image-hero", "social", "task", "chat"];
     case "social":
-      return ["hashtags", "repurpose", "tone", "image", "blog", "translate", "task", "chat"];
+      return ["hashtags", "repurpose", "tone", "image-social-pack", "image-hero", "image", "blog", "translate", "task", "chat"];
     case "ad":
-      return ["improve", "tone", "image", "hashtags", "repurpose", "task", "chat"];
+      return ["improve", "tone", "image-hero", "image-social-pack", "image", "hashtags", "repurpose", "task", "chat"];
     case "chat":
-      return ["task", "blog", "summarize", "social", "email", "image", "outline"];
+      return ["task", "blog", "summarize", "social", "email", "image-hero", "image", "outline"];
     case "task":
-      return ["outline", "blog", "social", "email", "chat", "image"];
+      return ["outline", "blog", "social", "email", "chat", "image-hero", "image"];
     default:
-      return ["seo", "hashtags", "summarize", "improve", "image", "task", "blog", "social", "translate", "chat"];
+      return ["seo", "hashtags", "summarize", "improve", "image-hero", "image-social-pack", "image", "task", "blog", "social", "translate", "chat"];
   }
 }
 

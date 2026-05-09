@@ -79,8 +79,24 @@ export function ResultCard({ result, context, onSendToEditor }: Props) {
           {new Date(result.ranAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
         </span>
       </div>
-      <div className="p-3 max-h-64 overflow-auto">
-        <pre className="whitespace-pre-wrap text-xs font-sans leading-relaxed">{result.result}</pre>
+      <div className="p-3 max-h-96 overflow-auto space-y-2">
+        {(() => {
+          const imgRegex = /!\[([^\]]*)\]\((https?:[^)]+)\)/g;
+          const matches = [...result.result.matchAll(imgRegex)];
+          if (matches.length > 0) {
+            return (
+              <div className="grid grid-cols-2 gap-2">
+                {matches.map((m, i) => (
+                  <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer" className="block group">
+                    <img src={m[2]} alt={m[1] || "Generated"} className="w-full rounded-lg border border-border/40 group-hover:border-primary/60 transition" />
+                    <p className="text-[10px] text-muted-foreground mt-1 text-center">{m[1]}</p>
+                  </a>
+                ))}
+              </div>
+            );
+          }
+          return <pre className="whitespace-pre-wrap text-xs font-sans leading-relaxed">{result.result}</pre>;
+        })()}
       </div>
       <div className="px-3 py-2 border-t border-border/40 bg-background/50 flex flex-wrap gap-1.5">
         <Button size="sm" variant="ghost" className="h-6 text-[11px] gap-1 px-2" onClick={handleCopy}>
