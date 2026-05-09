@@ -18,7 +18,25 @@ const BUILTIN_ACTIONS: Record<string, WorkflowAction> = {
   tone: { id: "tone", label: "Shift Tone", description: "Rewrite in a new voice", category: "transform", isAI: true, isNav: false },
   improve: { id: "improve", label: "Improve Writing", description: "Polish clarity & flow", category: "transform", isAI: true, isNav: false },
   outline: { id: "outline", label: "Generate Outline", description: "Structured outline of this content", category: "transform", isAI: true, isNav: false },
+  "image-hero": { id: "image-hero", label: "Hero Image", description: "Generate a cover image (50 words)", category: "amplify", isAI: true, isNav: false },
+  "image-social-pack": { id: "image-social-pack", label: "Social Card Pack", description: "4 sized variants: IG, Story, Twitter, OG (200 words)", category: "amplify", isAI: true, isNav: false },
 };
+
+// Image action helpers
+export const IMAGE_ACTION_IDS = new Set(["image-hero", "image-social-pack"]);
+export function isImageAction(actionId: string): boolean {
+  return IMAGE_ACTION_IDS.has(actionId);
+}
+export const IMAGE_ACTION_WORD_COST: Record<string, number> = {
+  "image-hero": 50,
+  "image-social-pack": 200,
+};
+export const SOCIAL_PACK_VARIANTS = [
+  { key: "instagram", label: "Instagram (1:1)", template: "social-media" },
+  { key: "story", label: "Story (9:16)", template: "social-media" },
+  { key: "twitter", label: "Twitter (16:9)", template: "banner" },
+  { key: "og", label: "OG Card (1200x630)", template: "banner" },
+];
 
 // ============================================================
 // Template actions — every PeakDraft template is exposed as an
