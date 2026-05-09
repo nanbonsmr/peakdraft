@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 const AVAILABLE_ACTIONS = [
-  "seo", "hashtags", "image", "task", "blog", "social", "email", "chat",
+  "seo", "hashtags", "image", "image-hero", "image-social-pack", "task", "blog", "social", "email", "chat",
   "translate", "summarize", "repurpose", "tone", "improve", "outline",
 ];
 
