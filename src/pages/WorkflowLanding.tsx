@@ -199,7 +199,7 @@ export default function WorkflowLanding() {
                 </Badge>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">Everything you need to automate content</h2>
                 <p className="text-muted-foreground text-sm sm:text-lg max-w-2xl mx-auto">
-                  Eight powerful capabilities that turn the AI workflow into your most reliable team member.
+                  Ten powerful capabilities — including in-chain image generation — that turn the AI workflow into your most reliable team member.
                 </p>
               </div>
 
