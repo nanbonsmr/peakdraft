@@ -37,4 +37,13 @@ export const STARTER_TEMPLATES: StarterTemplate[] = [
     actions: ["summarize", "repurpose", "hashtags", "translate"],
     use_brand_context: true,
   },
+  {
+    key: "starter-visual-content-kit",
+    name: "Visual Content Kit",
+    description:
+      "Turn any draft into a fully visual launch: hero image cover plus a 4-piece social card pack (IG, Story, Twitter, OG).",
+    source_types: ["blog", "social", "ad", "general"],
+    actions: ["image-hero", "image-social-pack", "hashtags"],
+    use_brand_context: true,
+  },
 ];
