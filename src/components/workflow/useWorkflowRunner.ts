@@ -105,7 +105,7 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
         return result;
       }
 
-
+      const prompt = buildActionPrompt(actionId, context.content, {
         language: opts.language || "",
         tone: opts.tone || "",
       });
