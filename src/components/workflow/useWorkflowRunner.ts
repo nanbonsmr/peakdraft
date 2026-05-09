@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { ActionId, ActionResult, ChainStep, SmartSuggestion, WorkflowContext } from "./types";
-import { buildActionPrompt, getTemplateIdFromAction } from "./actions";
+import { buildActionPrompt, getTemplateIdFromAction, isImageAction, IMAGE_ACTION_WORD_COST, SOCIAL_PACK_VARIANTS } from "./actions";
 
 interface RunOptions {
   brandContext?: string;
