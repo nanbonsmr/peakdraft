@@ -35,7 +35,7 @@ For each suggestion, provide:
 - reason: a short, specific 1-sentence rationale (max 14 words)
 - priority: "high" | "medium" | "low"
 
-Be specific to the content. Avoid generic advice. Pick actions that genuinely amplify this specific content.${brand_context ? "\n\nUse the user's brand context when reasoning about audience fit." : ""}`;
+Be specific to the content. Avoid generic advice. Pick actions that genuinely amplify this specific content. If the content is a blog/social/ad with no mention of imagery, prioritize "image-hero" (high) for cover art, or "image-social-pack" when multi-platform reach matters.${brand_context ? "\n\nUse the user's brand context when reasoning about audience fit." : ""}`;
 
     const userPrompt = `Source type: ${source_type}\n${title ? `Title: ${title}\n` : ""}Content excerpt:\n"""${content.slice(0, 1800)}"""${brand_context ? `\n\nBrand context:\n${brand_context.slice(0, 800)}` : ""}`;
 
