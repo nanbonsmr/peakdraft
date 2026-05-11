@@ -15,8 +15,10 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { useAvatars } from '@/hooks/useAvatars';
+import { UserCircle2 } from 'lucide-react';
 
 const imageTemplates = [
   { id: 'social-media', name: 'Social Media Post', description: 'Instagram, Facebook, Twitter posts optimized for engagement', icon: Instagram, color: 'text-pink-500', bgColor: 'bg-pink-500/10',
@@ -75,6 +77,11 @@ export default function ImageGeneration() {
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { avatars, defaultAvatar } = useAvatars();
+  const [selectedAvatarId, setSelectedAvatarId] = useState<string>('none');
+  useEffect(() => {
+    if (defaultAvatar && selectedAvatarId === 'none') setSelectedAvatarId(defaultAvatar.id);
+  }, [defaultAvatar, selectedAvatarId]);
 
   const activeTemplate = imageTemplates.find(t => t.id === selectedTemplate);
   const plan = profile?.subscription_plan?.toLowerCase() || 'free';
