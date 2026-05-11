@@ -402,6 +402,23 @@ export default function ImageGeneration() {
               </div>
 
               <div className="space-y-2">
+                <Label className="flex items-center gap-2"><UserCircle2 className="h-4 w-4 text-primary" /> Avatar (optional)</Label>
+                {avatars.length === 0 ? (
+                  <Link to="/app/avatars" className="text-xs text-primary hover:underline">+ Create your first avatar to keep characters consistent</Link>
+                ) : (
+                  <Select value={selectedAvatarId} onValueChange={setSelectedAvatarId}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No avatar</SelectItem>
+                      {avatars.map(a => (
+                        <SelectItem key={a.id} value={a.id}>{a.name}{a.is_default ? ' (default)' : ''}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+
+              <div className="space-y-2">
                 <Label>Describe Your Image</Label>
                 <Textarea
                   placeholder="Be specific about what you want — colors, composition, mood, elements..."
