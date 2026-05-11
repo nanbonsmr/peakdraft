@@ -15,6 +15,7 @@ import {
   Building2,
   ChevronRight,
   Workflow,
+  UserCircle2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,6 +63,7 @@ export function AppSidebar() {
     { title: "AI Chat", url: "/app/chat", icon: MessageCircle, badge: "Pro", badgeVariant: "pro" as const },
     { title: "Templates", url: "/app/templates", icon: Sparkles, badge: "25+", badgeVariant: "default" as const },
     { title: "Image Gen", url: "/app/image-generation", icon: ImageIcon, badge: "Pro", badgeVariant: "pro" as const },
+    { title: "Avatars", url: "/app/avatars", icon: UserCircle2, badge: "New", badgeVariant: "new" as const },
     { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2, badge: "Free", badgeVariant: "free" as const },
     { title: "Humanizer", url: "/app/humanizer", icon: Shield, badge: "New", badgeVariant: "new" as const },
   ];
