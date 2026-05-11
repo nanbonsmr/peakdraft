@@ -15,8 +15,10 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { useAvatars } from '@/hooks/useAvatars';
+import { UserCircle2 } from 'lucide-react';
 
 const imageTemplates = [
   { id: 'social-media', name: 'Social Media Post', description: 'Instagram, Facebook, Twitter posts optimized for engagement', icon: Instagram, color: 'text-pink-500', bgColor: 'bg-pink-500/10',
@@ -75,6 +77,11 @@ export default function ImageGeneration() {
   const { profile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { avatars, defaultAvatar } = useAvatars();
+  const [selectedAvatarId, setSelectedAvatarId] = useState<string>('none');
+  useEffect(() => {
+    if (defaultAvatar && selectedAvatarId === 'none') setSelectedAvatarId(defaultAvatar.id);
+  }, [defaultAvatar, selectedAvatarId]);
 
   const activeTemplate = imageTemplates.find(t => t.id === selectedTemplate);
   const plan = profile?.subscription_plan?.toLowerCase() || 'free';
@@ -142,9 +149,21 @@ export default function ImageGeneration() {
     setGeneratedImage(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke('generate-image', {
-        body: { prompt, template_type: selectedTemplate, style_preset: stylePreset },
-      });
+      const chosenAvatar = avatars.find(a => a.id === selectedAvatarId) || null;
+      const finalPrompt = chosenAvatar
+        ? `${prompt}\n\nFeature this consistent character/avatar prominently: ${chosenAvatar.name} — ${chosenAvatar.description || chosenAvatar.prompt}`
+        : prompt;
+      const body: Record<string, unknown> = {
+        prompt: finalPrompt,
+        template_type: selectedTemplate,
+        style_preset: stylePreset,
+      };
+      if (chosenAvatar?.image_url) {
+        body.mode = 'edit';
+        body.source_image_url = chosenAvatar.image_url;
+        body.edit_instruction = `Restyle this avatar into a ${selectedTemplate.replace('-', ' ')} visual. Brief: ${prompt}`;
+      }
+      const { data, error } = await supabase.functions.invoke('generate-image', { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
@@ -380,6 +399,23 @@ export default function ImageGeneration() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2"><UserCircle2 className="h-4 w-4 text-primary" /> Avatar (optional)</Label>
+                {avatars.length === 0 ? (
+                  <Link to="/app/avatars" className="text-xs text-primary hover:underline">+ Create your first avatar to keep characters consistent</Link>
+                ) : (
+                  <Select value={selectedAvatarId} onValueChange={setSelectedAvatarId}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No avatar</SelectItem>
+                      {avatars.map(a => (
+                        <SelectItem key={a.id} value={a.id}>{a.name}{a.is_default ? ' (default)' : ''}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
 
               <div className="space-y-2">

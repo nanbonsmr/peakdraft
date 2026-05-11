@@ -41,6 +41,7 @@ import NotFound from "./pages/NotFound";
 import Editor from "./pages/Editor";
 import DashboardTools from "./pages/DashboardTools";
 import ImageGeneration from "./pages/ImageGeneration";
+import Avatars from "./pages/Avatars";
 import Chat from "./pages/Chat";
 import Infobase from "./pages/Infobase";
 import Humanizer from "./pages/Humanizer";
@@ -103,6 +104,7 @@ function AnimatedRoutes() {
                         <Route path="tools" element={<PageTransition><DashboardTools /></PageTransition>} />
                         <Route path="free-ai-tools" element={<PageTransition><DashboardFreeAITools /></PageTransition>} />
                         <Route path="image-generation" element={<PageTransition><ImageGeneration /></PageTransition>} />
+                        <Route path="avatars" element={<PageTransition><Avatars /></PageTransition>} />
                         <Route path="infobase" element={<PageTransition><Infobase /></PageTransition>} />
                         <Route path="humanizer" element={<PageTransition><Humanizer /></PageTransition>} />
                         <Route path="workflow" element={<PageTransition><Workflows /></PageTransition>} />

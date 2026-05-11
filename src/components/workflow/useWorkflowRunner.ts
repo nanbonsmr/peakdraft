@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useAvatars } from "@/hooks/useAvatars";
 import { ActionId, ActionResult, ChainStep, SmartSuggestion, WorkflowContext } from "./types";
 import { buildActionPrompt, getTemplateIdFromAction, isImageAction, IMAGE_ACTION_WORD_COST, SOCIAL_PACK_VARIANTS } from "./actions";
 
@@ -13,6 +14,7 @@ interface RunOptions {
 
 export function useWorkflowRunner(context: WorkflowContext | null) {
   const { user, profile, refreshProfile } = useAuth();
+  const { defaultAvatar, buildAvatarContext } = useAvatars();
   const { toast } = useToast();
   const [results, setResults] = useState<Record<string, ActionResult>>({});
   const [chain, setChain] = useState<ChainStep[]>([]);
@@ -60,16 +62,25 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
             ? SOCIAL_PACK_VARIANTS
             : [{ key: "hero", label: "Hero Image", template: "banner" }];
 
-        const briefBase = `${context.title ? `Title: ${context.title}\n` : ""}Content excerpt:\n${context.content.slice(0, 1500)}`;
+        const avatarBrief = defaultAvatar
+          ? `\n\nFeature this avatar/persona prominently in the visual: ${defaultAvatar.name} — ${defaultAvatar.description || defaultAvatar.prompt}`
+          : "";
+        const briefBase = `${context.title ? `Title: ${context.title}\n` : ""}Content excerpt:\n${context.content.slice(0, 1500)}${avatarBrief}`;
         const urls: { label: string; url: string }[] = [];
 
         for (const v of variants) {
+          const imgBody: Record<string, unknown> = {
+            prompt: `Create a ${v.label} visual for the following content. Make it eye-catching and on-brand.\n\n${briefBase}`,
+            template_type: v.template,
+            style_preset: "professional",
+          };
+          if (defaultAvatar?.image_url) {
+            imgBody.mode = "edit";
+            imgBody.source_image_url = defaultAvatar.image_url;
+            imgBody.edit_instruction = `Use this avatar as the central character. Restyle into a ${v.label}: ${briefBase}`;
+          }
           const { data: imgData, error: imgErr } = await supabase.functions.invoke("generate-image", {
-            body: {
-              prompt: `Create a ${v.label} visual for the following content. Make it eye-catching and on-brand.\n\n${briefBase}`,
-              template_type: v.template,
-              style_preset: "professional",
-            },
+            body: imgBody,
           });
           if (imgErr) throw imgErr;
           const url = imgData?.image_url;
@@ -113,12 +124,15 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
       const tplId = getTemplateIdFromAction(actionId);
       const templateType = tplId ? tplId : `workflow-${actionId}`;
 
+      const avatarCtx = buildAvatarContext();
+      const mergedBrandContext = [opts.brandContext, avatarCtx].filter(Boolean).join("\n\n") || undefined;
+
       const { data, error } = await supabase.functions.invoke("generate-content", {
         body: {
           template_type: templateType,
           prompt,
           language: opts.language || "en",
-          brand_context: opts.brandContext || undefined,
+          brand_context: mergedBrandContext,
         },
       });
 
@@ -158,7 +172,7 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
       await logHistory(actionId, result);
       return result;
     },
-    [context, profile, user, refreshProfile, toast, logHistory]
+    [context, profile, user, refreshProfile, toast, logHistory, defaultAvatar, buildAvatarContext]
   );
 
   const fetchSmartSuggestions = useCallback(
