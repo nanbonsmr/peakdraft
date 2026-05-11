@@ -149,9 +149,21 @@ export default function ImageGeneration() {
     setGeneratedImage(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke('generate-image', {
-        body: { prompt, template_type: selectedTemplate, style_preset: stylePreset },
-      });
+      const chosenAvatar = avatars.find(a => a.id === selectedAvatarId) || null;
+      const finalPrompt = chosenAvatar
+        ? `${prompt}\n\nFeature this consistent character/avatar prominently: ${chosenAvatar.name} — ${chosenAvatar.description || chosenAvatar.prompt}`
+        : prompt;
+      const body: Record<string, unknown> = {
+        prompt: finalPrompt,
+        template_type: selectedTemplate,
+        style_preset: stylePreset,
+      };
+      if (chosenAvatar?.image_url) {
+        body.mode = 'edit';
+        body.source_image_url = chosenAvatar.image_url;
+        body.edit_instruction = `Restyle this avatar into a ${selectedTemplate.replace('-', ' ')} visual. Brief: ${prompt}`;
+      }
+      const { data, error } = await supabase.functions.invoke('generate-image', { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
