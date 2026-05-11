@@ -172,7 +172,7 @@ export function useWorkflowRunner(context: WorkflowContext | null) {
       await logHistory(actionId, result);
       return result;
     },
-    [context, profile, user, refreshProfile, toast, logHistory]
+    [context, profile, user, refreshProfile, toast, logHistory, defaultAvatar, buildAvatarContext]
   );
 
   const fetchSmartSuggestions = useCallback(
