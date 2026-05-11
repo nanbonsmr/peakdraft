@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      avatars: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string
+          is_default: boolean
+          name: string
+          prompt: string
+          reference_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url: string
+          is_default?: boolean
+          name: string
+          prompt: string
+          reference_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string
+          is_default?: boolean
+          name?: string
+          prompt?: string
+          reference_url?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           author: string
