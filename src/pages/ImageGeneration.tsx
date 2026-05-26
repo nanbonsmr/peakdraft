@@ -19,6 +19,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useAvatars } from '@/hooks/useAvatars';
 import { UserCircle2 } from 'lucide-react';
+import { PostToLinkedInButton } from '@/components/linkedin/PostToLinkedInButton';
 
 const imageTemplates = [
   { id: 'social-media', name: 'Social Media Post', description: 'Instagram, Facebook, Twitter posts optimized for engagement', icon: Instagram, color: 'text-pink-500', bgColor: 'bg-pink-500/10',
@@ -636,6 +637,13 @@ export default function ImageGeneration() {
                       <Button size="sm" variant="destructive" onClick={() => { handleDeleteImage(previewImage); setPreviewImage(null); }}>
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
+                      <PostToLinkedInButton
+                        content={previewImage.prompt}
+                        imageUrl={previewImage.image_url}
+                        source={`image:${previewImage.template_type}`}
+                        size="sm"
+                        variant="outline"
+                      />
                     </div>
 
                     {/* Edit Panel */}
