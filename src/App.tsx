@@ -42,6 +42,8 @@ import Editor from "./pages/Editor";
 import DashboardTools from "./pages/DashboardTools";
 import ImageGeneration from "./pages/ImageGeneration";
 import Avatars from "./pages/Avatars";
+import LinkedInPage from "./pages/LinkedIn";
+import LinkedInCallback from "./pages/LinkedInCallback";
 import Chat from "./pages/Chat";
 import Infobase from "./pages/Infobase";
 import Humanizer from "./pages/Humanizer";
@@ -82,6 +84,7 @@ function AnimatedRoutes() {
         <Route path="/social-media" element={<PageTransition><SocialMedia /></PageTransition>} />
         <Route path="/workflows" element={<PageTransition><WorkflowLanding /></PageTransition>} />
         <Route path="/shared/task/:token" element={<PageTransition><SharedTask /></PageTransition>} />
+        <Route path="/linkedin/callback" element={<LinkedInCallback />} />
         <Route path="/app/*" element={
           <ProtectedRoute>
             <SidebarProvider>
@@ -105,6 +108,7 @@ function AnimatedRoutes() {
                         <Route path="free-ai-tools" element={<PageTransition><DashboardFreeAITools /></PageTransition>} />
                         <Route path="image-generation" element={<PageTransition><ImageGeneration /></PageTransition>} />
                         <Route path="avatars" element={<PageTransition><Avatars /></PageTransition>} />
+                        <Route path="linkedin" element={<PageTransition><LinkedInPage /></PageTransition>} />
                         <Route path="infobase" element={<PageTransition><Infobase /></PageTransition>} />
                         <Route path="humanizer" element={<PageTransition><Humanizer /></PageTransition>} />
                         <Route path="workflow" element={<PageTransition><Workflows /></PageTransition>} />
