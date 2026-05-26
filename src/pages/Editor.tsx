@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { useToast } from '@/hooks/use-toast';
+import { PostToLinkedInButton } from '@/components/linkedin/PostToLinkedInButton';
 
 interface EditorState {
   content: string;
@@ -232,6 +233,14 @@ export default function Editor() {
             content={content}
             filename={getFilename()}
             disabled={!content.trim()}
+          />
+          <PostToLinkedInButton
+            content={content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()}
+            source="editor"
+            size="sm"
+            variant="outline"
+            className="gap-2"
+            label="LinkedIn"
           />
         </div>
       </div>

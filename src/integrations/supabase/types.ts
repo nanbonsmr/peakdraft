@@ -472,6 +472,99 @@ export type Database = {
         }
         Relationships: []
       }
+      linkedin_connections: {
+        Row: {
+          access_token: string
+          created_at: string
+          email: string | null
+          expires_at: string
+          id: string
+          linkedin_user_id: string
+          name: string | null
+          picture: string | null
+          refresh_token: string | null
+          scope: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          created_at?: string
+          email?: string | null
+          expires_at: string
+          id?: string
+          linkedin_user_id: string
+          name?: string | null
+          picture?: string | null
+          refresh_token?: string | null
+          scope?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          created_at?: string
+          email?: string | null
+          expires_at?: string
+          id?: string
+          linkedin_user_id?: string
+          name?: string | null
+          picture?: string | null
+          refresh_token?: string | null
+          scope?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      linkedin_posts: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          image_url: string | null
+          linkedin_post_id: string | null
+          linkedin_post_url: string | null
+          posted_at: string | null
+          scheduled_for: string | null
+          source: string | null
+          status: string
+          text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          image_url?: string | null
+          linkedin_post_id?: string | null
+          linkedin_post_url?: string | null
+          posted_at?: string | null
+          scheduled_for?: string | null
+          source?: string | null
+          status?: string
+          text: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          image_url?: string | null
+          linkedin_post_id?: string | null
+          linkedin_post_url?: string | null
+          posted_at?: string | null
+          scheduled_for?: string | null
+          source?: string | null
+          status?: string
+          text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
