@@ -36,6 +36,7 @@ import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { InfobaseToggle, useInfobaseContext } from "@/components/InfobaseToggle";
 import { PostToLinkedInButton } from "@/components/linkedin/PostToLinkedInButton";
+import { PostToInstagramButton } from "@/components/instagram/PostToInstagramButton";
 
 const QUICK_PROMPTS = [
   { icon: PenLine, label: "Write a blog post", desc: "Create engaging long-form content", prompt: "Write a compelling blog post about " },
@@ -555,6 +556,14 @@ function MessageBubble({ message, onOpenWorkflow }: { message: ChatMessage; onOp
               variant="ghost"
               className="h-7 px-2.5 text-[10px] sm:text-[11px] gap-1.5 rounded-lg font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60"
             />
+            <PostToInstagramButton
+              content={message.content}
+              source="chat"
+              size="sm"
+              variant="ghost"
+              className="h-7 px-2.5 text-[10px] sm:text-[11px] gap-1.5 rounded-lg font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            />
+
           </div>
         )}
       </div>
