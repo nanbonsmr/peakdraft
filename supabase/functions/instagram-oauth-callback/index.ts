@@ -12,12 +12,22 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // Public endpoint to fetch the Meta App ID (App IDs are public per Meta docs).
+    let body: any = {};
+    try { body = await req.clone().json(); } catch (_) {}
+    if (body?.action === "get_app_id") {
+      return new Response(JSON.stringify({ app_id: Deno.env.get("META_APP_ID") || "" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Missing Authorization" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
