@@ -555,6 +555,14 @@ function MessageBubble({ message, onOpenWorkflow }: { message: ChatMessage; onOp
               variant="ghost"
               className="h-7 px-2.5 text-[10px] sm:text-[11px] gap-1.5 rounded-lg font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60"
             />
+            <PostToInstagramButton
+              content={message.content}
+              source="chat"
+              size="sm"
+              variant="ghost"
+              className="h-7 px-2.5 text-[10px] sm:text-[11px] gap-1.5 rounded-lg font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            />
+
           </div>
         )}
       </div>
