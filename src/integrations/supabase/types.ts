@@ -472,6 +472,99 @@ export type Database = {
         }
         Relationships: []
       }
+      instagram_connections: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          ig_user_id: string
+          ig_username: string | null
+          page_access_token: string
+          page_id: string
+          page_name: string | null
+          scope: string | null
+          updated_at: string
+          user_access_token: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          ig_user_id: string
+          ig_username?: string | null
+          page_access_token: string
+          page_id: string
+          page_name?: string | null
+          scope?: string | null
+          updated_at?: string
+          user_access_token?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ig_user_id?: string
+          ig_username?: string | null
+          page_access_token?: string
+          page_id?: string
+          page_name?: string | null
+          scope?: string | null
+          updated_at?: string
+          user_access_token?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      instagram_posts: {
+        Row: {
+          caption: string
+          created_at: string
+          error: string | null
+          id: string
+          ig_media_id: string | null
+          ig_permalink: string | null
+          image_url: string | null
+          posted_at: string | null
+          scheduled_for: string | null
+          source: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          caption: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          ig_media_id?: string | null
+          ig_permalink?: string | null
+          image_url?: string | null
+          posted_at?: string | null
+          scheduled_for?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          caption?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          ig_media_id?: string | null
+          ig_permalink?: string | null
+          image_url?: string | null
+          posted_at?: string | null
+          scheduled_for?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       linkedin_connections: {
         Row: {
           access_token: string
