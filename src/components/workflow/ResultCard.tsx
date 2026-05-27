@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { PostToLinkedInButton } from "@/components/linkedin/PostToLinkedInButton";
+import { PostToInstagramButton } from "@/components/instagram/PostToInstagramButton";
 
 interface Props {
   result: ActionResult;
@@ -113,6 +114,14 @@ export function ResultCard({ result, context, onSendToEditor }: Props) {
           <Download className="h-3 w-3" /> .md
         </Button>
         <PostToLinkedInButton
+          content={result.result}
+          imageUrl={(result.result.match(/!\[[^\]]*\]\((https?:[^)]+)\)/)?.[1]) || null}
+          source={`workflow:${result.action}`}
+          size="sm"
+          variant="ghost"
+          className="h-6 text-[11px] gap-1 px-2"
+        />
+        <PostToInstagramButton
           content={result.result}
           imageUrl={(result.result.match(/!\[[^\]]*\]\((https?:[^)]+)\)/)?.[1]) || null}
           source={`workflow:${result.action}`}

@@ -9,6 +9,7 @@ import { ExportDropdown } from '@/components/ExportDropdown';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { useToast } from '@/hooks/use-toast';
 import { PostToLinkedInButton } from '@/components/linkedin/PostToLinkedInButton';
+import { PostToInstagramButton } from '@/components/instagram/PostToInstagramButton';
 
 interface EditorState {
   content: string;
@@ -241,6 +242,14 @@ export default function Editor() {
             variant="outline"
             className="gap-2"
             label="LinkedIn"
+          />
+          <PostToInstagramButton
+            content={content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()}
+            source="editor"
+            size="sm"
+            variant="outline"
+            className="gap-2"
+            label="Instagram"
           />
         </div>
       </div>

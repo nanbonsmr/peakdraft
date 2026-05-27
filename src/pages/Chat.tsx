@@ -36,6 +36,7 @@ import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { InfobaseToggle, useInfobaseContext } from "@/components/InfobaseToggle";
 import { PostToLinkedInButton } from "@/components/linkedin/PostToLinkedInButton";
+import { PostToInstagramButton } from "@/components/instagram/PostToInstagramButton";
 
 const QUICK_PROMPTS = [
   { icon: PenLine, label: "Write a blog post", desc: "Create engaging long-form content", prompt: "Write a compelling blog post about " },
